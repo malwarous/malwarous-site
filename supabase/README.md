@@ -18,7 +18,7 @@ doesn't match exactly, look for the nearest one.
 
 ## 3. Connect the website
 1. Open **Project Settings**, then **API** (or **API Keys**).
-2. Copy the **Project URL** and the **anon / publishable** key into `js/config.js`.
+2. Copy the **Project URL** and the **anon / publishable** key into `public/js/config.js`.
 3. Never use the **service_role / secret** key on the website. It skips every
    security rule in `schema.sql`.
 
@@ -27,7 +27,7 @@ that's fine: the rules in `schema.sql` decide what it can do.
 
 ## 4. Auth settings (under Authentication)
 - **URL configuration.** Set the Site URL to your site's address. Add
-  `https://YOUR-DOMAIN/login.html` to the redirect URLs: the confirmation
+  `https://malwarous.kabeerniazi7.workers.dev/login.html` (or your custom domain later) to the redirect URLs: the confirmation
   email sends people there.
 - **Email provider.** Keep "Confirm email" on. Set the minimum password length
   to 10. The site checks this too, but only the server's check really counts.
@@ -61,6 +61,6 @@ guestbook rm <the id it showed>
   write its policies, or anyone with the public key can read and change it.
   The dashboard's **Security Advisor** flags tables you missed.
 - **Changing the hidden flag:** the steps are in the comment above
-  `FLAG_SHA256` in `js/main.js`. Update that hash, the hash inside
+  `FLAG_SHA256` in `public/js/main.js`. Update that hash, the hash inside
   `submit_flag()` in `schema.sql` (re-run just that function in the SQL
-  Editor), and `ops/notes.txt`.
+  Editor), and `public/ops/notes.txt`.

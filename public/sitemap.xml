@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The pages search engines should know about.
+     If you get a custom domain later, change these addresses. Add new pages here. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://malwarous.kabeerniazi7.workers.dev/</loc>
+  </url>
+  <url>
+    <loc>https://malwarous.kabeerniazi7.workers.dev/events</loc>
+  </url>
+</urlset>

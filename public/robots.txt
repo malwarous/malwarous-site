@@ -8,8 +8,8 @@ Allow: /
 Disallow: /ops/
 
 # No reason to list these in search results
-Disallow: /login.html
-Disallow: /signup.html
+Disallow: /login
+Disallow: /signup
 
-# TODO: replace YOUR-DOMAIN with your real domain
-Sitemap: https://YOUR-DOMAIN/sitemap.xml
+# If you get a custom domain later, change this address
+Sitemap: https://malwarous.kabeerniazi7.workers.dev/sitemap.xml

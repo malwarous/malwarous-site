@@ -1,0 +1,17 @@
+// Cloudflare settings for the Malwarous website.
+// Cloudflare reads this file every time you push to GitHub.
+{
+  // Must match the Worker's name in the Cloudflare dashboard
+  "name": "malwarous",
+  "compatibility_date": "2026-09-30",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // ONLY this folder goes online. Everything else in the repository
+    // (.git, this file, supabase/ notes) stays private.
+    "directory": "./public",
+    // Addresses that don't exist show public/404.html
+    "not_found_handling": "404-page"
+  }
+}

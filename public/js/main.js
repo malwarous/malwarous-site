@@ -457,7 +457,9 @@ function initConsole() {
       }
       where = 'index.html' + where; // that section lives on the homepage
     }
-    if (window.location.pathname.endsWith('/' + where)) {
+    // Cloudflare serves "events.html" at "/events", so compare without ".html"
+    const here = window.location.pathname.replace(/\.html$/, '');
+    if (here.endsWith('/' + where.replace(/\.html$/, ''))) {
       print("you're already here.");
       return;
     }

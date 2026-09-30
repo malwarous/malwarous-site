@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — Malwarous</title>
+  <meta name="description" content="Create a Malwarous account.">
+  <meta name="robots" content="noindex"> <!-- no reason for search engines to list this page -->
+  <meta name="theme-color" content="#0E0E11">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/account.js" defer></script> <!-- the signup logic is in account.js, section 6 -->
+</head>
+
+<body>
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="star" viewBox="0 0 24 24">
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+  </svg>
+
+
+  <!-- HEADER (same on every page) -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html" aria-label="Malwarous home">
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
+        <ul class="nav__menu" id="nav-menu">
+          <li><a href="events.html">events</a></li>
+          <li><a href="index.html#next-event">arena</a></li>
+          <li><a href="index.html#academy">academy</a></li>
+          <li><a href="index.html#writeups">write-ups</a></li>
+          <li><a href="index.html#hall-of-fame">hall-of-fame</a></li>
+          <li><a href="index.html#team">team</a></li>
+          <li><a href="index.html#what-we-do">about</a></li>
+          <li class="nav__login"><a href="login.html">login</a></li>
+        </ul>
+      </nav>
+
+      <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+    </div>
+  </header>
+
+
+  <main id="main">
+    <section class="section section--first" aria-labelledby="auth-title">
+      <div class="container">
+        <div class="split">
+
+          <div class="split__aside">
+            <p class="hero__kicker">// ~/signup</p>
+            <h1 class="lede" id="auth-title">Get a shell.</h1>
+            <p class="read">One account for this site: sign the guestbook, get credit for the hidden flag, and more as the site grows. Your handle is public. Your email isn't.</p>
+            <p class="auth__aside-note">CTFs run on the arena, which has its own login.</p>
+          </div>
+
+          <div class="split__main">
+            <p class="prompt prompt--flush"><span class="prompt__user">guest@malwarous:~$</span> adduser</p>
+
+            <!-- Messages like "accounts aren't open yet." -->
+            <p class="notice" id="auth-notice" role="status" hidden></p>
+
+            <form class="form" id="signup-form" novalidate>
+              <div class="field">
+                <label for="signup-handle">handle</label>
+                <input id="signup-handle" name="handle" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="20" aria-describedby="handle-hint" required>
+                <p class="field__hint" id="handle-hint">3 to 20 characters: a-z, 0-9, _ and -. public, and it can't be changed later.</p>
+              </div>
+
+              <div class="field">
+                <label for="signup-email">email</label>
+                <input id="signup-email" name="email" type="email" autocomplete="email" spellcheck="false" required>
+              </div>
+
+              <div class="field">
+                <label for="signup-password">password</label>
+                <div class="field__row">
+                  <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="10" aria-describedby="password-hint" required>
+                  <button class="field__toggle" type="button" data-password-toggle aria-controls="signup-password" aria-pressed="false">[ show ]</button>
+                </div>
+                <p class="field__hint" id="password-hint">at least 10 characters. a long passphrase beats p@ssw0rd.</p>
+              </div>
+
+              <label class="check">
+                <input type="checkbox" name="agree" required>
+                <span>I'll only hack with permission, and I'll follow the <a href="#">code of conduct</a>.</span> <!-- later: code-of-conduct.html -->
+              </label>
+
+              <!-- Errors appear here, and are read out by screen readers -->
+              <p class="form__error" role="alert"></p>
+
+              <button class="btn btn--primary btn--wide" type="submit"><span class="btn__prompt" aria-hidden="true">&gt;</span> create_account</button>
+            </form>
+
+            <!-- Shown after signing up, while the confirmation email is on its way -->
+            <div class="auth-done" id="signup-done" tabindex="-1" hidden>
+              <p class="auth-done__title">check your inbox.</p>
+              <p class="read">We sent a confirmation link to <span class="auth-done__handle" id="signup-sent-email"></span>. Click it and you're in. Nothing there? Check spam, then try again in a few minutes.</p>
+            </div>
+
+            <p class="auth__switch" id="auth-switch">already have an account? <a href="login.html">log in -&gt;</a></p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
+
+      <div class="footer__ethics">
+        <p class="footer__ethics-line">We only hack with permission.</p>
+        <p class="footer__ethics-sub">CTFs, our own labs, and systems we're authorized to test. Nothing else.</p>
+      </div>
+
+      <div class="footer__grid">
+        <nav class="footer__col" aria-label="Site">
+          <p class="footer__label">// site</p>
+          <ul>
+            <li><a href="events.html">events</a></li>
+            <li><a href="index.html#next-event">arena</a></li>
+            <li><a href="index.html#academy">academy</a></li>
+            <li><a href="index.html#writeups">write-ups</a></li>
+            <li><a href="index.html#hall-of-fame">hall-of-fame</a></li>
+            <li><a href="index.html#team">team</a></li>
+            <li><a href="index.html#what-we-do">about</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Community">
+          <p class="footer__label">// community</p>
+          <ul>
+            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
+            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="signup.html">join</a></li>
+            <li><a href="login.html">login</a></li>
+            <li><a href="index.html#partners">sponsors</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social profiles">
+          <p class="footer__label">// elsewhere</p>
+          <ul>
+            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="#">github</a></li>    <!-- TODO: [GITHUB LINK] -->
+            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
+            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+          </ul>
+        </nav>
+      </div>
+
+      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+    </div>
+  </footer>
+
+
+  <!-- STATUS BAR -->
+  <aside class="statusbar" aria-label="Status bar">
+    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
+      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    </button>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">--d --h --m</span></span>
+    <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
+    <span class="statusbar__item statusbar__status">status: recruiting</span>
+    <span class="statusbar__spacer"></span>
+    <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a>
+    <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
+  </aside>
+
+
+  <!-- COMMAND CONSOLE -->
+  <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
+    <div class="console__bar">
+      <span>console — type <kbd>help</kbd></span>
+      <button class="console__close" type="button" data-console-close aria-label="Close console">[ esc ]</button>
+    </div>
+    <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
+    <form class="console__form" id="console-form" autocomplete="off">
+      <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+  </div>
+
+</body>
+</html>

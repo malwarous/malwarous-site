@@ -1,0 +1,15 @@
+# Malwarous: robots.txt
+# Tells search engines what they may crawl.
+
+User-agent: *
+Allow: /
+
+# ops notes are not for search engines.
+Disallow: /ops/
+
+# No reason to list these in search results
+Disallow: /login.html
+Disallow: /signup.html
+
+# TODO: replace YOUR-DOMAIN with your real domain
+Sitemap: https://YOUR-DOMAIN/sitemap.xml

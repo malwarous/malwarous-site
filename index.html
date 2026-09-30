@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" data-boot> <!-- data-boot: this page shows the boot screen -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Malwarous — student cybersecurity community at QAU</title>
+  <meta name="description" content="Malwarous is a student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons, and hands-on workshops on security and AI.">
+  <meta name="theme-color" content="#0E0E11">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Link previews (WhatsApp, Discord, LinkedIn...).
+       TODO: replace YOUR-DOMAIN with your real domain; previews need full URLs. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Malwarous">
+  <meta property="og:title" content="Malwarous — break things. with permission.">
+  <meta property="og:description" content="Student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons and hands-on workshops.">
+  <meta property="og:url" content="https://YOUR-DOMAIN/">
+  <meta property="og:image" content="https://YOUR-DOMAIN/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts: JetBrains Mono (main voice), Archivo at full width (headlines), IBM Plex Sans (paragraphs) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Scripts. config.js holds the settings you edit. main.js is loaded here
+       in <head> (not at the end of <body>) on purpose: its first few lines
+       decide whether to show the boot screen BEFORE the page is drawn, so
+       there is no flash. Everything else waits for the page to finish
+       loading (see "DOMContentLoaded"). account.js handles Supabase. -->
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/account.js" defer></script>
+</head>
+
+<body>
+  <!-- ops: robots are terrible at keeping secrets. -->
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <!-- SVG sprite: the four-pointed star from the "O" in the logo.
+       Defined once here, reused anywhere with: <svg><use href="#star"></use></svg> -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="star" viewBox="0 0 24 24">
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+  </svg>
+
+
+  <!-- =====================================================================
+       BOOT SCREEN
+       Hidden by default. main.js adds the class "is-booting" to <html> on
+       the first visit of a browser session, which makes this visible.
+       ===================================================================== -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot__inner">
+<pre class="boot__star">
+            .
+            |
+           :#:
+          .###.
+        .:#####:.
+ --==*#############*==--
+        ':#####:'
+          '###'
+           :#:
+            |
+            '
+</pre>
+      <ol class="boot__log" id="boot-log"></ol> <!-- lines are typed in by main.js -->
+      <p class="boot__hint">press any key to skip</p>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       HEADER + NAVIGATION
+       ===================================================================== -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+
+      <a class="brand" href="#top" aria-label="Malwarous, back to top">
+        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
+             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+
+      <!-- The links point to sections on this page for now.
+           When the real pages exist, change each href (e.g. "#events" to "events.html"). -->
+      <nav class="nav" aria-label="Main">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
+        <ul class="nav__menu" id="nav-menu">
+          <li><a href="events.html">events</a></li>
+          <li><a href="#next-event">arena</a></li>
+          <li><a href="#academy">academy</a></li>
+          <li><a href="#writeups">write-ups</a></li>
+          <li><a href="#hall-of-fame">hall-of-fame</a></li>
+          <li><a href="#team">team</a></li>
+          <li><a href="#what-we-do">about</a></li>
+          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
+        </ul>
+      </nav>
+
+      <a class="btn btn--small site-header__join" href="#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+    </div>
+  </header>
+
+
+  <main id="main">
+
+    <!-- =====================================================================
+         HERO
+         ===================================================================== -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero__grid">
+
+        <div class="hero__copy">
+          <p class="hero__kicker">// student-run cybersecurity community at quaid-i-azam university</p>
+
+          <!-- Screen readers read the .sr-only copy. The .hero__typed copy is what
+               you see (main.js types it out). .hero__mark draws the overline. -->
+          <h1 class="hero__title" id="hero-title">
+            <span class="sr-only">Break things. With permission.</span>
+            <span class="hero__typed" aria-hidden="true"><span class="hero__line">Break things.</span><span class="hero__line">With <span class="hero__mark">permission</span>.</span></span>
+          </h1>
+
+          <p class="hero__lede">CTFs, hackathons and hands-on workshops at QAU, Islamabad — from web exploitation to red-teaming LLMs.</p>
+
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#next-event" aria-label="register for next ctf"><span class="btn__prompt" aria-hidden="true">&gt;</span> register_for_next_ctf</a>
+            <a class="btn" href="#join" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
+          </div>
+
+          <ul class="hero__meta">
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> 33.75°N 73.14°E</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> islamabad, pk</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> est. [YEAR]</li>
+          </ul>
+        </div>
+
+        <!-- ASCII star: only shown on large screens (see .hero__art in style.css) -->
+        <figure class="hero__art" aria-hidden="true">
+<pre class="ascii-star">
+                    .
+                    |
+                   .#.
+                   *#*
+                  :###:
+                 :#####:
+               .*#######*.
+             .*###########*.
+         .:*#################*:.
+ --==**###########################**==--
+         ':*#################*:'
+             '*###########*'
+               '*#######*'
+                 :#####:
+                  :###:
+                   *#*
+                   '#'
+                    |
+                    '
+</pre>
+          <figcaption>fig. 01 — the star from the o</figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 01 — NEXT EVENT
+         The countdown reads nextEventStart in js/config.js. Change it there
+         and BOTH countdowns (this panel + the status bar) update.
+         ===================================================================== -->
+    <section class="section" id="next-event" aria-labelledby="next-event-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="next-event-title"><span class="section__num">// 01 —</span> next event</h2>
+          <span class="section__path">~/events/next</span>
+        </header>
+
+        <div class="event-panel" id="event-panel">
+          <div class="event-panel__info">
+            <p class="event-panel__tag">[ registration open ]</p>
+            <h3 class="event-panel__name">[EVENT NAME]</h3>
+
+            <dl class="kv">
+              <div class="kv__row">
+                <dt>date</dt>
+                <!-- The time itself is set in js/config.js; this is just the readable text -->
+                <dd><time id="next-event-time">[DATE], [TIME] PKT</time></dd>
+              </div>
+              <div class="kv__row">
+                <dt>venue</dt>
+                <dd>[VENUE]</dd>
+              </div>
+              <div class="kv__row">
+                <dt>format</dt>
+                <dd>jeopardy ctf</dd> <!-- or: hackathon / workshop -->
+              </div>
+              <div class="kv__row">
+                <dt>difficulty</dt>
+                <dd><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="event-panel__clock">
+            <p class="clock__label" id="clock-label">starts in</p>
+            <!-- role="timer" tells screen readers this is a countdown (it is not announced every second) -->
+            <div class="clock" role="timer" aria-labelledby="clock-label">
+              <div class="clock__unit"><span class="clock__num" data-countdown="days">--</span><span class="clock__name">days</span></div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit"><span class="clock__num" data-countdown="hours">--</span><span class="clock__name">hrs</span></div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit"><span class="clock__num" data-countdown="minutes">--</span><span class="clock__name">min</span></div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit"><span class="clock__num" data-countdown="seconds">--</span><span class="clock__name">sec</span></div>
+            </div>
+            <!-- TODO: replace # with [REGISTRATION LINK] -->
+            <a class="btn btn--primary btn--wide" href="#"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 02 — WHAT WE DO
+         A numbered log, not three cards.
+         ===================================================================== -->
+    <section class="section" id="what-we-do" aria-labelledby="what-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="what-title"><span class="section__num">// 02 —</span> what we do</h2>
+          <span class="section__path">~/about</span>
+        </header>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> cat what-we-do.log</p>
+
+        <ol class="log">
+          <li class="log__row">
+            <span class="log__num">01</span>
+            <div class="log__main">
+              <h3 class="log__title">CTF competitions</h3>
+              <p class="log__desc">Jeopardy-style challenges in web, crypto, pwn, forensics and reversing. We run them on campus and host them for students from other universities.</p>
+              <ul class="tags" aria-label="Categories">
+                <li>web</li><li>crypto</li><li>pwn</li><li>forensics</li><li>rev</li>
+              </ul>
+            </div>
+            <a class="log__link" href="#events">-&gt; upcoming ctfs</a>
+          </li>
+
+          <li class="log__row">
+            <span class="log__num">02</span>
+            <div class="log__main">
+              <h3 class="log__title">Hackathons</h3>
+              <p class="log__desc">Build something real against a deadline: security tooling, detection, privacy, and whatever else survives the night.</p>
+              <ul class="tags" aria-label="Themes">
+                <li>tooling</li><li>defense</li><li>privacy</li><li>ai</li>
+              </ul>
+            </div>
+            <a class="log__link" href="#events">-&gt; upcoming hackathons</a>
+          </li>
+
+          <li class="log__row">
+            <span class="log__num">03</span>
+            <div class="log__main">
+              <h3 class="log__title">Workshops</h3>
+              <p class="log__desc">Hands-on sessions on the tools and techniques behind real security work, and on AI: using AI tools well, securing AI systems, and red-teaming LLMs.</p>
+              <ul class="tags" aria-label="Topics">
+                <li>security tools</li><li>ai security</li><li>llm red-teaming</li>
+              </ul>
+            </div>
+            <a class="log__link" href="#academy">-&gt; academy</a>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 03 — UPCOMING EVENTS
+         Difficulty badges: sev--low / sev--medium / sev--high / sev--critical
+         Status: status--open / status--full / status--live
+         ===================================================================== -->
+    <section class="section" id="events" aria-labelledby="events-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="events-title"><span class="section__num">// 03 —</span> upcoming events</h2>
+          <a class="section__link" href="events.html">all events -&gt;</a>
+        </header>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> events --upcoming</p>
+
+        <table class="table events-table">
+          <caption class="sr-only">Upcoming Malwarous events</caption>
+          <thead>
+            <tr>
+              <th scope="col">date</th>
+              <th scope="col">type</th>
+              <th scope="col">title</th>
+              <th scope="col">difficulty</th>
+              <th scope="col">status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__type">workshop</td>
+              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
+              <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
+              <td class="events-table__status"><span class="status status--live">live</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__type">ctf</td>
+              <td class="events-table__title"><a href="#next-event">[EVENT NAME]</a></td>
+              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
+              <td class="events-table__status"><span class="status status--open">open</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__type">workshop</td>
+              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__status"><span class="status status--open">open</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__type">hackathon</td>
+              <td class="events-table__title"><a href="#">[HACKATHON NAME]</a></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__status"><span class="status status--full">full</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__type">ctf</td>
+              <td class="events-table__title"><a href="#">[EVENT NAME]</a></td>
+              <td class="events-table__sev"><span class="sev sev--critical"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>critical</span></td>
+              <td class="events-table__status"><span class="status status--open">open</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 04 — ACADEMY
+         Styled like the output of the `tree` command.
+         ===================================================================== -->
+    <section class="section" id="academy" aria-labelledby="academy-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="academy-title"><span class="section__num">// 04 —</span> academy</h2>
+          <span class="section__path">~/academy</span>
+        </header>
+
+        <div class="split">
+          <div class="split__aside">
+            <p class="lede">Learn it before the CTF asks.</p>
+            <p class="read">Self-paced learning paths built from our workshops. Pick one, work through it at your own speed, then test yourself in the arena.</p>
+            <a class="text-link" href="#academy">browse all paths -&gt;</a> <!-- later: academy.html -->
+          </div>
+
+          <div class="split__main">
+            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> tree ~/academy -L 1</p>
+            <ul class="tree">
+              <li class="tree__item">
+                <h3 class="tree__title"><a href="#">Web Hacking 101</a></h3>
+                <p class="tree__desc">HTTP, cookies, sessions and the OWASP Top 10, learned by breaking a deliberately vulnerable app.</p>
+                <p class="tree__meta"><span>level: beginner</span><span>[N] modules</span></p>
+              </li>
+              <li class="tree__item">
+                <h3 class="tree__title"><a href="#">AI Security Fundamentals</a></h3>
+                <p class="tree__desc">How LLM apps fail — prompt injection, data leakage, insecure tool use — and how to red-team them.</p>
+                <p class="tree__meta"><span>level: intermediate</span><span>[N] modules</span></p>
+              </li>
+              <li class="tree__item">
+                <h3 class="tree__title"><a href="#">Linux for CTFs</a></h3>
+                <p class="tree__desc">The shell, permissions, processes and pipes: the ground every challenge assumes you're standing on.</p>
+                <p class="tree__meta"><span>level: beginner</span><span>[N] modules</span></p>
+              </li>
+              <li class="tree__item">
+                <h3 class="tree__title"><a href="#">Crypto &amp; Forensics</a></h3>
+                <p class="tree__desc">From classical ciphers to broken RSA, from file carving to packet captures.</p>
+                <p class="tree__meta"><span>level: intermediate</span><span>[N] modules</span></p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 05 — LATEST WRITE-UPS
+         Styled like `ls -la`.
+         ===================================================================== -->
+    <section class="section" id="writeups" aria-labelledby="writeups-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="writeups-title"><span class="section__num">// 05 —</span> latest write-ups</h2>
+          <a class="section__link" href="#writeups">all write-ups -&gt;</a> <!-- later: writeups.html -->
+        </header>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> ls -la ~/writeups | head -5</p>
+
+        <ul class="ls" aria-label="Latest write-ups">
+          <li class="ls__row ls__row--head" aria-hidden="true">
+            <span class="ls__perms">perms</span><span class="ls__date">date</span><span class="ls__author">author</span><span class="ls__title">title</span><span class="ls__tags">tags</span>
+          </li>
+          <li class="ls__row">
+            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
+            <span class="ls__date">[DATE]</span>
+            <span class="ls__author">[AUTHOR]</span>
+            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
+            <span class="ls__tags">web · sqli</span>
+          </li>
+          <li class="ls__row">
+            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
+            <span class="ls__date">[DATE]</span>
+            <span class="ls__author">[AUTHOR]</span>
+            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
+            <span class="ls__tags">ai-sec · prompt-injection</span>
+          </li>
+          <li class="ls__row">
+            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
+            <span class="ls__date">[DATE]</span>
+            <span class="ls__author">[AUTHOR]</span>
+            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
+            <span class="ls__tags">crypto · rsa</span>
+          </li>
+          <li class="ls__row">
+            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
+            <span class="ls__date">[DATE]</span>
+            <span class="ls__author">[AUTHOR]</span>
+            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
+            <span class="ls__tags">forensics · pcap</span>
+          </li>
+          <li class="ls__row">
+            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
+            <span class="ls__date">[DATE]</span>
+            <span class="ls__author">[AUTHOR]</span>
+            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
+            <span class="ls__tags">pwn · bof</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 06 — HALL OF FAME
+         ===================================================================== -->
+    <section class="section" id="hall-of-fame" aria-labelledby="hof-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="hof-title"><span class="section__num">// 06 —</span> hall of fame</h2>
+          <a class="section__link" href="#hall-of-fame">full rankings -&gt;</a> <!-- later: hall-of-fame.html -->
+        </header>
+
+        <div class="split">
+          <div class="split__aside">
+            <p class="lede">Top of the board.</p>
+            <p class="read">Points earned across Malwarous CTFs this season. Handles only — you choose what name goes up here.</p>
+          </div>
+
+          <div class="split__main">
+            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> scoreboard --top 5</p>
+            <table class="table board">
+              <caption class="sr-only">Top 5 players this season</caption>
+              <thead>
+                <tr>
+                  <th scope="col">rank</th>
+                  <th scope="col">handle</th>
+                  <th scope="col" class="num">points</th>
+                  <th scope="col" class="num">events<span class="hide-sm"> played</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="board__first">
+                  <td class="board__rank">01</td>
+                  <td class="board__handle">[HANDLE]</td>
+                  <td class="num">[PTS]</td>
+                  <td class="num">[N]</td>
+                </tr>
+                <tr>
+                  <td class="board__rank">02</td>
+                  <td class="board__handle">[HANDLE]</td>
+                  <td class="num">[PTS]</td>
+                  <td class="num">[N]</td>
+                </tr>
+                <tr>
+                  <td class="board__rank">03</td>
+                  <td class="board__handle">[HANDLE]</td>
+                  <td class="num">[PTS]</td>
+                  <td class="num">[N]</td>
+                </tr>
+                <tr>
+                  <td class="board__rank">04</td>
+                  <td class="board__handle">[HANDLE]</td>
+                  <td class="num">[PTS]</td>
+                  <td class="num">[N]</td>
+                </tr>
+                <tr>
+                  <td class="board__rank">05</td>
+                  <td class="board__handle">[HANDLE]</td>
+                  <td class="num">[PTS]</td>
+                  <td class="num">[N]</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 07 — TEAM
+         Styled like the output of `finger`. To add someone, copy a .member
+         block. The "open seat" entry at the end points people to // 08 join.
+         ===================================================================== -->
+    <section class="section" id="team" aria-labelledby="team-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="team-title"><span class="section__num">// 07 —</span> team</h2>
+          <span class="section__path">~/team</span> <!-- later: about.html#team -->
+        </header>
+
+        <div class="split">
+          <div class="split__aside">
+            <p class="lede">The humans behind the shell.</p>
+            <p class="read">Malwarous is run by students at QAU. We write the challenges, run the events, and keep the lights on.</p>
+          </div>
+
+          <div class="split__main">
+            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> finger @malwarous</p>
+            <ul class="team">
+              <li class="member">
+                <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Kabir Niazi</h3>
+                <dl class="member__info">
+                  <div><dt>role</dt><dd>team lead</dd></div>
+                </dl>
+              </li>
+              <li class="member member--open">
+                <h3 class="member__name">[ open seat ]</h3>
+                <p class="member__note">status: recruiting. <a href="#join">this could be you -&gt;</a></p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 08 — JOIN
+         ===================================================================== -->
+    <section class="section" id="join" aria-labelledby="join-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="join-title"><span class="section__num">// 08 —</span> join</h2>
+          <span class="section__path">~/join</span>
+        </header>
+
+        <div class="join">
+          <p class="join__title">Curiosity is the only prerequisite.</p>
+          <p class="read join__text">No experience needed. Come to a workshop, play a CTF, or lurk on Discord until you're ready. If you can open a terminal — or want to learn how — you're in.</p>
+          <div class="join__actions">
+            <a class="btn btn--primary" href="signup.html" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
+            <!-- TODO: replace # with [DISCORD LINK] -->
+            <a class="btn" href="#"><span aria-hidden="true">[</span> discord <span aria-hidden="true">]</span></a>
+          </div>
+          <p class="join__note">already have an account? <a href="login.html">log in -&gt;</a> · discord: [DISCORD LINK]</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 09 — PARTNERS  (empty state until sponsors sign on)
+         ===================================================================== -->
+    <section class="section" id="partners" aria-labelledby="partners-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="partners-title"><span class="section__num">// 09 —</span> partners</h2>
+          <span class="section__path">~/sponsors</span>
+        </header>
+
+        <div class="split">
+          <div class="split__aside">
+            <p class="lede">This space is unclaimed.</p>
+            <p class="read">We're looking for partners to fund prizes, contribute challenges, or run a workshop with us. If your team hires people who like taking things apart, we should talk.</p>
+            <!-- TODO: replace # with mailto:[SPONSOR EMAIL] -->
+            <a class="btn" href="#"><span aria-hidden="true">[</span> get in touch <span aria-hidden="true">]</span></a>
+          </div>
+
+          <div class="split__main">
+            <!-- Replace a slot's contents with <img src="assets/sponsor-name.svg" alt="Sponsor name"> -->
+            <ul class="slots" aria-label="Sponsor slots">
+              <li class="slot"><span class="slot__id">slot_01</span><span class="slot__empty">[ available ]</span></li>
+              <li class="slot"><span class="slot__id">slot_02</span><span class="slot__empty">[ available ]</span></li>
+              <li class="slot"><span class="slot__id">slot_03</span><span class="slot__empty">[ available ]</span></li>
+              <li class="slot"><span class="slot__id">slot_04</span><span class="slot__empty">[ available ]</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================================
+       FOOTER
+       ===================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
+
+      <div class="footer__ethics">
+        <p class="footer__ethics-line">We only hack with permission.</p>
+        <p class="footer__ethics-sub">CTFs, our own labs, and systems we're authorized to test. Nothing else.</p>
+      </div>
+
+      <div class="footer__grid">
+        <nav class="footer__col" aria-label="Site">
+          <p class="footer__label">// site</p>
+          <ul>
+            <li><a href="events.html">events</a></li>
+            <li><a href="#next-event">arena</a></li>
+            <li><a href="#academy">academy</a></li>
+            <li><a href="#writeups">write-ups</a></li>
+            <li><a href="#hall-of-fame">hall-of-fame</a></li>
+            <li><a href="#team">team</a></li>
+            <li><a href="#what-we-do">about</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Community">
+          <p class="footer__label">// community</p>
+          <ul>
+            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
+            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="signup.html">join</a></li>
+            <li><a href="login.html">login</a></li>
+            <li><a href="#partners">sponsors</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social profiles">
+          <p class="footer__label">// elsewhere</p>
+          <ul>
+            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="#">github</a></li>    <!-- TODO: [GITHUB LINK] -->
+            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
+            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+          </ul>
+        </nav>
+      </div>
+
+      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+    </div>
+  </footer>
+
+
+  <!-- =====================================================================
+       STATUS BAR (pinned to the bottom, like tmux)
+       The countdown here and in // 01 come from the same function in main.js.
+       ===================================================================== -->
+  <aside class="statusbar" aria-label="Status bar">
+    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
+      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    </button>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">--d --h --m</span></span>
+    <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
+    <span class="statusbar__item statusbar__status">status: recruiting</span>
+    <span class="statusbar__spacer"></span>
+    <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
+    <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
+  </aside>
+
+
+  <!-- =====================================================================
+       COMMAND CONSOLE (easter egg: press the ` key, or click the status bar prompt)
+       ===================================================================== -->
+  <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
+    <div class="console__bar">
+      <span>console — type <kbd>help</kbd></span>
+      <button class="console__close" type="button" data-console-close aria-label="Close console">[ esc ]</button>
+    </div>
+    <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
+    <form class="console__form" id="console-form" autocomplete="off">
+      <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+  </div>
+
+</body>
+</html>

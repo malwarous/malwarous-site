@@ -1,0 +1,2223 @@
+/* ==========================================================================
+   Malwarous — style.css
+   Design direction: "Night Ops". A calm, precise terminal.
+   Hierarchy comes from type, spacing and 1px hairlines. No glow, no gradients.
+
+   Contents
+    1. Design tokens (every color, font and spacing value lives here)
+    2. Reset and base
+    3. Utilities
+    4. Buttons and links
+    5. Boot screen
+    6. Header and navigation
+    7. Hero
+    8. Section scaffolding (headings, prompts, split layout)
+    9. // 01 next event
+   10. // 02 what we do
+   11. // 03 upcoming events (table, badges, status)
+   12. // 04 academy (tree)
+   13. // 05 write-ups (ls -la)
+   14. // 06 hall of fame
+   15. // 07 team (styled like `finger`)
+   16. // 08 join
+   17. // 09 partners
+   18. Footer
+   19. Status bar
+   20. Command console
+   21. Page title (pages other than the homepage)
+   22. Events page archive + filters
+   23. Forms (login + signup)
+   24. 404 page
+   25. Photos (duotone treatment, for later)
+   26. Reduced motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Design tokens
+   ========================================================================== */
+:root {
+  /* Colors */
+  --bg: #0E0E11;          /* warm charcoal page background */
+  --surface: #16161B;     /* panels */
+  --line: #2A2A31;        /* hairline borders and grid lines */
+  --text: #E7E5DF;        /* soft off-white */
+  --muted: #8B8A93;       /* secondary text and labels */
+  --brand: #3F2DB5;       /* Malwarous indigo. TODO: confirm from the logo file */
+  --brand-tint: #9D90FF;  /* readable indigo for links and highlights */
+  --live: #F2A93B;        /* terminal amber: live, countdowns, active */
+  --critical: #E5484D;    /* ONLY for "critical" badges */
+
+  /* Fonts */
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-display: "Archivo", "Arial Black", Arial, sans-serif;
+  --font-read: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --display-width: 125%;  /* Archivo's widest setting on its wdth axis */
+
+  /* Type scale */
+  --fs-xs: 0.75rem;       /* 12px  labels, status bar */
+  --fs-sm: 0.8125rem;     /* 13px  tables, buttons, nav */
+  --fs-base: 0.9375rem;   /* 15px  default mono text */
+  --fs-read: 1.0625rem;   /* 17px  paragraphs */
+  --fs-h3: 1.0625rem;
+  --fs-lede: clamp(1.5rem, 1.05rem + 1.5vw, 2.25rem);
+  --fs-title: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  --fs-event: clamp(1.75rem, 1rem + 2.8vw, 3.25rem);
+  --fs-hero: clamp(2rem, 0.6rem + 5vw, 4.25rem);
+  --fs-clock: clamp(2.25rem, 1rem + 2.6vw, 3.5rem);
+
+  /* Spacing scale */
+  --space-0: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --gutter: var(--space-4);          /* side padding; grows on bigger screens */
+  --section-pad: var(--space-7);     /* vertical padding inside sections */
+
+  /* Layout */
+  --container: 1280px;
+  --header-h: 60px;
+  --statusbar-h: 30px;
+  --hairline: 1px solid var(--line);
+  --speed: 120ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: var(--space-6);
+    --section-pad: var(--space-8);
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --gutter: var(--space-7);
+  }
+}
+
+
+/* ==========================================================================
+   2. Reset and base
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0; /* square corners, everywhere, always */
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Anchor jumps land below the sticky header */
+  scroll-padding-top: calc(var(--header-h) + var(--space-4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  /* leave room for the fixed status bar at the bottom */
+  padding-bottom: var(--statusbar-h);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  /* JetBrains Mono ligatures turn "--" into a dash and "->" into an arrow.
+     Commands should read exactly as typed, so they're off. */
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, pre {
+  margin: 0;
+}
+
+/* Anything with the hidden attribute stays hidden, even if a class
+   elsewhere gives it display: grid or flex */
+[hidden] {
+  display: none !important;
+}
+
+ul, ol {
+  padding: 0;
+  list-style: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--brand-tint);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--text);
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--brand-tint);
+  outline-offset: 3px;
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 1em;
+  color: var(--text);
+}
+
+
+/* ==========================================================================
+   3. Utilities
+   ========================================================================== */
+
+/* Hidden visually, still read by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The SVG sprite that holds the star symbol takes up no space */
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* The page frame: vertical hairlines on either side of the content */
+.container {
+  max-width: var(--container);
+  margin-inline: auto;
+}
+
+@media (min-width: 1330px) {
+  .container {
+    border-inline: var(--hairline);
+  }
+}
+
+/* Small inline star (bullets, dividers) */
+.star {
+  display: inline-block;
+  flex: none;
+  width: 0.7em;
+  height: 0.7em;
+  fill: var(--brand-tint);
+  vertical-align: -0.05em;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 200;
+  padding: var(--space-2) var(--space-3);
+  background: var(--brand-tint);
+  color: var(--bg);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+
+/* ==========================================================================
+   4. Buttons and links
+   Buttons look like terminal commands. Hover inverts: bg -> tint, text -> bg.
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1ch;
+  min-height: 44px; /* comfortable touch target */
+  padding: var(--space-2) var(--space-4);
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--speed), color var(--speed), border-color var(--speed);
+}
+
+.btn--primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--text);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: var(--brand-tint);
+  border-color: var(--brand-tint);
+  color: var(--bg);
+}
+
+.btn__prompt {
+  color: var(--brand-tint);
+}
+
+.btn--primary .btn__prompt {
+  color: var(--text);
+}
+
+.btn:hover .btn__prompt,
+.btn:focus-visible .btn__prompt {
+  color: inherit;
+}
+
+.btn--small {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-xs);
+}
+
+.btn--wide {
+  width: 100%;
+}
+
+/* Arrow links like "all events ->" */
+.text-link,
+.section__link {
+  color: var(--brand-tint);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+
+.text-link:hover,
+.section__link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   5. Boot screen
+   Only visible while <html> has the class "is-booting" (set by main.js).
+   ========================================================================== */
+.boot {
+  display: none;
+}
+
+.is-booting body {
+  overflow: hidden;
+}
+
+.is-booting .boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter);
+  background: var(--bg);
+  cursor: pointer;
+  transition: opacity 200ms linear;
+}
+
+.boot.is-leaving {
+  opacity: 0;
+}
+
+.boot__inner {
+  width: min(100%, 34rem);
+}
+
+.boot__star {
+  margin-bottom: var(--space-5);
+  color: var(--brand-tint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.15;
+}
+
+.boot__log {
+  min-height: calc(5 * 1.7em);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.boot__log li {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boot__log .stamp {
+  color: var(--muted);
+}
+
+.boot__log .ok {
+  color: var(--brand-tint);
+}
+
+.boot__hint {
+  margin-top: var(--space-5);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   6. Header and navigation
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg);
+  border-bottom: var(--hairline);
+}
+
+.site-header__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--header-h);
+  padding-inline: var(--gutter);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--text);
+}
+
+.brand__star {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: var(--brand-tint);
+}
+
+.brand__word {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.brand__logo {
+  height: 24px;
+  width: auto;
+}
+
+.nav__menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.nav__menu a {
+  display: block;
+  padding: var(--space-2) var(--space-2);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+
+.nav__menu a:hover {
+  color: var(--text);
+}
+
+.nav__menu a::before {
+  content: "./";
+  color: var(--line);
+}
+
+.nav__menu a:hover::before {
+  color: var(--brand-tint);
+}
+
+/* The page you're on is amber (amber = active) */
+.nav__menu a[aria-current="page"],
+.nav__menu a[aria-current="page"]::before {
+  color: var(--live);
+}
+
+/* "login" only appears in the phone menu; on big screens it's in the status bar */
+.nav__login {
+  display: none;
+}
+
+.nav__toggle {
+  display: none;
+  min-height: 36px;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav__toggle:hover {
+  color: var(--brand-tint);
+}
+
+/* Below 1080px the seven links no longer fit on one row, so they collapse
+   behind the [ menu ] button (only when JS is on) */
+@media (max-width: 1079px) {
+  .js .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .js .nav__menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: var(--hairline);
+  }
+
+  .js .nav__menu.is-open {
+    display: flex;
+  }
+
+  .js .nav__menu .nav__login {
+    display: block;
+  }
+
+  .js .nav__menu li + li {
+    border-top: var(--hairline);
+  }
+
+  .js .nav__menu a {
+    padding: var(--space-4) var(--gutter);
+    font-size: var(--fs-base);
+  }
+
+  /* Without JS, links simply wrap onto a second row */
+  html:not(.js) .site-header__inner {
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
+  }
+}
+
+@media (min-width: 1080px) {
+  .nav {
+    margin-right: var(--space-2);
+  }
+}
+
+/* Very small phones: tighten the header so logo, [ menu ] and [ join ] fit */
+@media (max-width: 400px) {
+  .site-header__inner {
+    gap: var(--space-2);
+  }
+
+  .brand__word {
+    font-size: 0.875rem;
+  }
+}
+
+
+/* ==========================================================================
+   7. Hero
+   ========================================================================== */
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.hero__copy {
+  padding: var(--space-8) var(--gutter) var(--space-7);
+}
+
+.hero__kicker {
+  max-width: 44ch;
+  margin-bottom: var(--space-5);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-hero);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.hero__line {
+  display: block;
+}
+
+/* The overline on "permission". It's drawn with ::before (not
+   text-decoration) so it sits just above the capitals. */
+.hero__mark {
+  position: relative;
+}
+
+.hero__mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.075em;
+  height: 0.08em;
+  background: var(--brand-tint);
+  transform-origin: left;
+  /* draws in 10 steps, one per letter, once typing has finished */
+  transition: transform 360ms steps(10, end);
+}
+
+.hero__typed.is-typing .hero__mark::before {
+  transform: scaleX(0);
+}
+
+/* Typing animation states (see startTyping() in main.js).
+   With JS on, the headline stays hidden until the script is ready,
+   so the full text never flashes before it is typed. */
+.js .hero__typed {
+  visibility: hidden;
+}
+
+.js .hero__typed.is-ready {
+  visibility: visible;
+}
+
+.hero__typed.is-typing .ch:not(.is-on) {
+  visibility: hidden;
+}
+
+/* Block cursor. The negative margin means it takes no space, so the
+   text never shifts while typing. */
+.cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.8em;
+  margin-right: -0.5em;
+  margin-left: 0.06em;
+  background: var(--brand-tint);
+  vertical-align: baseline;
+  animation: blink 1.06s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.hero__lede {
+  max-width: 46ch;
+  margin-top: var(--space-5);
+  color: var(--text);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.55;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-7);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.hero__meta li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The ASCII star only appears on large screens */
+.hero__art {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  }
+
+  .hero__copy {
+    padding-block: var(--space-9) var(--space-8);
+  }
+
+  .hero__art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    border-left: var(--hairline);
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .ascii-star {
+    color: var(--brand-tint);
+    font-family: var(--font-mono);
+    font-size: clamp(0.6875rem, 0.1rem + 0.8vw, 1rem);
+    line-height: 1.12;
+  }
+
+  .hero__art figcaption {
+    color: var(--muted);
+    font-size: var(--fs-xs);
+  }
+}
+
+
+/* ==========================================================================
+   8. Section scaffolding
+   ========================================================================== */
+.section {
+  border-top: var(--hairline);
+}
+
+/* The heading bar at the top of every section: "// 01 — next event" */
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+.section__title {
+  font-size: var(--fs-base);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.section__num {
+  color: var(--brand-tint);
+}
+
+.section__path {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+/* Command lines like "malwarous@qau:~$ events --upcoming" */
+.prompt {
+  padding: var(--space-5) var(--gutter) var(--space-3);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.prompt__user {
+  color: var(--muted);
+}
+
+.prompt--flush {
+  padding-inline: 0;
+  padding-top: 0;
+}
+
+/* Big display statements inside sections */
+.lede {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--fs-lede);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+/* Reading text (paragraphs longer than two lines) */
+.read {
+  max-width: 52ch;
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.6;
+}
+
+/* Two columns with a hairline between them */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.split__aside,
+.split__main {
+  padding: var(--section-pad) var(--gutter);
+}
+
+.split__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  border-bottom: var(--hairline);
+}
+
+@media (min-width: 960px) {
+  .split {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .split__aside {
+    border-bottom: 0;
+    border-right: var(--hairline);
+  }
+}
+
+
+/* ==========================================================================
+   9. // 01 next event
+   ========================================================================== */
+.event-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.event-panel__info {
+  padding: var(--section-pad) var(--gutter);
+}
+
+.event-panel__tag {
+  color: var(--brand-tint);
+  font-size: var(--fs-xs);
+}
+
+.event-panel__name {
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-event);
+  line-height: 1.02;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+/* key / value list: "venue    [VENUE]" */
+.kv {
+  margin-top: var(--space-6);
+  border-top: var(--hairline);
+}
+
+.kv__row {
+  display: grid;
+  grid-template-columns: 12ch minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-3);
+  border-bottom: var(--hairline);
+}
+
+.kv dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.kv dd {
+  font-size: var(--fs-base);
+}
+
+.event-panel__clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--section-pad) var(--gutter);
+  background: var(--surface);
+  border-top: var(--hairline);
+}
+
+@media (min-width: 960px) {
+  .event-panel {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .event-panel__clock {
+    border-top: 0;
+    border-left: var(--hairline);
+  }
+}
+
+.clock__label {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.clock {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--live);
+}
+
+.clock__unit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.clock__num,
+.clock__sep {
+  font-size: var(--fs-clock);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__sep {
+  color: var(--line);
+}
+
+.clock__name {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+/* When the event has started, main.js adds .is-live to the panel */
+.event-panel.is-live .clock__label {
+  color: var(--live);
+}
+
+
+/* ==========================================================================
+   10. // 02 what we do (a numbered log)
+   ========================================================================== */
+.log {
+  border-top: var(--hairline);
+}
+
+.log__row {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-6) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+.log__row:last-child {
+  border-bottom: 0;
+}
+
+.log__num {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 2.1; /* sits on the same line as the title */
+}
+
+.log__title {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--fs-title);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.log__desc {
+  max-width: 60ch;
+  margin-top: var(--space-3);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.6;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.tags li {
+  padding: var(--space-0) var(--space-2);
+  border: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.log__link {
+  grid-column: 2;
+  align-self: start;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+
+.log__link:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 960px) {
+  .log__row {
+    grid-template-columns: 6ch minmax(0, 1fr) 24ch;
+    gap: var(--space-6);
+    padding-block: var(--space-7);
+  }
+
+  .log__link {
+    grid-column: 3;
+    justify-self: end;
+    line-height: 2.1;
+  }
+}
+
+
+/* ==========================================================================
+   11. // 03 upcoming events (table, severity badges, status)
+   ========================================================================== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--hairline);
+  border-bottom: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: var(--space-4);
+  border-bottom: var(--hairline);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover {
+  background: var(--surface);
+}
+
+/* line the first/last columns up with the section gutter */
+.events-table th:first-child,
+.events-table td:first-child {
+  padding-left: var(--gutter);
+}
+
+.events-table th:last-child,
+.events-table td:last-child {
+  padding-right: var(--gutter);
+}
+
+.events-table__date,
+.events-table__type {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.events-table__title a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.events-table__title a:hover {
+  color: var(--brand-tint);
+  text-decoration: underline;
+}
+
+.table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Severity badges. The block meter makes the level readable without color. */
+.sev {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-0) var(--space-2);
+  border: 1px solid currentColor;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.sev--low      { color: var(--muted); }
+.sev--medium   { color: var(--text); }
+.sev--high     { color: var(--brand-tint); }
+.sev--critical { color: var(--critical); }
+
+/* Four pips; the level decides how many are filled */
+.sev__bar {
+  display: inline-flex;
+  gap: var(--space-0);
+}
+
+.sev__bar i {
+  width: 4px;
+  height: 9px;
+  border: 1px solid currentColor;
+}
+
+.sev--low i:nth-child(-n+1),
+.sev--medium i:nth-child(-n+2),
+.sev--high i:nth-child(-n+3),
+.sev--critical i {
+  background: currentColor;
+}
+
+/* Status: open / full / live */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border: 1px solid currentColor;
+}
+
+.status--open { color: var(--text); }
+.status--open::before { background: currentColor; }
+
+.status--full { color: var(--muted); } /* hollow square */
+
+.status--live { color: var(--live); }
+.status--live::before {
+  background: currentColor;
+  animation: blink 1.06s step-end infinite;
+}
+
+/* Phones: each table row becomes a small stacked block */
+@media (max-width: 719px) {
+  .events-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .events-table,
+  .events-table tbody {
+    display: block;
+  }
+
+  .events-table tr {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "date   type"
+      "title  title"
+      "sev    status";
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-4) var(--gutter);
+    border-top: var(--hairline);
+  }
+
+  .events-table td,
+  .events-table td:first-child,
+  .events-table td:last-child {
+    padding: 0;
+    border: 0;
+  }
+
+  .events-table__date   { grid-area: date; }
+  .events-table__type   { grid-area: type; }
+  .events-table__title  { grid-area: title; font-size: var(--fs-base); }
+  .events-table__sev    { grid-area: sev; }
+  .events-table__status { grid-area: status; align-self: center; }
+}
+
+
+/* ==========================================================================
+   12. // 04 academy (styled like `tree`)
+   ========================================================================== */
+.tree {
+  font-size: var(--fs-base);
+}
+
+.tree__item {
+  position: relative;
+  padding-left: 5ch;
+  padding-bottom: var(--space-6);
+}
+
+.tree__item:last-child {
+  padding-bottom: 0;
+}
+
+/* the branch glyphs: ├── for every item, └── for the last one */
+.tree__item::before {
+  content: "├──";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.tree__item:last-child::before {
+  content: "└──";
+}
+
+/* the vertical line that continues down to the next item */
+.tree__item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 1.2em;
+  bottom: 0;
+  left: calc(0.5ch - 0.5px);
+  border-left: 1px solid var(--muted);
+}
+
+.tree__title {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.tree__title a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.tree__title a::after {
+  content: "/";
+  color: var(--muted);
+}
+
+.tree__title a:hover {
+  color: var(--brand-tint);
+  text-decoration: underline;
+}
+
+.tree__desc {
+  max-width: 56ch;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.55;
+}
+
+.tree__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
+  margin-top: var(--space-3);
+  color: var(--brand-tint);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   13. // 05 write-ups (styled like `ls -la`)
+   ========================================================================== */
+.ls {
+  border-top: var(--hairline);
+  font-size: var(--fs-sm);
+}
+
+.ls__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "date   author"
+    "title  title"
+    "tags   tags";
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-4) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+.ls__row:last-child {
+  border-bottom: 0;
+}
+
+.ls__row:not(.ls__row--head):hover {
+  background: var(--surface);
+}
+
+.ls__row--head,
+.ls__perms {
+  display: none;
+}
+
+.ls__date   { grid-area: date; color: var(--muted); }
+.ls__author { grid-area: author; color: var(--muted); }
+.ls__title  { grid-area: title; }
+.ls__tags   { grid-area: tags; color: var(--muted); }
+
+a.ls__title {
+  color: var(--text);
+  font-size: var(--fs-base);
+  text-decoration: none;
+}
+
+a.ls__title:hover {
+  color: var(--brand-tint);
+  text-decoration: underline;
+}
+
+@media (min-width: 860px) {
+  .ls__row {
+    grid-template-columns: 11ch 12ch 14ch minmax(0, 1fr) auto;
+    grid-template-areas: "perms date author title tags";
+    align-items: baseline;
+    gap: var(--space-5);
+    padding-block: var(--space-3);
+  }
+
+  .ls__row--head {
+    display: grid;
+    color: var(--muted);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ls__row--head .ls__perms {
+    display: block;
+  }
+
+  .ls__perms {
+    display: block;
+    grid-area: perms;
+    color: var(--muted);
+  }
+
+  a.ls__title {
+    font-size: var(--fs-sm);
+  }
+
+  .ls__tags {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+
+/* ==========================================================================
+   14. // 06 hall of fame
+   ========================================================================== */
+.board th:first-child,
+.board td:first-child {
+  padding-left: 0;
+  width: 7ch;
+}
+
+.board th:last-child,
+.board td:last-child {
+  padding-right: 0;
+}
+
+.board__rank {
+  color: var(--muted);
+}
+
+.board__first .board__rank,
+.board__first .board__handle {
+  color: var(--brand-tint);
+}
+
+.board__first .board__rank::before {
+  content: "> ";
+}
+
+@media (max-width: 479px) {
+  .hide-sm {
+    display: none;
+  }
+
+  .board th,
+  .board td {
+    padding-inline: var(--space-2);
+  }
+}
+
+
+/* ==========================================================================
+   15. // 07 team (styled like `finger`)
+   ========================================================================== */
+.team {
+  border-top: var(--hairline);
+}
+
+.member {
+  padding-block: var(--space-5);
+  border-bottom: var(--hairline);
+}
+
+.member__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--fs-title);
+  line-height: 1.2;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.member__name .star {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+/* "role   [ROLE]" pairs, side by side */
+.member__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.member__info div {
+  display: flex;
+  gap: 1ch;
+}
+
+.member__info dt {
+  color: var(--muted);
+}
+
+.member__info dt::after {
+  content: ":";
+}
+
+/* The empty seat: muted, points to // 08 join */
+.member--open .member__name {
+  color: var(--muted);
+}
+
+.member__note {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+
+/* ==========================================================================
+   16. // 08 join
+   ========================================================================== */
+.join {
+  padding: var(--space-9) var(--gutter);
+}
+
+.join__title {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-hero);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.join__text {
+  margin-top: var(--space-5);
+}
+
+.join__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.join__note {
+  margin-top: var(--space-4);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   17. // 09 partners (empty state)
+   ========================================================================== */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: var(--hairline);
+  border-left: var(--hairline);
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-5);
+  min-height: 8.5rem;
+  padding: var(--space-3);
+  border-right: var(--hairline);
+  border-bottom: var(--hairline);
+}
+
+.slot__id {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.slot__empty {
+  align-self: center;
+  margin-bottom: auto;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+/* sponsor logos, once added */
+.slot img {
+  max-height: 3rem;
+  width: auto;
+  align-self: center;
+  margin-block: auto;
+}
+
+
+/* ==========================================================================
+   18. Footer
+   ========================================================================== */
+.site-footer {
+  border-top: var(--hairline);
+}
+
+.site-footer .container {
+  padding: var(--space-7) var(--gutter) var(--space-6);
+}
+
+/* ------ ✦ ------ */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-top: var(--hairline);
+}
+
+.divider .star {
+  width: 14px;
+  height: 14px;
+}
+
+.footer__ethics {
+  padding-block: var(--space-7);
+  text-align: center;
+}
+
+.footer__ethics-line {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--fs-title);
+  text-transform: uppercase;
+}
+
+.footer__ethics-sub {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+  padding-block: var(--space-6);
+  border-top: var(--hairline);
+}
+
+@media (min-width: 768px) {
+  .footer__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.footer__label {
+  margin-bottom: var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.footer__col a {
+  display: inline-block;
+  padding-block: var(--space-1);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+
+.footer__col a:hover {
+  color: var(--brand-tint);
+  text-decoration: underline;
+}
+
+.footer__copy {
+  padding-top: var(--space-5);
+  border-top: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   19. Status bar (tmux-style, pinned to the bottom)
+   ========================================================================== */
+.statusbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--statusbar-h);
+  padding-right: var(--space-3);
+  background: var(--surface);
+  border-top: var(--hairline);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.statusbar__session {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  height: 100%;
+  padding: 0 var(--space-3);
+  border: 0;
+  background: var(--brand);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.statusbar__session:hover,
+.statusbar__session:focus-visible {
+  background: var(--brand-tint);
+  color: var(--bg);
+}
+
+.statusbar__session:focus-visible {
+  outline-offset: -2px;
+  outline-color: var(--text);
+}
+
+.statusbar__countdown {
+  color: var(--live);
+}
+
+.statusbar__sep {
+  color: var(--muted);
+}
+
+.statusbar__spacer {
+  flex: 1;
+}
+
+.statusbar__hint,
+.statusbar__clock {
+  color: var(--muted);
+}
+
+.statusbar__hint kbd {
+  padding: 0 var(--space-1);
+  border: var(--hairline);
+  border-color: var(--muted);
+}
+
+/* "login", or "@handle" once logged in */
+.statusbar__user {
+  color: var(--brand-tint);
+  text-decoration: none;
+}
+
+.statusbar__user:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+/* Shorten the status bar on small screens (login is in the phone menu) */
+@media (max-width: 719px) {
+  .statusbar__hint,
+  .statusbar__user,
+  .statusbar__clock {
+    display: none;
+  }
+}
+
+@media (max-width: 479px) {
+  .statusbar__status,
+  .statusbar__win {
+    display: none;
+  }
+}
+
+
+/* ==========================================================================
+   20. Command console (easter egg)
+   ========================================================================== */
+.console {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--statusbar-h);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  height: min(320px, 55vh);
+  background: var(--surface);
+  border-top: 1px solid var(--brand-tint);
+  font-size: var(--fs-sm);
+}
+
+.console[hidden] {
+  display: none;
+}
+
+.console__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--gutter);
+  border-bottom: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.console__close {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.console__close:hover {
+  color: var(--text);
+}
+
+.console__output {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3) var(--gutter) 0;
+}
+
+.console__line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.console__line--echo  { color: var(--muted); }
+.console__line--error { color: var(--live); }
+.console__line--hint  { color: var(--brand-tint); }
+
+.console__form {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  padding: var(--space-2) var(--gutter) var(--space-3);
+  border-left: 2px solid transparent;
+}
+
+.console__prompt {
+  flex: none;
+  color: var(--brand-tint);
+}
+
+.console__input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--live);
+  font-size: 16px; /* 16px stops iOS from zooming in on focus */
+}
+
+.console__input:focus {
+  outline: none;
+}
+
+/* the input has no outline of its own; the form's left edge shows focus instead */
+.console__form:focus-within {
+  border-left-color: var(--brand-tint);
+}
+
+
+/* ==========================================================================
+   21. Page title (pages other than the homepage)
+   ========================================================================== */
+.page-hero__inner {
+  padding: var(--space-8) var(--gutter) var(--space-7);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-hero);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* A section that sits right under the header (which already has a line) */
+.section--first {
+  border-top: 0;
+}
+
+
+/* ==========================================================================
+   22. Events page archive + filters
+   ========================================================================== */
+.archive__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+.archive__type {
+  color: var(--live);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* [ ctf ] style buttons; the active one is amber */
+.filter {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  border: var(--hairline);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.filter::before { content: "[ "; }
+.filter::after  { content: " ]"; }
+
+.filter:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.filter[aria-pressed="true"] {
+  color: var(--live);
+  border-color: var(--live);
+}
+
+.archive__year-title {
+  padding: var(--space-4) var(--gutter);
+  border-bottom: var(--hairline);
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--fs-title);
+  line-height: 1.2;
+}
+
+/* One past event. Phones: stacked. Wide screens: one row. */
+.past {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "date   type"
+    "main   main"
+    "links  links";
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-5) var(--gutter);
+  border-bottom: var(--hairline);
+  font-size: var(--fs-sm);
+}
+
+.past:hover {
+  background: var(--surface);
+}
+
+.past__date  { grid-area: date; color: var(--muted); }
+.past__type  { grid-area: type; color: var(--muted); }
+.past__main  { grid-area: main; }
+
+.past__title {
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.past__meta {
+  margin-top: var(--space-1);
+  color: var(--muted);
+}
+
+.past__links {
+  grid-area: links;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+.past__links a {
+  text-decoration: none;
+}
+
+.past__links a::after {
+  content: " ->";
+}
+
+.past__links a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 860px) {
+  .past {
+    grid-template-columns: 12ch 11ch minmax(0, 1fr) auto;
+    grid-template-areas: "date type main links";
+    align-items: baseline;
+    gap: var(--space-5);
+  }
+
+  .past__links {
+    justify-content: flex-end;
+  }
+}
+
+.archive__empty {
+  padding: var(--space-6) var(--gutter);
+  color: var(--muted);
+}
+
+
+/* ==========================================================================
+   23. Forms (login + signup)
+   ========================================================================== */
+.form {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field label {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+/* Inputs get a --muted border: --line is too faint to see where to type */
+.field input {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px; /* 16px stops phones from zooming in */
+  appearance: none;
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--brand-tint);
+  outline-offset: 0;
+  border-color: var(--brand-tint);
+}
+
+.field input[aria-invalid="true"] {
+  border-color: var(--live);
+}
+
+.field__hint {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+/* password + [ show ] button, side by side */
+.field__row {
+  display: flex;
+}
+
+.field__row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.field__toggle {
+  flex: none;
+  min-width: 10ch;
+  border: var(--hairline);
+  border-color: var(--muted);
+  border-left: 0;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.field__toggle:hover {
+  color: var(--text);
+}
+
+/* Square checkbox: an empty box, filled with indigo when ticked */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-family: var(--font-read);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: var(--space-0) 0 0;
+  padding: 3px;
+  border: 1px solid var(--muted);
+  background: var(--surface);
+  background-clip: content-box;
+  appearance: none;
+  cursor: pointer;
+}
+
+.check input:checked {
+  background-color: var(--brand-tint);
+  border-color: var(--brand-tint);
+}
+
+.check input[aria-invalid="true"] {
+  border-color: var(--live);
+}
+
+/* Error line above the submit button (amber, like console errors) */
+.form__error {
+  color: var(--live);
+  font-size: var(--fs-sm);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.notice {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: var(--hairline);
+  border-color: var(--brand-tint);
+  font-size: var(--fs-sm);
+}
+
+/* "logged in as @handle" / "check your inbox" panels */
+.auth-done {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  border: var(--hairline);
+  background: var(--surface);
+}
+
+.auth-done__title {
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.auth-done__handle {
+  color: var(--brand-tint);
+}
+
+.auth-done__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.auth__switch {
+  margin-top: var(--space-5);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.auth__aside-note {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   24. 404 page
+   ========================================================================== */
+.notfound__inner {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-5);
+  padding: var(--space-8) var(--gutter) var(--space-9);
+}
+
+.notfound__code {
+  color: var(--brand-tint);
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: clamp(5rem, 2rem + 12vw, 12rem);
+  line-height: 0.9;
+}
+
+.notfound__log {
+  max-width: 100%;
+  padding: var(--space-4);
+  border: var(--hairline);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.notfound__prompt {
+  color: var(--muted);
+}
+
+.notfound .hero__actions {
+  margin-top: 0;
+}
+
+
+/* ==========================================================================
+   25. Photos (for later)
+   Wrap an <img> in <div class="duotone"> for the indigo duotone look:
+   the photo is turned grayscale, then multiplied over the indigo tint.
+   ========================================================================== */
+.duotone {
+  background: var(--brand-tint);
+}
+
+.duotone img {
+  width: 100%;
+  filter: grayscale(100%) contrast(1.15) brightness(0.9);
+  mix-blend-mode: multiply;
+}
+
+
+/* ==========================================================================
+   26. Reduced motion: no blinking, no fades, no smooth scrolling.
+   (The boot screen and typing animation are skipped in main.js.)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

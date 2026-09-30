@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404: command not found — Malwarous</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0E0E11">
+
+  <!-- Hosts show this page for ANY missing address, even /a/b/c. So every
+       path here starts with "/" (the site root) instead of being relative.
+       If you ever host the site inside a folder (e.g. username.github.io/malwarous/),
+       put that folder in front: /malwarous/css/style.css and so on. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/config.js"></script>
+  <script src="/js/main.js"></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="star" viewBox="0 0 24 24">
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/" aria-label="Malwarous home">
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main" class="notfound">
+    <div class="container notfound__inner">
+      <p class="notfound__code" aria-hidden="true">404</p>
+      <h1 class="lede">Command not found.</h1>
+
+      <!-- main.js fills in the address that was typed -->
+      <pre class="notfound__log"><span class="notfound__prompt">malwarous@qau:~$</span> cd <span data-missing-path>/that-page</span>
+bash: cd: <span data-missing-path>/that-page</span>: No such file or directory</pre>
+
+      <p class="read">This page doesn't exist, moved, or was never here. No flags in this one either.</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="/"><span class="btn__prompt" aria-hidden="true">&gt;</span> cd ~</a>
+        <a class="btn" href="/events.html"><span aria-hidden="true">[</span> events <span aria-hidden="true">]</span></a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

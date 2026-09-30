@@ -1,0 +1,14 @@
+== malwarous // ops notes ==
+
+[x] set up the site
+[x] hide the flag somewhere nobody will look
+[ ] stop leaving notes in public folders
+[ ] rotate the flag before the next ctf
+
+flag, "encrypted" (base64, because real encryption is hard):
+em55am5lYmhme2UwbzBnZl80ZTNfZzNlZTFveTNfNGdfZjNwZTNnZn0=
+
+p.s. base64 alone felt too easy, so caesar had a go at it too. thirteen times.
+
+submit it on the site: press ` to open the console, then type
+  flag <answer>

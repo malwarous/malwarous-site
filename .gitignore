@@ -1,0 +1,12 @@
+# Files git should never upload.
+
+# Secrets (just in case one ever lands in this folder)
+.env
+.env.*
+*.pem
+*.key
+
+# Clutter made by Windows and macOS
+Thumbs.db
+desktop.ini
+.DS_Store

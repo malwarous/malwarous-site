@@ -10,3 +10,8 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Local development preview files
+server.js
+package.json
+package-lock.json

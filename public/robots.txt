@@ -11,5 +11,5 @@ Disallow: /ops/
 Disallow: /login
 Disallow: /signup
 
-# If you get a custom domain later, change this address
-Sitemap: https://malwarous.kabeerniazi7.workers.dev/sitemap.xml
+# The sitemap: the list of pages search engines should know about
+Sitemap: https://malwarous.dev/sitemap.xml

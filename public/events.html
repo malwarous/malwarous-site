@@ -7,14 +7,15 @@
   <meta name="description" content="Every CTF, hackathon and workshop Malwarous runs at Quaid-i-Azam University: what's coming up, and what already happened.">
   <meta name="theme-color" content="#0E0E11">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://malwarous.dev/events">
 
   <!-- Link previews. If you get a custom domain later, replace the address below. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Malwarous">
   <meta property="og:title" content="Events — Malwarous">
   <meta property="og:description" content="Every CTF, hackathon and workshop we run: what's coming up, and what already happened.">
-  <meta property="og:url" content="https://malwarous.kabeerniazi7.workers.dev/events">
-  <meta property="og:image" content="https://malwarous.kabeerniazi7.workers.dev/assets/og-image.png">
+  <meta property="og:url" content="https://malwarous.dev/events">
+  <meta property="og:image" content="https://malwarous.dev/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
@@ -31,21 +32,22 @@
 </head>
 
 <body>
+  <!-- layout:top -->
   <a class="skip-link" href="#main">skip to content</a>
 
+  <!-- SVG sprite: the four-pointed star from the "O" in the logo.
+       Reuse it anywhere with: <svg><use href="#star"></use></svg> -->
   <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="star" viewBox="0 0 24 24">
       <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
     </symbol>
   </svg>
 
-
-  <!-- =====================================================================
-       HEADER (same on every page; links to homepage sections use index.html#...)
-       ===================================================================== -->
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="brand" href="index.html" aria-label="Malwarous home">
+        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
+             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
         <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
         <span class="brand__word">MALWAROUS</span>
       </a>
@@ -54,19 +56,20 @@
         <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
         <ul class="nav__menu" id="nav-menu">
           <li><a href="events.html" aria-current="page">events</a></li>
-          <li><a href="index.html#next-event">arena</a></li>
-          <li><a href="index.html#academy">academy</a></li>
-          <li><a href="index.html#writeups">write-ups</a></li>
-          <li><a href="index.html#hall-of-fame">hall-of-fame</a></li>
-          <li><a href="index.html#team">team</a></li>
+          <li><a href="arena.html">arena</a></li>
+          <li><a href="academy.html">academy</a></li>
+          <li><a href="writeups.html">write-ups</a></li>
+          <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+          <li><a href="team.html">team</a></li>
           <li><a href="index.html#what-we-do">about</a></li>
-          <li class="nav__login"><a href="login.html">login</a></li>
+          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
         </ul>
       </nav>
 
       <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
     </div>
   </header>
+  <!-- /layout:top -->
 
 
   <main id="main">
@@ -247,9 +250,7 @@
   </main>
 
 
-  <!-- =====================================================================
-       FOOTER
-       ===================================================================== -->
+  <!-- layout:bottom -->
   <footer class="site-footer">
     <div class="container">
       <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
@@ -264,11 +265,11 @@
           <p class="footer__label">// site</p>
           <ul>
             <li><a href="events.html">events</a></li>
-            <li><a href="index.html#next-event">arena</a></li>
-            <li><a href="index.html#academy">academy</a></li>
-            <li><a href="index.html#writeups">write-ups</a></li>
-            <li><a href="index.html#hall-of-fame">hall-of-fame</a></li>
-            <li><a href="index.html#team">team</a></li>
+            <li><a href="arena.html">arena</a></li>
+            <li><a href="academy.html">academy</a></li>
+            <li><a href="writeups.html">write-ups</a></li>
+            <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+            <li><a href="team.html">team</a></li>
             <li><a href="index.html#what-we-do">about</a></li>
           </ul>
         </nav>
@@ -286,7 +287,7 @@
           <p class="footer__label">// elsewhere</p>
           <ul>
             <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
-            <li><a href="#">github</a></li>    <!-- TODO: [GITHUB LINK] -->
+            <li><a href="https://github.com/malwarous">github</a></li>
             <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
             <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
           </ul>
@@ -297,23 +298,21 @@
     </div>
   </footer>
 
-
-  <!-- STATUS BAR -->
+  <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
     <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
       <span class="statusbar__win">[0]</span> malwarous@qau:~$
     </button>
-    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">--d --h --m</span></span>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
     <span class="statusbar__item statusbar__status">status: recruiting</span>
     <span class="statusbar__spacer"></span>
     <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
-    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
     <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
   </aside>
 
-
-  <!-- COMMAND CONSOLE -->
+  <!-- Command console (easter egg: press ` or click the status bar prompt) -->
   <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
     <div class="console__bar">
       <span>console — type <kbd>help</kbd></span>
@@ -325,6 +324,7 @@
       <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
     </form>
   </div>
+  <!-- /layout:bottom -->
 
 </body>
 </html>

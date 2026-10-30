@@ -1,7 +1,8 @@
 /* ==========================================================================
    Malwarous — account.js
    Everything that talks to Supabase: signup, login, logout, the console
-   guestbook and the flag challenge.
+   guestbook, the flag challenge, posts (write-ups page) and team
+   applications (team page).
 
    The Supabase library (~218 KB) is only downloaded when it's needed: on the
    login/signup pages, when a logged-in member visits, or when a console
@@ -18,6 +19,8 @@
      4. Form helpers
      5. Login page
      6. Signup page
+     7. Write-ups page (read approved posts, submit new ones)
+     8. Team page (application form)
    ========================================================================== */
 
 
@@ -34,6 +37,7 @@ const SUPABASE_SRI = 'sha256-WdOUh8NYmEO0EDItij1WLOAiq6HlzLFomO8/sqDaLs0=';
 const AUTH_STORAGE_KEY = 'malwarous-auth';
 
 const HANDLE_PATTERN = /^[a-z0-9_-]{3,20}$/;
+const THM_PATTERN = /^[A-Za-z0-9._-]{1,40}$/; // TryHackMe usernames, e.g. hasnaat.hussain.2
 const MIN_PASSWORD_LENGTH = 10;
 
 let supabaseClientPromise = null; // created once, then reused
@@ -108,9 +112,10 @@ function friendlyError(error) {
   if (/email not confirmed/i.test(text)) return 'confirm your email first: check your inbox for the link.';
   if (/already registered/i.test(text)) return 'that email already has an account. try logging in.';
   if (/rate limit|too many/i.test(text) || status === 429) return 'too many attempts. wait a minute and try again.';
-  if (/database error saving new user/i.test(text)) return "that handle can't be used. try another.";
-  if (/slow down/i.test(text)) return 'slow down: one message every 2 minutes.';
-  if (code === '23514') return 'messages are 1 to 140 characters, on one line.';
+  if (/database error saving new user/i.test(text)) return "that handle or TryHackMe username can't be used (it may be taken). try another.";
+  // Our own database rules ("slow down: ...", "already applied: ...") are already readable
+  if (/^(slow down|already applied)/i.test(text)) return text;
+  if (code === '23514') return 'something you entered is too short, too long, or in the wrong format.';
   return text ? text.toLowerCase() : 'something went wrong. try again.';
 }
 
@@ -146,20 +151,28 @@ const Account = {
     return { id: user.id, email: user.email, handle: cachedProfile.handle };
   },
 
-  signUp: async function (handle, email, password) {
+  // thmUsername is optional ('' = none)
+  signUp: async function (handle, email, password, thmUsername) {
     const client = await getClient();
     if (!client) return offline();
 
-    // Friendly early check. The database's unique rule is the real guard.
+    // Friendly early checks. The database's unique rules are the real guard.
     const taken = await client.from('profiles').select('id').eq('handle', handle).maybeSingle();
     if (taken.error) return fail(friendlyError(taken.error));
     if (taken.data) return fail('that handle is taken. pick another.');
+
+    if (thmUsername) {
+      const thmTaken = await client.from('profiles').select('id').eq('thm_username', thmUsername).maybeSingle();
+      if (thmTaken.error) return fail(friendlyError(thmTaken.error));
+      if (thmTaken.data) return fail('that TryHackMe username is already linked to another account.');
+    }
 
     const { data, error } = await client.auth.signUp({
       email: email,
       password: password,
       options: {
-        data: { handle: handle }, // the database trigger turns this into a profile
+        // the database trigger turns this into a profile
+        data: { handle: handle, thm_username: thmUsername || '' },
         emailRedirectTo: new URL('login.html', window.location.href).href
       }
     });
@@ -253,6 +266,47 @@ const Account = {
     const { data, error } = await client.rpc('submit_flag', { guess: guess });
     if (error) return fail(friendlyError(error));
     return { ok: true, correct: data === true, recordedFor: data === true && user ? user.handle : null };
+  },
+
+  // Approved write-ups and opportunities, newest first
+  readPosts: async function () {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const { data, error } = await client
+      .from('posts')
+      .select('id, kind, title, body, link, deadline, approved_at, created_at, profiles(handle)')
+      .eq('status', 'approved')
+      .order('approved_at', { ascending: false })
+      .limit(50);
+    if (error) return fail(friendlyError(error));
+    return { ok: true, posts: data };
+  },
+
+  // post = { kind, title, body, link, deadline }. Always starts as 'pending'.
+  submitPost: async function (post) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const user = await Account.getCurrentUser();
+    if (!user) return fail('log in first to submit a post.');
+
+    const { error } = await client.from('posts').insert(post);
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
+  },
+
+  // application = { full_name, program, skills, interest, links }
+  applyToTeam: async function (application) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const user = await Account.getCurrentUser();
+    if (!user) return fail('log in first to apply.');
+
+    const { error } = await client.from('team_applications').insert(application);
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
   }
 };
 
@@ -425,6 +479,7 @@ function initSignupPage() {
     const handle = form.elements.handle;
     const email = form.elements.email;
     const password = form.elements.password;
+    const thm = form.elements.thm;
     const agree = form.elements.agree;
 
     if (!HANDLE_PATTERN.test(handle.value)) {
@@ -436,13 +491,16 @@ function initSignupPage() {
     if (password.value.length < MIN_PASSWORD_LENGTH) {
       return showFormError(form, 'passwords need at least ' + MIN_PASSWORD_LENGTH + ' characters.', password);
     }
+    if (thm.value.trim() && !THM_PATTERN.test(thm.value.trim())) {
+      return showFormError(form, "that doesn't look like a TryHackMe username: letters, numbers, . _ and - only.", thm);
+    }
     if (!agree.checked) {
       return showFormError(form, 'tick the box to agree to hack only with permission.', agree);
     }
     clearFormError(form);
 
     setBusy(form, true, '> creating account...');
-    const result = await Account.signUp(handle.value, email.value.trim(), password.value);
+    const result = await Account.signUp(handle.value, email.value.trim(), password.value, thm.value.trim());
     setBusy(form, false);
 
     if (!result.ok) return showFormError(form, result.message, null);
@@ -462,6 +520,219 @@ function initSignupPage() {
 
 
 /* --------------------------------------------------------------------------
+   Members-only forms (write-ups + team pages)
+   <div data-members-only="FORM_ID"> wraps three states:
+     [data-state="closed"]   accounts aren't switched on yet
+     [data-state="guest"]    "log in to ..." message
+     the form itself         shown to logged-in members
+   -------------------------------------------------------------------------- */
+
+async function showMembersOnly(form) {
+  const box = form.closest('[data-members-only]');
+  const closed = box.querySelector('[data-state="closed"]');
+  const guest = box.querySelector('[data-state="guest"]');
+
+  function show(state) {
+    closed.hidden = state !== 'closed';
+    guest.hidden = state !== 'guest';
+    form.hidden = state !== 'member';
+  }
+
+  if (!Account.isConfigured()) return show('closed');
+  if (!Account.hasSavedSession()) return show('guest');
+  const user = await Account.getCurrentUser();
+  show(user ? 'member' : 'guest');
+}
+
+// Shows a "thanks" panel in place of a form after it was sent
+function showSent(form, panelId) {
+  const panel = document.getElementById(panelId);
+  form.hidden = true;
+  panel.hidden = false;
+  panel.focus();
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Write-ups page (writeups.html)
+   Reads approved posts from the database, lets members submit new ones.
+   -------------------------------------------------------------------------- */
+
+const POST_KINDS = { writeup: 'write-up', opportunity: 'opportunity' };
+
+// Builds one post. Everything is set with textContent, so nothing a member
+// writes can ever run as code on the page.
+function makePost(post) {
+  const article = document.createElement('article');
+  article.className = 'post';
+  article.dataset.kind = post.kind;
+
+  const meta = document.createElement('p');
+  meta.className = 'post__meta';
+  const kind = document.createElement('span');
+  kind.className = 'post__kind post__kind--' + post.kind;
+  kind.textContent = POST_KINDS[post.kind] || post.kind;
+  const date = new Date(post.approved_at || post.created_at).toLocaleDateString('en-CA');
+  const handle = post.profiles ? '@' + post.profiles.handle : '';
+  meta.append(kind, ' · ' + date + (handle ? ' · ' + handle : ''));
+
+  const title = document.createElement('h3');
+  title.className = 'post__title';
+  title.textContent = post.title;
+
+  const body = document.createElement('p');
+  body.className = 'post__body';
+  body.textContent = post.body;
+
+  article.append(meta, title, body);
+
+  const extras = [];
+  if (post.deadline) extras.push('deadline: ' + post.deadline);
+  if (extras.length || post.link) {
+    const extra = document.createElement('p');
+    extra.className = 'post__extra';
+    if (extras.length) extra.append(extras.join(' · ') + (post.link ? ' · ' : ''));
+    // Double-check the link is https before making it clickable
+    if (post.link && /^https:\/\/\S+$/.test(post.link)) {
+      const link = document.createElement('a');
+      link.href = post.link;
+      link.textContent = 'open link ->';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer nofollow ugc'; // tells search engines it's user content
+      extra.append(link);
+    }
+    article.append(extra);
+  }
+  return article;
+}
+
+async function initWriteupsPage() {
+  const list = document.getElementById('post-list');
+  if (!list) return;
+  const status = document.getElementById('post-status');
+  const empty = document.getElementById('post-empty');
+  const buttons = document.querySelectorAll('[data-post-filter]');
+
+  // [ all ] [ write-ups ] [ opportunities ]
+  function filter(kind) {
+    let shown = 0;
+    list.querySelectorAll('.post').forEach(function (post) {
+      const match = kind === 'all' || post.dataset.kind === kind;
+      post.hidden = !match;
+      if (match) shown++;
+    });
+    buttons.forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.postFilter === kind));
+    });
+    empty.hidden = shown > 0;
+  }
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () { filter(button.dataset.postFilter); });
+  });
+
+  // Load the posts
+  if (!Account.isConfigured()) {
+    status.textContent = 'offline';
+    empty.textContent = 'posts appear here once accounts are switched on. check back soon.';
+    empty.hidden = false;
+  } else {
+    status.textContent = 'loading posts...';
+    const result = await Account.readPosts();
+    if (!result.ok) {
+      status.textContent = 'error';
+      empty.textContent = result.message;
+      empty.hidden = false;
+    } else {
+      result.posts.forEach(function (post) { list.appendChild(makePost(post)); });
+      status.textContent = result.posts.length + (result.posts.length === 1 ? ' post' : ' posts');
+      filter('all');
+    }
+  }
+
+  // The submit form
+  const form = document.getElementById('post-form');
+  if (!form) return;
+  await showMembersOnly(form);
+
+  // Deadline only makes sense for opportunities
+  const deadlineField = document.getElementById('post-deadline-field');
+  function syncKind() {
+    deadlineField.hidden = form.elements.kind.value !== 'opportunity';
+  }
+  form.querySelectorAll('[name="kind"]').forEach(function (radio) {
+    radio.addEventListener('change', syncKind);
+  });
+  syncKind();
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const title = form.elements.title;
+    const body = form.elements.body;
+    const link = form.elements.link;
+    const kind = form.elements.kind.value;
+
+    if (title.value.trim().length < 5) return showFormError(form, 'give it a title (at least 5 characters).', title);
+    if (body.value.trim().length < 20) return showFormError(form, 'write a little more (at least 20 characters).', body);
+    if (link.value.trim() && !/^https:\/\/\S+$/.test(link.value.trim())) {
+      return showFormError(form, 'links must start with https://', link);
+    }
+    clearFormError(form);
+
+    setBusy(form, true, '> submitting...');
+    const result = await Account.submitPost({
+      kind: kind,
+      title: title.value.trim(),
+      body: body.value.trim(),
+      link: link.value.trim() || null,
+      deadline: kind === 'opportunity' && form.elements.deadline.value ? form.elements.deadline.value : null
+    });
+    setBusy(form, false);
+
+    if (!result.ok) return showFormError(form, result.message, null);
+    form.reset();
+    showSent(form, 'post-sent');
+  });
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Team page (team.html): application form
+   -------------------------------------------------------------------------- */
+
+async function initTeamPage() {
+  const form = document.getElementById('apply-form');
+  if (!form) return;
+  await showMembersOnly(form);
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const name = form.elements.full_name;
+    const skills = form.elements.skills;
+    const interest = form.elements.interest;
+
+    if (name.value.trim().length < 2) return showFormError(form, 'enter your name.', name);
+    if (skills.value.trim().length < 10) return showFormError(form, 'tell us a bit more about your skills (10+ characters).', skills);
+    if (interest.value.trim().length < 10) return showFormError(form, 'tell us what you want to work on (10+ characters).', interest);
+    clearFormError(form);
+
+    setBusy(form, true, '> sending...');
+    const result = await Account.applyToTeam({
+      full_name: name.value.trim(),
+      program: form.elements.program.value.trim() || null,
+      skills: skills.value.trim(),
+      interest: interest.value.trim(),
+      links: form.elements.links.value.trim() || null
+    });
+    setBusy(form, false);
+
+    if (!result.ok) return showFormError(form, result.message, null);
+    form.reset();
+    showSent(form, 'apply-sent');
+  });
+}
+
+
+/* --------------------------------------------------------------------------
    Start-up
    -------------------------------------------------------------------------- */
 
@@ -469,5 +740,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initPasswordToggles();
   initLoginPage();
   initSignupPage();
+  initWriteupsPage();
+  initTeamPage();
   refreshStatusUser();
 });

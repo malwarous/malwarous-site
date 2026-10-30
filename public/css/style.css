@@ -28,8 +28,9 @@
    22. Events page archive + filters
    23. Forms (login + signup)
    24. 404 page
-   25. Photos (duotone treatment, for later)
-   26. Reduced motion
+   25. Arena, academy, hall of fame, team and write-ups pages
+   26. Photos (duotone treatment, for later)
+   27. Reduced motion
    ========================================================================== */
 
 
@@ -2193,7 +2194,532 @@ a.ls__title:hover {
 
 
 /* ==========================================================================
-   25. Photos (for later)
+   25. Arena, academy, hall of fame, team and write-ups pages
+   ========================================================================== */
+
+/* ---- small shared pieces ---- */
+.kv--flush,
+.room .kv {
+  margin-top: 0;
+}
+
+.form--flush {
+  margin-top: 0;
+}
+
+.field__optional {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.notice a {
+  white-space: nowrap;
+}
+
+/* Two paragraphs in a row get some space between them */
+.split__main > .read + .read {
+  margin-top: var(--space-4);
+}
+
+/* Detail lists in the left column fill its width */
+.split__aside > .kv {
+  align-self: stretch;
+}
+
+.team--page .member:last-child {
+  border-bottom: 0;
+}
+
+/* ---- Arena: the current room card ---- */
+.room {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5);
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: var(--surface);
+}
+
+/* When a room is live, the card's edge turns amber (amber = live) */
+.room.is-live {
+  border-color: var(--live);
+}
+
+.room__number {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.room__name {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-title);
+  line-height: 1.15;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.room__status {
+  color: var(--brand-tint);
+  font-size: var(--fs-sm);
+}
+
+.room.is-live .room__status {
+  color: var(--live);
+}
+
+.room__nolink {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.arena__note {
+  margin-top: var(--space-5);
+}
+
+/* ---- Videos: 16:9 box, click to play ---- */
+.video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: var(--hairline);
+  background: var(--surface);
+}
+
+.video--empty {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.video__play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.video__play img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.75;
+}
+
+.video__label {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  background: var(--brand);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.video__play:hover .video__label,
+.video__play:focus-visible .video__label {
+  background: var(--brand-tint);
+  color: var(--bg);
+}
+
+.video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video__caption {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+/* ---- Arena: numbered steps ---- */
+.steps {
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: 0 0 var(--space-5) 5ch;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step::before {
+  counter-increment: step;
+  content: "0" counter(step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--brand-tint);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+.step__title {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.step__text {
+  max-width: 60ch;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.6;
+}
+
+/* ---- Arena: rules ---- */
+.rule {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter);
+  border-top: var(--hairline);
+}
+
+.rule__num {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+}
+
+.rule__text {
+  max-width: 70ch;
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.6;
+}
+
+.rule__text strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ---- Hall of fame ---- */
+.results__event {
+  font-family: var(--font-display);
+  font-stretch: var(--display-width);
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: var(--fs-lede);
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+.board__thm {
+  color: var(--muted);
+}
+
+.points {
+  width: 100%;
+  max-width: 24ch;
+}
+
+/* ---- Academy: "lectures posting now" is live, so amber ---- */
+.tree__live {
+  color: var(--live);
+}
+
+.course__subtitle {
+  margin-top: var(--space-2);
+  color: var(--brand-tint);
+  font-size: var(--fs-base);
+}
+
+/* ---- Academy: the journey roadmap ---- */
+.roadmap__stage {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  border-top: var(--hairline);
+}
+
+.roadmap__stage:first-child {
+  padding-top: var(--space-2);
+  border-top: 0;
+}
+
+.roadmap__num {
+  color: var(--brand-tint);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+}
+
+.roadmap__title {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.roadmap__desc {
+  max-width: 56ch;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.55;
+}
+
+/* ---- Academy: a course's lectures ---- */
+.lessons {
+  border-top: var(--hairline);
+}
+
+.lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-6) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+@media (min-width: 960px) {
+  .lesson {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    gap: var(--space-7);
+  }
+}
+
+.lesson__meta {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.lesson__num {
+  color: var(--brand-tint);
+}
+
+.lesson__title {
+  margin-top: var(--space-2);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+
+.lesson__desc {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.55;
+}
+
+.lesson__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.lesson__links a::after {
+  content: " ->";
+}
+
+/* ---- Team: projects ---- */
+.project {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-5) var(--gutter);
+  border-top: var(--hairline);
+}
+
+@media (min-width: 860px) {
+  .project {
+    grid-template-columns: 11ch minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-5);
+  }
+}
+
+.project__status {
+  justify-self: start;
+  padding: var(--space-0) var(--space-2);
+  border: 1px solid currentColor;
+  font-size: var(--fs-xs);
+}
+
+.project__status--active  { color: var(--live); }
+.project__status--planned { color: var(--brand-tint); }
+.project__status--done    { color: var(--muted); }
+
+.project__name {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+
+.project__desc {
+  max-width: 64ch;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.55;
+}
+
+.project__meta {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.project__link {
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+
+.team--page {
+  margin-inline: var(--gutter);
+}
+
+/* ---- Write-ups: posts ---- */
+.post {
+  padding: var(--space-6) var(--gutter);
+  border-bottom: var(--hairline);
+}
+
+.post__meta {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.post__kind {
+  padding: var(--space-0) var(--space-2);
+  border: 1px solid currentColor;
+}
+
+.post__kind--writeup     { color: var(--brand-tint); }
+.post__kind--opportunity { color: var(--live); }
+
+.post__title {
+  margin-top: var(--space-3);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+
+/* Members write plain text; keep their line breaks */
+.post__body {
+  max-width: 70ch;
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-read);
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.post__extra {
+  margin-top: var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.guidelines {
+  display: grid;
+  gap: var(--space-3);
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+}
+
+.guidelines li {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.guidelines .star {
+  margin-top: 0.45em;
+}
+
+/* ---- Forms: big text boxes and type choices ---- */
+.field textarea {
+  width: 100%;
+  min-height: 7rem;
+  padding: var(--space-2) var(--space-3);
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px; /* 16px stops phones from zooming in */
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.field textarea:focus-visible {
+  outline: 2px solid var(--brand-tint);
+  outline-offset: 0;
+  border-color: var(--brand-tint);
+}
+
+.field textarea[aria-invalid="true"] {
+  border-color: var(--live);
+}
+
+.choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice legend {
+  width: 100%;
+  margin-bottom: var(--space-2);
+  padding: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.choice label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+/* Square radio buttons, filled with indigo when chosen */
+.choice input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 3px;
+  border: 1px solid var(--muted);
+  background: var(--surface);
+  background-clip: content-box;
+  appearance: none;
+  cursor: pointer;
+}
+
+.choice input:checked {
+  background-color: var(--brand-tint);
+  border-color: var(--brand-tint);
+}
+
+
+/* ==========================================================================
+   26. Photos (for later)
    Wrap an <img> in <div class="duotone"> for the indigo duotone look:
    the photo is turned grayscale, then multiplied over the indigo tint.
    ========================================================================== */
@@ -2209,7 +2735,7 @@ a.ls__title:hover {
 
 
 /* ==========================================================================
-   26. Reduced motion: no blinking, no fades, no smooth scrolling.
+   27. Reduced motion: no blinking, no fades, no smooth scrolling.
    (The boot screen and typing animation are skipped in main.js.)
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

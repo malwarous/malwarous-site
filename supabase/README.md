@@ -27,7 +27,7 @@ that's fine: the rules in `schema.sql` decide what it can do.
 
 ## 4. Auth settings (under Authentication)
 - **URL configuration.** Set the Site URL to your site's address. Add
-  `https://malwarous.kabeerniazi7.workers.dev/login.html` (or your custom domain later) to the redirect URLs: the confirmation
+  `https://malwarous.dev/login.html` and `https://www.malwarous.dev/login.html` to the redirect URLs: the confirmation
   email sends people there.
 - **Email provider.** Keep "Confirm email" on. Set the minimum password length
   to 10. The site checks this too, but only the server's check really counts.
@@ -47,12 +47,25 @@ that's fine: the rules in `schema.sql` decide what it can do.
 Admins can delete any guestbook message with `guestbook rm <id>`.
 
 ## 6. Test everything
-Open the console and try:
-```
-guestbook sign hello from the other side
-guestbook
-guestbook rm <the id it showed>
-```
+1. Open the console and try:
+   ```
+   guestbook sign hello from the other side
+   guestbook
+   guestbook rm <the id it showed>
+   ```
+2. On `/writeups`, submit a test post. It should say "submitted for review"
+   and NOT appear in the list yet.
+3. Approve it (see below), reload `/writeups`: now it shows.
+4. On `/team`, send a test application, then find it in the dashboard.
+
+## Admin tasks (all in Table Editor)
+- **Approve a post:** table `posts`, find the row with status `pending`,
+  change status to `approved` (or `rejected`). The approval time fills in itself.
+- **Read team applications:** table `team_applications`. The applicant's email
+  is filled in automatically. Nobody can read this table from the website.
+- **Fix a TryHackMe username:** table `profiles`, column `thm_username`.
+  Use this to match names on a room's scoreboard to members.
+- **Remove a guestbook message:** table `guestbook`, delete the row.
 
 ## Good to know
 - **Free plan:** a project may pause after about a week with no activity.

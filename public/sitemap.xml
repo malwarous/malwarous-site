@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- The pages search engines should know about.
-     If you get a custom domain later, change these addresses. Add new pages here. -->
+<!-- The pages search engines should know about. Add new pages here. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://malwarous.kabeerniazi7.workers.dev/</loc>
-  </url>
-  <url>
-    <loc>https://malwarous.kabeerniazi7.workers.dev/events</loc>
-  </url>
+  <url><loc>https://malwarous.dev/</loc></url>
+  <url><loc>https://malwarous.dev/events</loc></url>
+  <url><loc>https://malwarous.dev/arena</loc></url>
+  <url><loc>https://malwarous.dev/academy</loc></url>
+  <url><loc>https://malwarous.dev/academy-psp</loc></url>
+  <url><loc>https://malwarous.dev/writeups</loc></url>
+  <url><loc>https://malwarous.dev/hall-of-fame</loc></url>
+  <url><loc>https://malwarous.dev/team</loc></url>
 </urlset>

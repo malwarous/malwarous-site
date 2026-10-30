@@ -1,0 +1,73 @@
+  <footer class="site-footer">
+    <div class="container">
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
+
+      <div class="footer__ethics">
+        <p class="footer__ethics-line">We only hack with permission.</p>
+        <p class="footer__ethics-sub">CTFs, our own labs, and systems we're authorized to test. Nothing else.</p>
+      </div>
+
+      <div class="footer__grid">
+        <nav class="footer__col" aria-label="Site">
+          <p class="footer__label">// site</p>
+          <ul>
+            <li><a href="events.html">events</a></li>
+            <li><a href="arena.html">arena</a></li>
+            <li><a href="academy.html">academy</a></li>
+            <li><a href="writeups.html">write-ups</a></li>
+            <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+            <li><a href="team.html">team</a></li>
+            <li><a href="index.html#what-we-do">about</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Community">
+          <p class="footer__label">// community</p>
+          <ul>
+            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
+            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="signup.html">join</a></li>
+            <li><a href="login.html">login</a></li>
+            <li><a href="index.html#partners">sponsors</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social profiles">
+          <p class="footer__label">// elsewhere</p>
+          <ul>
+            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="https://github.com/malwarous">github</a></li>
+            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
+            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+          </ul>
+        </nav>
+      </div>
+
+      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+    </div>
+  </footer>
+
+  <!-- Status bar, pinned to the bottom like tmux -->
+  <aside class="statusbar" aria-label="Status bar">
+    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
+      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    </button>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
+    <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
+    <span class="statusbar__item statusbar__status">status: recruiting</span>
+    <span class="statusbar__spacer"></span>
+    <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
+    <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
+  </aside>
+
+  <!-- Command console (easter egg: press ` or click the status bar prompt) -->
+  <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
+    <div class="console__bar">
+      <span>console — type <kbd>help</kbd></span>
+      <button class="console__close" type="button" data-console-close aria-label="Close console">[ esc ]</button>
+    </div>
+    <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
+    <form class="console__form" id="console-form" autocomplete="off">
+      <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+  </div>

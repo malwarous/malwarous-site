@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" data-boot> <!-- data-boot: this page shows the boot screen -->
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Malwarous </title>
-  <meta name="description"
-    content="Malwarous is a student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons, and hands-on workshops on security and AI.">
+  <title>Malwarous</title>
+  <meta name="description" content="Malwarous is a student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons, and hands-on workshops on security and AI.">
   <meta name="theme-color" content="#0E0E11">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- The main address. The site also answers on www. and workers.dev;
+       this tells search engines which one counts. -->
+  <link rel="canonical" href="https://malwarous.dev/">
 
-  <!-- Link previews (WhatsApp, Discord, LinkedIn...).
-       If you get a custom domain later, replace malwarous.kabeerniazi7.workers.dev below; previews need full URLs. -->
+  <!-- Link previews (WhatsApp, Discord, LinkedIn...). Previews need full URLs. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Malwarous">
   <meta property="og:title" content="Malwarous — break things. with permission.">
-  <meta property="og:description"
-    content="Student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons and hands-on workshops.">
-  <meta property="og:url" content="https://malwarous.kabeerniazi7.workers.dev/">
-  <meta property="og:image" content="https://malwarous.kabeerniazi7.workers.dev/assets/og-image.png">
+  <meta property="og:description" content="Student-run cybersecurity community at Quaid-i-Azam University, Islamabad. CTFs, hackathons and hands-on workshops.">
+  <meta property="og:url" content="https://malwarous.dev/">
+  <meta property="og:image" content="https://malwarous.dev/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
@@ -26,8 +25,7 @@
   <!-- Fonts: JetBrains Mono (main voice), Archivo at full width (headlines), IBM Plex Sans (paragraphs) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
   <link rel="stylesheet" href="css/style.css">
 
@@ -43,17 +41,44 @@
 
 <body>
   <!-- ops: robots are terrible at keeping secrets. -->
+  <!-- layout:top -->
   <a class="skip-link" href="#main">skip to content</a>
 
   <!-- SVG sprite: the four-pointed star from the "O" in the logo.
-       Defined once here, reused anywhere with: <svg><use href="#star"></use></svg> -->
+       Reuse it anywhere with: <svg><use href="#star"></use></svg> -->
   <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="star" viewBox="0 0 24 24">
-      <path
-        d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z" />
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
     </symbol>
   </svg>
 
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="#top" aria-label="Malwarous home">
+        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
+             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
+        <ul class="nav__menu" id="nav-menu">
+          <li><a href="events.html">events</a></li>
+          <li><a href="arena.html">arena</a></li>
+          <li><a href="academy.html">academy</a></li>
+          <li><a href="writeups.html">write-ups</a></li>
+          <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+          <li><a href="team.html">team</a></li>
+          <li><a href="#what-we-do">about</a></li>
+          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
+        </ul>
+      </nav>
+
+      <a class="btn btn--small site-header__join" href="#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+    </div>
+  </header>
+  <!-- /layout:top -->
 
   <!-- =====================================================================
        BOOT SCREEN
@@ -62,7 +87,7 @@
        ===================================================================== -->
   <div class="boot" id="boot" aria-hidden="true">
     <div class="boot__inner">
-      <pre class="boot__star">
+<pre class="boot__star">
             .
             |
            :#:
@@ -81,43 +106,6 @@
   </div>
 
 
-  <!-- =====================================================================
-       HEADER + NAVIGATION
-       ===================================================================== -->
-  <header class="site-header">
-    <div class="container site-header__inner">
-
-      <a class="brand" href="#top" aria-label="Malwarous, back to top">
-        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
-             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
-        <svg class="brand__star" aria-hidden="true">
-          <use href="#star"></use>
-        </svg>
-        <span class="brand__word">MALWAROUS</span>
-      </a>
-
-      <!-- The links point to sections on this page for now.
-           When the real pages exist, change each href (e.g. "#events" to "events.html"). -->
-      <nav class="nav" aria-label="Main">
-        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
-        <ul class="nav__menu" id="nav-menu">
-          <li><a href="events.html">events</a></li>
-          <li><a href="#next-event">arena</a></li>
-          <li><a href="#academy">academy</a></li>
-          <li><a href="#writeups">write-ups</a></li>
-          <li><a href="#hall-of-fame">hall-of-fame</a></li>
-          <li><a href="#team">team</a></li>
-          <li><a href="#what-we-do">about</a></li>
-          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
-        </ul>
-      </nav>
-
-      <a class="btn btn--small site-header__join" href="#join"><span aria-hidden="true">[</span> join <span
-          aria-hidden="true">]</span></a>
-    </div>
-  </header>
-
-
   <main id="main">
 
     <!-- =====================================================================
@@ -133,36 +121,26 @@
                you see (main.js types it out). .hero__mark draws the overline. -->
           <h1 class="hero__title" id="hero-title">
             <span class="sr-only">Break things. With permission.</span>
-            <span class="hero__typed" aria-hidden="true"><span class="hero__line">Break things.</span><span
-                class="hero__line">With <span class="hero__mark">permission</span>.</span></span>
+            <span class="hero__typed" aria-hidden="true"><span class="hero__line">Break things.</span><span class="hero__line">With <span class="hero__mark">permission</span>.</span></span>
           </h1>
 
-          <p class="hero__lede">CTFs, hackathons and hands-on workshops at QAU, Islamabad — from web exploitation to
-            red-teaming LLMs.</p>
+          <p class="hero__lede">CTFs, hackathons and hands-on workshops at QAU, Islamabad — from web exploitation to red-teaming LLMs.</p>
 
           <div class="hero__actions">
-            <a class="btn btn--primary" href="#next-event" aria-label="register for next ctf"><span class="btn__prompt"
-                aria-hidden="true">&gt;</span> register_for_next_ctf</a>
-            <a class="btn" href="#join" aria-label="join malwarous"><span class="btn__prompt"
-                aria-hidden="true">&gt;</span> join_malwarous</a>
+            <a class="btn btn--primary" href="#next-event" aria-label="register for next ctf"><span class="btn__prompt" aria-hidden="true">&gt;</span> register_for_next_ctf</a>
+            <a class="btn" href="#join" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
           </div>
 
           <ul class="hero__meta">
-            <li><svg class="star" aria-hidden="true">
-                <use href="#star"></use>
-              </svg> 33.75°N 73.14°E</li>
-            <li><svg class="star" aria-hidden="true">
-                <use href="#star"></use>
-              </svg> islamabad, pk</li>
-            <li><svg class="star" aria-hidden="true">
-                <use href="#star"></use>
-              </svg> est. [YEAR]</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> 33.75°N 73.14°E</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> islamabad, pk</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> est. [YEAR]</li>
           </ul>
         </div>
 
         <!-- ASCII star: only shown on large screens (see .hero__art in style.css) -->
         <figure class="hero__art" aria-hidden="true">
-          <pre class="ascii-star">
+<pre class="ascii-star">
                     .
                     |
                    .#.
@@ -223,8 +201,7 @@
               </div>
               <div class="kv__row">
                 <dt>difficulty</dt>
-                <dd><span class="sev sev--high"><span class="sev__bar"
-                      aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></dd>
+                <dd><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></dd>
               </div>
             </dl>
           </div>
@@ -233,21 +210,16 @@
             <p class="clock__label" id="clock-label">starts in</p>
             <!-- role="timer" tells screen readers this is a countdown (it is not announced every second) -->
             <div class="clock" role="timer" aria-labelledby="clock-label">
-              <div class="clock__unit"><span class="clock__num" data-countdown="days">--</span><span
-                  class="clock__name">days</span></div>
+              <div class="clock__unit"><span class="clock__num" data-countdown="days">--</span><span class="clock__name">days</span></div>
               <span class="clock__sep" aria-hidden="true">:</span>
-              <div class="clock__unit"><span class="clock__num" data-countdown="hours">--</span><span
-                  class="clock__name">hrs</span></div>
+              <div class="clock__unit"><span class="clock__num" data-countdown="hours">--</span><span class="clock__name">hrs</span></div>
               <span class="clock__sep" aria-hidden="true">:</span>
-              <div class="clock__unit"><span class="clock__num" data-countdown="minutes">--</span><span
-                  class="clock__name">min</span></div>
+              <div class="clock__unit"><span class="clock__num" data-countdown="minutes">--</span><span class="clock__name">min</span></div>
               <span class="clock__sep" aria-hidden="true">:</span>
-              <div class="clock__unit"><span class="clock__num" data-countdown="seconds">--</span><span
-                  class="clock__name">sec</span></div>
+              <div class="clock__unit"><span class="clock__num" data-countdown="seconds">--</span><span class="clock__name">sec</span></div>
             </div>
             <!-- TODO: replace # with [REGISTRATION LINK] -->
-            <a class="btn btn--primary btn--wide" href="#"><span aria-hidden="true">[</span> register <span
-                aria-hidden="true">]</span></a>
+            <a class="btn btn--primary btn--wide" href="#"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
           </div>
         </div>
       </div>
@@ -272,14 +244,9 @@
             <span class="log__num">01</span>
             <div class="log__main">
               <h3 class="log__title">CTF competitions</h3>
-              <p class="log__desc">Jeopardy-style challenges in web, crypto, pwn, forensics and reversing. We run them
-                on campus and host them for students from other universities.</p>
+              <p class="log__desc">Jeopardy-style challenges in web, crypto, pwn, forensics and reversing. We run them on campus and host them for students from other universities.</p>
               <ul class="tags" aria-label="Categories">
-                <li>web</li>
-                <li>crypto</li>
-                <li>pwn</li>
-                <li>forensics</li>
-                <li>rev</li>
+                <li>web</li><li>crypto</li><li>pwn</li><li>forensics</li><li>rev</li>
               </ul>
             </div>
             <a class="log__link" href="#events">-&gt; upcoming ctfs</a>
@@ -289,13 +256,9 @@
             <span class="log__num">02</span>
             <div class="log__main">
               <h3 class="log__title">Hackathons</h3>
-              <p class="log__desc">Build something real against a deadline: security tooling, detection, privacy, and
-                whatever else survives the night.</p>
+              <p class="log__desc">Build something real against a deadline: security tooling, detection, privacy, and whatever else survives the night.</p>
               <ul class="tags" aria-label="Themes">
-                <li>tooling</li>
-                <li>defense</li>
-                <li>privacy</li>
-                <li>ai</li>
+                <li>tooling</li><li>defense</li><li>privacy</li><li>ai</li>
               </ul>
             </div>
             <a class="log__link" href="#events">-&gt; upcoming hackathons</a>
@@ -305,12 +268,9 @@
             <span class="log__num">03</span>
             <div class="log__main">
               <h3 class="log__title">Workshops</h3>
-              <p class="log__desc">Hands-on sessions on the tools and techniques behind real security work, and on AI:
-                using AI tools well, securing AI systems, and red-teaming LLMs.</p>
+              <p class="log__desc">Hands-on sessions on the tools and techniques behind real security work, and on AI: using AI tools well, securing AI systems, and red-teaming LLMs.</p>
               <ul class="tags" aria-label="Topics">
-                <li>security tools</li>
-                <li>ai security</li>
-                <li>llm red-teaming</li>
+                <li>security tools</li><li>ai security</li><li>llm red-teaming</li>
               </ul>
             </div>
             <a class="log__link" href="#academy">-&gt; academy</a>
@@ -350,40 +310,35 @@
               <td class="events-table__date">[DATE]</td>
               <td class="events-table__type">workshop</td>
               <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
-              <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar"
-                    aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
+              <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
               <td class="events-table__status"><span class="status status--live">live</span></td>
             </tr>
             <tr>
               <td class="events-table__date">[DATE]</td>
               <td class="events-table__type">ctf</td>
               <td class="events-table__title"><a href="#next-event">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar"
-                    aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
+              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
               <td class="events-table__status"><span class="status status--open">open</span></td>
             </tr>
             <tr>
               <td class="events-table__date">[DATE]</td>
               <td class="events-table__type">workshop</td>
               <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar"
-                    aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
               <td class="events-table__status"><span class="status status--open">open</span></td>
             </tr>
             <tr>
               <td class="events-table__date">[DATE]</td>
               <td class="events-table__type">hackathon</td>
               <td class="events-table__title"><a href="#">[HACKATHON NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar"
-                    aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
               <td class="events-table__status"><span class="status status--full">full</span></td>
             </tr>
             <tr>
               <td class="events-table__date">[DATE]</td>
               <td class="events-table__type">ctf</td>
               <td class="events-table__title"><a href="#">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--critical"><span class="sev__bar"
-                    aria-hidden="true"><i></i><i></i><i></i><i></i></span>critical</span></td>
+              <td class="events-table__sev"><span class="sev sev--critical"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>critical</span></td>
               <td class="events-table__status"><span class="status status--open">open</span></td>
             </tr>
           </tbody>
@@ -406,36 +361,32 @@
         <div class="split">
           <div class="split__aside">
             <p class="lede">Learn it before the CTF asks.</p>
-            <p class="read">Self-paced learning paths built from our workshops. Pick one, work through it at your own
-              speed, then test yourself in the arena.</p>
-            <a class="text-link" href="#academy">browse all paths -&gt;</a> <!-- later: academy.html -->
+            <p class="read">Our degree courses rebuilt for self-study, plus a cybersecurity journey from your first terminal to your first CTF. Then test yourself in the arena.</p>
+            <a class="text-link" href="academy.html">browse all paths -&gt;</a>
           </div>
 
           <div class="split__main">
             <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> tree ~/academy -L 1</p>
             <ul class="tree">
               <li class="tree__item">
-                <h3 class="tree__title"><a href="#">Web Hacking 101</a></h3>
-                <p class="tree__desc">HTTP, cookies, sessions and the OWASP Top 10, learned by breaking a deliberately
-                  vulnerable app.</p>
-                <p class="tree__meta"><span>level: beginner</span><span>[N] modules</span></p>
+                <h3 class="tree__title"><a href="academy-psp.html">PSP: Problem Solving and Programming</a></h3>
+                <p class="tree__desc">The degree course, as video lectures posted as they're released.</p>
+                <p class="tree__meta"><span>track: degree</span><span class="tree__live">lectures posting now</span></p>
               </li>
               <li class="tree__item">
-                <h3 class="tree__title"><a href="#">AI Security Fundamentals</a></h3>
-                <p class="tree__desc">How LLM apps fail — prompt injection, data leakage, insecure tool use — and how to
-                  red-team them.</p>
-                <p class="tree__meta"><span>level: intermediate</span><span>[N] modules</span></p>
+                <h3 class="tree__title"><a href="academy.html#journey">Linux for CTFs</a></h3>
+                <p class="tree__desc">The shell, permissions, processes and pipes: the ground every challenge assumes you're standing on.</p>
+                <p class="tree__meta"><span>track: journey</span><span>level: beginner</span></p>
               </li>
               <li class="tree__item">
-                <h3 class="tree__title"><a href="#">Linux for CTFs</a></h3>
-                <p class="tree__desc">The shell, permissions, processes and pipes: the ground every challenge assumes
-                  you're standing on.</p>
-                <p class="tree__meta"><span>level: beginner</span><span>[N] modules</span></p>
+                <h3 class="tree__title"><a href="academy.html#journey">Web Hacking 101</a></h3>
+                <p class="tree__desc">Cookies, sessions and the OWASP Top 10, learned by breaking a deliberately vulnerable app.</p>
+                <p class="tree__meta"><span>track: journey</span><span>level: beginner</span></p>
               </li>
               <li class="tree__item">
-                <h3 class="tree__title"><a href="#">Crypto &amp; Forensics</a></h3>
-                <p class="tree__desc">From classical ciphers to broken RSA, from file carving to packet captures.</p>
-                <p class="tree__meta"><span>level: intermediate</span><span>[N] modules</span></p>
+                <h3 class="tree__title"><a href="academy.html#journey">AI Security Fundamentals</a></h3>
+                <p class="tree__desc">How LLM apps fail: prompt injection, data leakage, insecure tool use, and how to red-team them.</p>
+                <p class="tree__meta"><span>track: journey</span><span>level: intermediate</span></p>
               </li>
             </ul>
           </div>
@@ -452,15 +403,14 @@
       <div class="container">
         <header class="section__head">
           <h2 class="section__title" id="writeups-title"><span class="section__num">// 05 —</span> latest write-ups</h2>
-          <a class="section__link" href="#writeups">all write-ups -&gt;</a> <!-- later: writeups.html -->
+          <a class="section__link" href="writeups.html">all write-ups -&gt;</a>
         </header>
 
         <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> ls -la ~/writeups | head -5</p>
 
         <ul class="ls" aria-label="Latest write-ups">
           <li class="ls__row ls__row--head" aria-hidden="true">
-            <span class="ls__perms">perms</span><span class="ls__date">date</span><span
-              class="ls__author">author</span><span class="ls__title">title</span><span class="ls__tags">tags</span>
+            <span class="ls__perms">perms</span><span class="ls__date">date</span><span class="ls__author">author</span><span class="ls__title">title</span><span class="ls__tags">tags</span>
           </li>
           <li class="ls__row">
             <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
@@ -509,24 +459,25 @@
       <div class="container">
         <header class="section__head">
           <h2 class="section__title" id="hof-title"><span class="section__num">// 06 —</span> hall of fame</h2>
-          <a class="section__link" href="#hall-of-fame">full rankings -&gt;</a> <!-- later: hall-of-fame.html -->
+          <a class="section__link" href="hall-of-fame.html">full rankings -&gt;</a>
         </header>
 
         <div class="split">
           <div class="split__aside">
             <p class="lede">Top of the board.</p>
-            <p class="read">Points earned across Malwarous CTFs this season. Handles only — you choose what name goes up
-              here.</p>
+            <p class="read">All-time standings across Malwarous events and arena rooms. Every event gives points to its top five.</p>
+            <a class="text-link" href="hall-of-fame.html">latest results and points -&gt;</a>
           </div>
 
+          <!-- Keep this table in sync with // 02 on hall-of-fame.html -->
           <div class="split__main">
-            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> scoreboard --top 5</p>
+            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> standings --all-time --top 5</p>
             <table class="table board">
-              <caption class="sr-only">Top 5 players this season</caption>
+              <caption class="sr-only">All-time top 5</caption>
               <thead>
                 <tr>
                   <th scope="col">rank</th>
-                  <th scope="col">handle</th>
+                  <th scope="col">name</th>
                   <th scope="col" class="num">points</th>
                   <th scope="col" class="num">events<span class="hide-sm"> played</span></th>
                 </tr>
@@ -534,33 +485,33 @@
               <tbody>
                 <tr class="board__first">
                   <td class="board__rank">01</td>
-                  <td class="board__handle">[HANDLE]</td>
-                  <td class="num">[PTS]</td>
-                  <td class="num">[N]</td>
+                  <td class="board__handle">Fahad</td>
+                  <td class="num">10</td>
+                  <td class="num">1</td>
                 </tr>
                 <tr>
                   <td class="board__rank">02</td>
-                  <td class="board__handle">[HANDLE]</td>
-                  <td class="num">[PTS]</td>
-                  <td class="num">[N]</td>
+                  <td class="board__handle">Huzaifa</td>
+                  <td class="num">8</td>
+                  <td class="num">1</td>
                 </tr>
                 <tr>
                   <td class="board__rank">03</td>
-                  <td class="board__handle">[HANDLE]</td>
-                  <td class="num">[PTS]</td>
-                  <td class="num">[N]</td>
+                  <td class="board__handle">Hasnat</td>
+                  <td class="num">6</td>
+                  <td class="num">1</td>
                 </tr>
                 <tr>
                   <td class="board__rank">04</td>
-                  <td class="board__handle">[HANDLE]</td>
-                  <td class="num">[PTS]</td>
-                  <td class="num">[N]</td>
+                  <td class="board__handle">Haider Ali</td>
+                  <td class="num">4</td>
+                  <td class="num">1</td>
                 </tr>
                 <tr>
                   <td class="board__rank">05</td>
-                  <td class="board__handle">[HANDLE]</td>
-                  <td class="num">[PTS]</td>
-                  <td class="num">[N]</td>
+                  <td class="board__handle">Hassan</td>
+                  <td class="num">2</td>
+                  <td class="num">1</td>
                 </tr>
               </tbody>
             </table>
@@ -579,28 +530,22 @@
       <div class="container">
         <header class="section__head">
           <h2 class="section__title" id="team-title"><span class="section__num">// 07 —</span> team</h2>
-          <span class="section__path">~/team</span> <!-- later: about.html#team -->
+          <a class="section__link" href="team.html">meet the team -&gt;</a>
         </header>
 
         <div class="split">
           <div class="split__aside">
             <p class="lede">The humans behind the shell.</p>
-            <p class="read">Malwarous is run by students at QAU. We write the challenges, run the events, and keep the
-              lights on.</p>
+            <p class="read">Malwarous is run by students at QAU. We write the challenges, run the events, and keep the lights on.</p>
           </div>
 
           <div class="split__main">
             <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> finger @malwarous</p>
             <ul class="team">
               <li class="member">
-                <h3 class="member__name"><svg class="star" aria-hidden="true">
-                    <use href="#star"></use>
-                  </svg> Kabir Niazi</h3>
+                <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Kabir Niazi</h3>
                 <dl class="member__info">
-                  <div>
-                    <dt>role</dt>
-                    <dd>team lead</dd>
-                  </div>
+                  <div><dt>role</dt><dd>team lead</dd></div>
                 </dl>
               </li>
               <li class="member member--open">
@@ -626,16 +571,13 @@
 
         <div class="join">
           <p class="join__title">Curiosity is the only prerequisite.</p>
-          <p class="read join__text">No experience needed. Come to a workshop, play a CTF, or lurk on Discord until
-            you're ready. If you can open a terminal — or want to learn how — you're in.</p>
+          <p class="read join__text">No experience needed. Come to a workshop, play a CTF, or lurk on Discord until you're ready. If you can open a terminal — or want to learn how — you're in.</p>
           <div class="join__actions">
-            <a class="btn btn--primary" href="signup.html" aria-label="join malwarous"><span class="btn__prompt"
-                aria-hidden="true">&gt;</span> join_malwarous</a>
+            <a class="btn btn--primary" href="signup.html" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
             <!-- TODO: replace # with [DISCORD LINK] -->
             <a class="btn" href="#"><span aria-hidden="true">[</span> discord <span aria-hidden="true">]</span></a>
           </div>
-          <p class="join__note">already have an account? <a href="login.html">log in -&gt;</a> · discord: [DISCORD LINK]
-          </p>
+          <p class="join__note">already have an account? <a href="login.html">log in -&gt;</a> · discord: [DISCORD LINK]</p>
         </div>
       </div>
     </section>
@@ -654,8 +596,7 @@
         <div class="split">
           <div class="split__aside">
             <p class="lede">This space is unclaimed.</p>
-            <p class="read">We're looking for partners to fund prizes, contribute challenges, or run a workshop with us.
-              If your team hires people who like taking things apart, we should talk.</p>
+            <p class="read">We're looking for partners to fund prizes, contribute challenges, or run a workshop with us. If your team hires people who like taking things apart, we should talk.</p>
             <!-- TODO: replace # with mailto:[SPONSOR EMAIL] -->
             <a class="btn" href="#"><span aria-hidden="true">[</span> get in touch <span aria-hidden="true">]</span></a>
           </div>
@@ -676,14 +617,10 @@
   </main>
 
 
-  <!-- =====================================================================
-       FOOTER
-       ===================================================================== -->
+  <!-- layout:bottom -->
   <footer class="site-footer">
     <div class="container">
-      <div class="divider" aria-hidden="true"><svg class="star">
-          <use href="#star"></use>
-        </svg></div>
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
 
       <div class="footer__ethics">
         <p class="footer__ethics-line">We only hack with permission.</p>
@@ -695,11 +632,11 @@
           <p class="footer__label">// site</p>
           <ul>
             <li><a href="events.html">events</a></li>
-            <li><a href="#next-event">arena</a></li>
-            <li><a href="#academy">academy</a></li>
-            <li><a href="#writeups">write-ups</a></li>
-            <li><a href="#hall-of-fame">hall-of-fame</a></li>
-            <li><a href="#team">team</a></li>
+            <li><a href="arena.html">arena</a></li>
+            <li><a href="academy.html">academy</a></li>
+            <li><a href="writeups.html">write-ups</a></li>
+            <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+            <li><a href="team.html">team</a></li>
             <li><a href="#what-we-do">about</a></li>
           </ul>
         </nav>
@@ -707,7 +644,7 @@
           <p class="footer__label">// community</p>
           <ul>
             <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
-            <li><a href="#">contact</a></li> <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
             <li><a href="#partners">sponsors</a></li>
@@ -716,43 +653,33 @@
         <nav class="footer__col" aria-label="Social profiles">
           <p class="footer__label">// elsewhere</p>
           <ul>
-            <li><a href="#">discord</a></li> <!-- TODO: [DISCORD LINK] -->
-            <li><a href="#">github</a></li> <!-- TODO: [GITHUB LINK] -->
-            <li><a href="#">linkedin</a></li> <!-- TODO: [LINKEDIN LINK] -->
+            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="https://github.com/malwarous">github</a></li>
+            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
             <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
           </ul>
         </nav>
       </div>
 
-      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University,
-        Islamabad</p>
+      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
     </div>
   </footer>
 
-
-  <!-- =====================================================================
-       STATUS BAR (pinned to the bottom, like tmux)
-       The countdown here and in // 01 come from the same function in main.js.
-       ===================================================================== -->
+  <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
     <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
       <span class="statusbar__win">[0]</span> malwarous@qau:~$
     </button>
-    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">--d --h
-        --m</span></span>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
     <span class="statusbar__item statusbar__status">status: recruiting</span>
     <span class="statusbar__spacer"></span>
     <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
-    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a>
-    <!-- becomes @handle when logged in -->
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
     <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
   </aside>
 
-
-  <!-- =====================================================================
-       COMMAND CONSOLE (easter egg: press the ` key, or click the status bar prompt)
-       ===================================================================== -->
+  <!-- Command console (easter egg: press ` or click the status bar prompt) -->
   <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
     <div class="console__bar">
       <span>console — type <kbd>help</kbd></span>
@@ -761,11 +688,10 @@
     <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
     <form class="console__form" id="console-form" autocomplete="off">
       <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
-      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off"
-        autocomplete="off">
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
     </form>
   </div>
+  <!-- /layout:bottom -->
 
 </body>
-
 </html>

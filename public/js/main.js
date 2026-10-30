@@ -12,7 +12,9 @@
      5. Command console (easter egg: press the ` key)
      6. Events page filters
      7. 404 page
-     8. Small helpers
+     8. Arena: current room card
+     9. Videos (click to play)
+    10. Small helpers
    ========================================================================== */
 
 
@@ -44,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
   initConsole();
   initFilters();
   initNotFound();
+  initArenaRoom();
+  initVideos();
   setYear();
   runBootScreen(startTyping); // when the boot screen is done, type the headline
 });
@@ -262,7 +266,8 @@ function initCountdown() {
 
   const start = MALWAROUS_CONFIG.nextEventStart;
   const target = new Date(start).getTime();
-  if (timeEl) timeEl.setAttribute('datetime', start); // keeps the HTML accurate
+  const liveFor = (MALWAROUS_CONFIG.nextEventHours || 3) * 3600 * 1000;
+  if (timeEl && start) timeEl.setAttribute('datetime', start); // keeps the HTML accurate
 
   // Pakistan time for the status bar clock
   const pktFormat = new Intl.DateTimeFormat('en-GB', {
@@ -271,11 +276,25 @@ function initCountdown() {
     timeZone: 'Asia/Karachi'
   });
 
+  // Shows "--" everywhere and "tba" in the status bar
+  function showTba() {
+    setText(parts.days, '--');
+    setText(parts.hours, '--');
+    setText(parts.minutes, '--');
+    setText(parts.seconds, '--');
+    setText(labelEl, 'date to be announced');
+    setText(statusEl, 'tba');
+    if (panel) panel.classList.remove('is-live');
+  }
+
   function tick() {
     if (clockEl) clockEl.textContent = pktFormat.format(new Date());
 
-    // No valid date set yet: leave the "--" placeholders in place
-    if (isNaN(target)) return;
+    // No date set yet, or the event is over: "tba" until there's a new date
+    if (isNaN(target) || Date.now() > target + liveFor) {
+      showTba();
+      return;
+    }
 
     const left = splitTime(target - Date.now());
 
@@ -290,6 +309,7 @@ function initCountdown() {
       return;
     }
 
+    setText(labelEl, 'starts in');
     setText(parts.days, pad(left.days));
     setText(parts.hours, pad(left.hours));
     setText(parts.minutes, pad(left.minutes));
@@ -326,11 +346,11 @@ function splitTime(ms) {
 // is a page.
 const ROUTES = {
   events: 'events.html',
-  arena: '#next-event',
-  academy: '#academy',
-  writeups: '#writeups',
-  halloffame: '#hall-of-fame',
-  team: '#team',
+  arena: 'arena.html',
+  academy: 'academy.html',
+  writeups: 'writeups.html',
+  halloffame: 'hall-of-fame.html',
+  team: 'team.html',
   about: '#what-we-do',
   join: '#join',
   signup: 'signup.html',
@@ -340,10 +360,10 @@ const ROUTES = {
 const HELP_TEXT = [
   'navigate',
   '  events         all events, upcoming and past',
-  '  arena          the next ctf',
-  '  academy        learning paths',
-  '  writeups       latest write-ups',
-  '  halloffame     the leaderboard',
+  '  arena          this room, rules, how to play',
+  '  academy        courses and learning paths',
+  '  writeups       write-ups and opportunities',
+  '  halloffame     winners and rankings',
   '  team           who runs this place',
   '  about          what we do',
   '  join           how to join',
@@ -595,7 +615,6 @@ function initConsole() {
     const name = words[0].toLowerCase().replace(/[-_]/g, '');
 
     if (ROUTES[name]) {
-      if (name === 'arena') print("the arena isn't deployed yet. here's the next ctf:");
       goTo(ROUTES[name]);
     } else if (name === 'help') {
       print(HELP_TEXT);
@@ -686,7 +705,7 @@ async function sha256Hex(text) {
    -------------------------------------------------------------------------- */
 
 function initFilters() {
-  const buttons = document.querySelectorAll('[data-filter]');
+  const buttons = document.querySelectorAll('.archive__bar [data-filter]');
   if (!buttons.length) return;
 
   const items = document.querySelectorAll('.past');
@@ -740,6 +759,118 @@ function initNotFound() {
   }
   document.querySelectorAll('[data-missing-path]').forEach(function (element) {
     element.textContent = path; // textContent: the address is shown as text, never run
+  });
+}
+
+
+/* --------------------------------------------------------------------------
+   8. Arena: current room card
+   Fills in the room on arena.html from currentRoom in js/config.js, and
+   keeps its status up to date: "opens in ..." / "live" / "closed".
+   -------------------------------------------------------------------------- */
+
+function initArenaRoom() {
+  const card = document.getElementById('room');
+  if (!card) return;
+
+  const room = MALWAROUS_CONFIG.currentRoom || {};
+  const opens = new Date(room.opens).getTime();
+  const closes = new Date(room.closes).getTime();
+  const field = function (name) { return card.querySelector('[data-room="' + name + '"]'); };
+
+  const dateFormat = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Karachi'
+  });
+  const showDate = function (time) { return isNaN(time) ? 'tba' : dateFormat.format(time) + ' PKT'; };
+
+  setText(field('number'), '#' + pad(room.number || 0));
+  setText(field('name'), room.name || 'tba');
+  setText(field('opens'), showDate(opens));
+  setText(field('closes'), showDate(closes));
+
+  // Only accept real TryHackMe links, so a typo can't send people somewhere odd
+  const link = field('link');
+  const hasLink = /^https:\/\/tryhackme\.com\//.test(room.url || '');
+  if (hasLink) link.href = room.url;
+
+  function update() {
+    const now = Date.now();
+    let status;
+    let live = false;
+    if (isNaN(opens)) {
+      status = 'next room coming soon';
+    } else if (now < opens) {
+      status = 'opens in ' + shortTime(opens - now);
+    } else if (isNaN(closes) || now < closes) {
+      live = true;
+      status = isNaN(closes) ? 'live now' : 'live · closes in ' + shortTime(closes - now);
+    } else {
+      status = 'closed · results in the hall of fame';
+    }
+    setText(field('status'), status);
+    card.classList.toggle('is-live', live);
+    link.hidden = !(live && hasLink);
+    field('nolink').hidden = live && hasLink;
+  }
+
+  update();
+  setInterval(update, 30000);
+}
+
+// 3 days 4 hours -> "3d 04h"; under a day -> "4h 12m"
+function shortTime(ms) {
+  const t = splitTime(ms);
+  if (t.done) return '0m';
+  return t.days ? t.days + 'd ' + pad(t.hours) + 'h' : t.hours + 'h ' + pad(t.minutes) + 'm';
+}
+
+
+/* --------------------------------------------------------------------------
+   9. Videos (click to play)
+   <div class="video" data-youtube="VIDEO_ID" data-title="..."></div>
+   shows a play button; YouTube only loads when someone clicks it, which
+   keeps pages fast and doesn't send visitors to YouTube until they choose.
+   An empty data-youtube="" shows a "video coming soon" placeholder.
+   -------------------------------------------------------------------------- */
+
+function initVideos() {
+  document.querySelectorAll('.video[data-youtube]').forEach(function (box) {
+    const id = box.dataset.youtube;
+    const title = box.dataset.title || 'video';
+
+    // YouTube IDs are 11 letters, digits, - or _. Anything else is ignored.
+    if (!/^[A-Za-z0-9_-]{11}$/.test(id)) {
+      box.classList.add('video--empty');
+      box.textContent = '[ video coming soon ]';
+      return;
+    }
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'video__play';
+    button.setAttribute('aria-label', 'Play video: ' + title);
+
+    const thumb = document.createElement('img');
+    thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+    thumb.alt = '';
+    thumb.loading = 'lazy';
+
+    const label = document.createElement('span');
+    label.className = 'video__label';
+    label.textContent = '> play';
+
+    button.append(thumb, label);
+    box.appendChild(button);
+
+    button.addEventListener('click', function () {
+      const frame = document.createElement('iframe');
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1';
+      frame.title = title;
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      box.replaceChildren(frame);
+      frame.focus();
+    });
   });
 }
 

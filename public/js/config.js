@@ -29,6 +29,6 @@ const MALWAROUS_CONFIG = {
   // by the Row Level Security rules in supabase/schema.sql, not by hiding it.
   // Leave them empty and the site still works; accounts just stay switched off.
   supabaseUrl: 'https://zdqdtnthyxkskkigqmww.supabase.co',
-  supabaseKey: ''    // the anon / publishable key (never the service_role key!)
+  supabaseKey: 'sb_publishable_q_j8vwSlc4Onm9uVCH_u9w_cbCgDpVw'    // the anon / publishable key (never the service_role key!)
 
 };

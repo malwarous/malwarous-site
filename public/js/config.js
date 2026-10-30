@@ -28,7 +28,7 @@ const MALWAROUS_CONFIG = {
   // The anon / publishable key is MEANT to be public. Your data is protected
   // by the Row Level Security rules in supabase/schema.sql, not by hiding it.
   // Leave them empty and the site still works; accounts just stay switched off.
-  supabaseUrl: '',   // e.g. 'https://abcdefghijkl.supabase.co'
+  supabaseUrl: 'https://zdqdtnthyxkskkigqmww.supabase.co',
   supabaseKey: ''    // the anon / publishable key (never the service_role key!)
 
 };

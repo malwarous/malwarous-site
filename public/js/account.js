@@ -23,6 +23,7 @@
      8. Team page (application form)
      9. Password reset page
     10. Homepage: latest write-ups
+    11. Event registration page
    ========================================================================== */
 
 
@@ -109,6 +110,7 @@ function friendlyError(error) {
   const text = (error && error.message) || '';
   const status = error && error.status;
   const code = error && error.code;
+  if (/schema cache|could not find the (function|table)/i.test(text)) return "this part of the site isn't set up yet. check back soon.";
   if (/failed to fetch|network/i.test(text)) return "couldn't reach the account server. check your connection and try again.";
   if (/invalid login credentials/i.test(text)) return 'wrong email or password.';
   if (/email not confirmed/i.test(text)) return 'confirm your email first: check your inbox for the link.';
@@ -116,7 +118,8 @@ function friendlyError(error) {
   if (/rate limit|too many/i.test(text) || status === 429) return 'too many attempts. wait a minute and try again.';
   if (/database error saving new user/i.test(text)) return "that handle or TryHackMe username can't be used (it may be taken). try another.";
   // Our own database rules ("slow down: ...", "already applied: ...") are already readable
-  if (/^(slow down|already applied)/i.test(text)) return text;
+  if (/^(slow down|already applied|closed|full)/i.test(text)) return text;
+  if (code === '23505' && /registrations/i.test(text)) return "you're already registered for this event.";
   if (code === '23514') return 'something you entered is too short, too long, or in the wrong format.';
   return text ? text.toLowerCase() : 'something went wrong. try again.';
 }
@@ -175,7 +178,8 @@ const Account = {
       options: {
         // the database trigger turns this into a profile
         data: { handle: handle, thm_username: thmUsername || '' },
-        emailRedirectTo: new URL('login.html', window.location.href).href
+        // after confirming their email, bring them back to where they were going
+        emailRedirectTo: new URL('login.html' + (nextPage() ? '?next=' + encodeURIComponent(nextPage()) : ''), window.location.href).href
       }
     });
     if (error) return fail(friendlyError(error));
@@ -324,6 +328,54 @@ const Account = {
     return { ok: true };
   },
 
+  // { title, starts_at, capacity, registered, open } for an event, or null
+  getEventStatus: async function (slug) {
+    const client = await getClient();
+    if (!client) return offline();
+    const { data, error } = await client.rpc('event_status', { p_slug: slug });
+    if (error) return fail(friendlyError(error));
+    return { ok: true, event: data };
+  },
+
+  // This member's registration for an event, or null
+  getMyRegistration: async function (slug) {
+    const client = await getClient();
+    if (!client) return null;
+    const { data } = await client
+      .from('registrations')
+      .select('team_name, university, created_at')
+      .eq('event_slug', slug)
+      .maybeSingle();
+    return data;
+  },
+
+  // teamName '' = going solo
+  register: async function (slug, teamName, university) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const user = await Account.getCurrentUser();
+    if (!user) return fail('log in first to register.');
+
+    const { error } = await client.from('registrations').insert({
+      event_slug: slug,
+      team_name: teamName || null,
+      university: university
+    });
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
+  },
+
+  cancelRegistration: async function (slug) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const { data, error } = await client.from('registrations').delete().eq('event_slug', slug).select('id');
+    if (error) return fail(friendlyError(error));
+    if (!data.length) return fail("couldn't find your registration.");
+    return { ok: true };
+  },
+
   // application = { full_name, program, skills, interest, links }
   applyToTeam: async function (application) {
     const client = await getClient();
@@ -403,6 +455,15 @@ function showNotice(text) {
   notice.hidden = false;
 }
 
+// Where to send someone after login/signup, from ?next=... in the address.
+// Only pages on this site, like "register.html?event=info-session-nov-2026",
+// are allowed: otherwise anyone could make a login link that sends people
+// to a fake site afterwards (an "open redirect").
+function nextPage() {
+  const next = new URLSearchParams(window.location.search).get('next') || '';
+  return /^[a-z0-9-]+\.html(\?event=[a-z0-9-]+)?$/.test(next) ? next : '';
+}
+
 // [ show ] / [ hide ] buttons next to password fields
 function initPasswordToggles() {
   document.querySelectorAll('[data-password-toggle]').forEach(function (button) {
@@ -450,9 +511,20 @@ async function initLoginPage() {
   // Arriving from the confirmation email? (Supabase reads the link itself.)
   const fromEmailLink = /type=signup|access_token|code=/.test(window.location.hash + window.location.search);
 
+  // Keep "where to go after login" when switching to the signup page
+  if (nextPage()) {
+    const signupLink = switchLine.querySelector('a');
+    if (signupLink) signupLink.href = 'signup.html?next=' + encodeURIComponent(nextPage());
+  }
+
   const user = await Account.getCurrentUser();
   if (user) {
     if (fromEmailLink) showNotice('email confirmed. welcome to malwarous.');
+    // Logged in and on the way somewhere (e.g. registering)? Go straight there.
+    if (nextPage()) {
+      window.location.href = nextPage();
+      return;
+    }
     showSignedIn(user);
   }
 
@@ -470,7 +542,7 @@ async function initLoginPage() {
     setBusy(form, false);
 
     if (!result.ok) return showFormError(form, result.message, null);
-    window.location.href = 'index.html';
+    window.location.href = nextPage() || 'index.html';
   });
 
   document.getElementById('logout-button').addEventListener('click', async function () {
@@ -494,6 +566,12 @@ function initSignupPage() {
     showNotice("accounts aren't open yet. check back soon.");
     disableForm(form);
     return;
+  }
+
+  // Keep "where to go after login" when switching to the login page
+  if (nextPage()) {
+    const loginLink = document.querySelector('#auth-switch a');
+    if (loginLink) loginLink.href = 'login.html?next=' + encodeURIComponent(nextPage());
   }
 
   // Handles are lowercase: fix it as they type
@@ -541,7 +619,7 @@ function initSignupPage() {
       done.hidden = false;
       done.focus(); // so screen readers read the "check your inbox" message
     } else {
-      window.location.href = 'index.html';
+      window.location.href = nextPage() || 'index.html';
     }
   });
 }
@@ -914,6 +992,105 @@ async function initHomeWriteups() {
 
 
 /* --------------------------------------------------------------------------
+   11. Event registration (register.html?event=<slug>)
+   The slug is the event's id in the database (table "events").
+   -------------------------------------------------------------------------- */
+
+async function initRegisterPage() {
+  const form = document.getElementById('register-form');
+  if (!form) return;
+
+  const slug = new URLSearchParams(window.location.search).get('event') || '';
+  const guest = document.getElementById('reg-guest');
+  const done = document.getElementById('reg-done');
+  const set = function (id, text) { document.getElementById(id).textContent = text; };
+  set('reg-slug', slug || '?');
+
+  if (!Account.isConfigured()) return showNotice("registration opens once accounts are switched on. check back soon.");
+  if (!/^[a-z0-9-]{3,60}$/.test(slug)) return showNotice("that link doesn't point to an event. pick one from the events page.");
+
+  // Event details and seats (public: anyone can see these)
+  const status = await Account.getEventStatus(slug);
+  if (!status.ok) return showNotice(status.message);
+  const ev = status.event;
+  if (!ev) return showNotice("that event isn't taking registrations. pick one from the events page.");
+
+  const full = ev.capacity !== null && ev.registered >= ev.capacity;
+  set('reg-title', ev.title);
+  set('auth-title', 'Register');
+  document.title = 'Register: ' + ev.title + ' — Malwarous';
+  set('reg-date', ev.starts_at
+    ? new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Karachi' }).format(new Date(ev.starts_at)) + ' PKT'
+    : 'tba');
+  set('reg-seats', ev.capacity === null
+    ? ev.registered + ' registered · no limit'
+    : ev.registered + ' / ' + ev.capacity + ' taken');
+  set('reg-status', !ev.open ? 'closed' : full ? 'full' : 'open');
+  document.getElementById('reg-status').className = !ev.open || full ? '' : 'tree__live';
+
+  // Who's looking?
+  const user = Account.hasSavedSession() ? await Account.getCurrentUser() : null;
+
+  function showRegistered(registration) {
+    set('reg-done-team', registration.team_name || 'solo');
+    set('reg-done-university', registration.university);
+    form.hidden = true;
+    done.hidden = false;
+  }
+
+  if (user) {
+    document.querySelector('.split__main .prompt__user').textContent = user.handle + '@malwarous:~$';
+    const mine = await Account.getMyRegistration(slug);
+    if (mine) return showRegistered(mine);
+  }
+
+  if (!ev.open) return showNotice('registration for this event is closed.');
+  if (full) return showNotice('this event is full. keep an eye on the events page for the next one.');
+
+  if (!user) {
+    // Send them through login/signup and straight back here afterwards
+    const here = encodeURIComponent('register.html?event=' + slug);
+    document.getElementById('reg-login').href = 'login.html?next=' + here;
+    document.getElementById('reg-signup').href = 'signup.html?next=' + here;
+    guest.hidden = false;
+    return;
+  }
+
+  form.hidden = false;
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const team = form.elements.team;
+    const university = form.elements.university;
+
+    if (team.value.trim() && team.value.trim().length < 2) {
+      return showFormError(form, 'team names need at least 2 characters (or leave it empty to go solo).', team);
+    }
+    if (university.value.trim().length < 2) return showFormError(form, 'enter your university.', university);
+    clearFormError(form);
+
+    setBusy(form, true, '> registering...');
+    const result = await Account.register(slug, team.value.trim(), university.value.trim());
+    setBusy(form, false);
+
+    if (!result.ok) return showFormError(form, result.message, null);
+    showRegistered({ team_name: team.value.trim(), university: university.value.trim() });
+    done.focus();
+  });
+
+  document.getElementById('reg-cancel').addEventListener('click', async function () {
+    if (!window.confirm('Cancel your registration for this event?')) return;
+    const result = await Account.cancelRegistration(slug);
+    if (!result.ok) return showNotice(result.message);
+    done.hidden = true;
+    form.reset();
+    form.hidden = false;
+    showNotice('registration cancelled. you can register again while it is open.');
+  });
+}
+
+
+/* --------------------------------------------------------------------------
    Start-up
    -------------------------------------------------------------------------- */
 
@@ -925,5 +1102,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initTeamPage();
   initResetPage();
   initHomeWriteups();
+  initRegisterPage();
   refreshStatusUser();
 });

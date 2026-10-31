@@ -11,6 +11,7 @@ Disallow: /ops/
 Disallow: /login
 Disallow: /signup
 Disallow: /reset
+Disallow: /register
 
 # The sitemap: the list of pages search engines should know about
 Sitemap: https://malwarous.dev/sitemap.xml

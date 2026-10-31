@@ -26,10 +26,10 @@ The anon key is meant to be public. Anyone can read it from the page, and
 that's fine: the rules in `schema.sql` decide what it can do.
 
 ## 4. Auth settings (under Authentication)
-- **URL configuration.** Set the Site URL to your site's address. Add
-  `https://malwarous.dev/login.html` and `https://www.malwarous.dev/login.html` to the redirect URLs (plus the same two
-  with `reset.html` instead of `login.html`, for password resets): the confirmation
-  email sends people there.
+- **URL configuration.** Set the Site URL to `https://malwarous.dev`. Under
+  Redirect URLs add `https://malwarous.dev/**` and `https://www.malwarous.dev/**`.
+  The `**` covers every page and its `?next=...` part: confirmation emails,
+  password resets, and "log in, then come back to this event's registration".
 - **Email provider.** Keep "Confirm email" on. Set the minimum password length
   to 10. The site checks this too, but only the server's check really counts.
 - **Email sending: do this before announcing signups.** Supabase's built-in
@@ -78,3 +78,15 @@ Admins can delete any guestbook message with `guestbook rm <id>`.
   `FLAG_SHA256` in `public/js/main.js`. Update that hash, the hash inside
   `submit_flag()` in `schema.sql` (re-run just that function in the SQL
   Editor), and `public/ops/notes.txt`.
+
+## Event registration (run `002-registrations.sql` once, after `schema.sql`)
+- **Add an event people can register for:** Table Editor, `events`, Insert row:
+  - `slug`: a short id like `ctf-dec-2026` (lowercase letters, numbers, `-`)
+  - `title`, `starts_at` (registration closes automatically when it starts)
+  - `capacity`: a seat limit, or leave empty for no limit
+- **Link to it** from any button: `register.html?event=ctf-dec-2026`
+- **Close registration early:** set `registration_open` to `false`.
+- **See who registered:** table `registrations`, filter `event_slug`, then
+  **Export to CSV** for the check-in list. Each row has the email, team name
+  (empty = solo) and university. Members can only ever see their own row.
+- **Teams:** each teammate registers separately with the same team name.

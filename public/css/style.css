@@ -2590,6 +2590,61 @@ a.ls__title:hover {
   margin-inline: var(--gutter);
 }
 
+/* ---- Collapsible sections and posts: [+] closed, [-] open ---- */
+.collapse__head,
+.post__summary {
+  cursor: pointer;
+  list-style: none; /* hide the browser's own triangle */
+}
+
+.collapse__head::-webkit-details-marker,
+.post__summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapse__head:hover .section__title,
+.post__summary:hover .post__title {
+  color: var(--brand-tint);
+}
+
+.collapse__icon::before {
+  content: "[+]";
+  color: var(--brand-tint);
+}
+
+details[open] > summary .collapse__icon::before {
+  content: "[-]";
+}
+
+/* Closed section: no extra line under the heading (the next section has one) */
+.collapse:not([open]) > .collapse__head {
+  border-bottom: 0;
+}
+
+.collapse__more {
+  padding: var(--space-4) var(--gutter) var(--space-5);
+  border-top: var(--hairline);
+}
+
+/* A post's always-visible row: type, date, author, title, and [+] on the right */
+.post__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-4);
+}
+
+.post__summary .post__meta,
+.post__summary .post__title {
+  grid-column: 1;
+}
+
+.post__summary .collapse__icon {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: var(--fs-sm);
+}
+
 /* ---- Write-ups: posts ---- */
 .post {
   padding: var(--space-6) var(--gutter);

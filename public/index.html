@@ -390,57 +390,29 @@
 
     <!-- =====================================================================
          // 05 — LATEST WRITE-UPS
-         Styled like `ls -la`.
+         Styled like `ls -la`. The 5 newest approved posts are loaded by
+         account.js (section 10). It's a <details> element, so it collapses:
+         closed while there are no posts, opened automatically once there are.
          ===================================================================== -->
     <section class="section" id="writeups" aria-labelledby="writeups-title">
       <div class="container">
-        <header class="section__head">
-          <h2 class="section__title" id="writeups-title"><span class="section__num">// 05 —</span> latest write-ups</h2>
-          <a class="section__link" href="writeups.html">all write-ups -&gt;</a>
-        </header>
+        <details class="collapse" data-home-writeups>
+          <summary class="section__head collapse__head">
+            <h2 class="section__title" id="writeups-title"><span class="section__num">// 05 —</span> latest write-ups</h2>
+            <span class="section__path"><span id="home-writeups-count">no posts yet</span> <span class="collapse__icon" aria-hidden="true"></span></span>
+          </summary>
 
-        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> ls -la ~/writeups | head -5</p>
+          <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> ls -la ~/writeups | head -5</p>
 
-        <ul class="ls" aria-label="Latest write-ups">
-          <li class="ls__row ls__row--head" aria-hidden="true">
-            <span class="ls__perms">perms</span><span class="ls__date">date</span><span class="ls__author">author</span><span class="ls__title">title</span><span class="ls__tags">tags</span>
-          </li>
-          <li class="ls__row">
-            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
-            <span class="ls__date">[DATE]</span>
-            <span class="ls__author">[AUTHOR]</span>
-            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
-            <span class="ls__tags">web · sqli</span>
-          </li>
-          <li class="ls__row">
-            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
-            <span class="ls__date">[DATE]</span>
-            <span class="ls__author">[AUTHOR]</span>
-            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
-            <span class="ls__tags">ai-sec · prompt-injection</span>
-          </li>
-          <li class="ls__row">
-            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
-            <span class="ls__date">[DATE]</span>
-            <span class="ls__author">[AUTHOR]</span>
-            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
-            <span class="ls__tags">crypto · rsa</span>
-          </li>
-          <li class="ls__row">
-            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
-            <span class="ls__date">[DATE]</span>
-            <span class="ls__author">[AUTHOR]</span>
-            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
-            <span class="ls__tags">forensics · pcap</span>
-          </li>
-          <li class="ls__row">
-            <span class="ls__perms" aria-hidden="true">-rw-r--r--</span>
-            <span class="ls__date">[DATE]</span>
-            <span class="ls__author">[AUTHOR]</span>
-            <a class="ls__title" href="#">[WRITE-UP TITLE]</a>
-            <span class="ls__tags">pwn · bof</span>
-          </li>
-        </ul>
+          <ul class="ls" id="home-writeups-list" aria-label="Latest write-ups">
+            <li class="ls__row ls__row--head" aria-hidden="true">
+              <span class="ls__perms">perms</span><span class="ls__date">date</span><span class="ls__author">author</span><span class="ls__title">title</span><span class="ls__tags">type</span>
+            </li>
+          </ul>
+
+          <p class="archive__empty" id="home-writeups-empty">no write-ups yet. solved an arena room after it closed? <a href="writeups.html#submit">be the first to write one up -&gt;</a></p>
+          <p class="collapse__more"><a class="section__link" href="writeups.html">all write-ups and opportunities -&gt;</a></p>
+        </details>
       </div>
     </section>
 

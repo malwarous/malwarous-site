@@ -22,6 +22,7 @@
      7. Write-ups page (read approved posts, submit new ones)
      8. Team page (application form)
      9. Password reset page
+    10. Homepage: latest write-ups
    ========================================================================== */
 
 
@@ -587,12 +588,23 @@ function showSent(form, panelId) {
 
 const POST_KINDS = { writeup: 'write-up', opportunity: 'opportunity' };
 
-// Builds one post. Everything is set with textContent, so nothing a member
-// writes can ever run as code on the page.
+// Builds one post as a collapsible <details>: the title row is always
+// visible, the text opens on click. Everything is set with textContent, so
+// nothing a member writes can ever run as code on the page.
 function makePost(post) {
-  const article = document.createElement('article');
+  const article = document.createElement('details');
   article.className = 'post';
+  article.id = 'post-' + post.id; // so writeups.html#post-12 links straight to it
   article.dataset.kind = post.kind;
+
+  const summary = document.createElement('summary');
+  summary.className = 'post__summary';
+  const icon = document.createElement('span');
+  icon.className = 'collapse__icon';
+  icon.setAttribute('aria-hidden', 'true');
+
+  const content = document.createElement('div');
+  content.className = 'post__content';
 
   const meta = document.createElement('p');
   meta.className = 'post__meta';
@@ -611,7 +623,9 @@ function makePost(post) {
   body.className = 'post__body';
   body.textContent = post.body;
 
-  article.append(meta, title, body);
+  summary.append(meta, title, icon);
+  content.append(body);
+  article.append(summary, content);
 
   const extras = [];
   if (post.deadline) extras.push('deadline: ' + post.deadline);
@@ -628,7 +642,7 @@ function makePost(post) {
       link.rel = 'noopener noreferrer nofollow ugc'; // tells search engines it's user content
       extra.append(link);
     }
-    article.append(extra);
+    content.append(extra);
   }
   return article;
 }
@@ -673,6 +687,13 @@ async function initWriteupsPage() {
       result.posts.forEach(function (post) { list.appendChild(makePost(post)); });
       status.textContent = result.posts.length + (result.posts.length === 1 ? ' post' : ' posts');
       filter('all');
+
+      // Arriving from a link like writeups.html#post-12: open that post
+      const target = window.location.hash ? document.getElementById(window.location.hash.slice(1)) : null;
+      if (target && target.classList.contains('post')) {
+        target.open = true;
+        target.scrollIntoView({ block: 'start' });
+      }
     }
   }
 
@@ -828,6 +849,71 @@ async function initResetPage() {
 
 
 /* --------------------------------------------------------------------------
+   10. Homepage: latest write-ups (// 05)
+   Uses one small direct request instead of the Supabase library, so the
+   homepage stays fast. The section collapses when there are no posts.
+   -------------------------------------------------------------------------- */
+
+async function initHomeWriteups() {
+  const box = document.querySelector('[data-home-writeups]');
+  if (!box) return;
+  const list = document.getElementById('home-writeups-list');
+  const count = document.getElementById('home-writeups-count');
+  const empty = document.getElementById('home-writeups-empty');
+
+  let posts = [];
+  if (Account.isConfigured()) {
+    try {
+      const url = MALWAROUS_CONFIG.supabaseUrl + '/rest/v1/posts' +
+        '?select=id,kind,title,approved_at,profiles(handle)' +
+        '&status=eq.approved&order=approved_at.desc&limit=5';
+      const response = await fetch(url, { headers: { apikey: MALWAROUS_CONFIG.supabaseKey } });
+      if (response.ok) posts = await response.json();
+    } catch (error) {
+      // offline: show the empty state
+    }
+  }
+
+  posts.forEach(function (post) {
+    const row = document.createElement('li');
+    row.className = 'ls__row';
+
+    const perms = document.createElement('span');
+    perms.className = 'ls__perms';
+    perms.setAttribute('aria-hidden', 'true');
+    perms.textContent = '-rw-r--r--';
+
+    const date = document.createElement('span');
+    date.className = 'ls__date';
+    date.textContent = new Date(post.approved_at).toLocaleDateString('en-CA');
+
+    const author = document.createElement('span');
+    author.className = 'ls__author';
+    author.textContent = post.profiles ? '@' + post.profiles.handle : '';
+
+    const title = document.createElement('a');
+    title.className = 'ls__title';
+    title.href = 'writeups.html#post-' + post.id;
+    title.textContent = post.title;
+
+    const kind = document.createElement('span');
+    kind.className = 'ls__tags';
+    kind.textContent = POST_KINDS[post.kind] || post.kind;
+
+    row.append(perms, date, author, title, kind);
+    list.appendChild(row);
+  });
+
+  // Open the section when there's something to show; stay collapsed otherwise
+  const any = posts.length > 0;
+  count.textContent = any ? posts.length + (posts.length === 1 ? ' post' : ' posts') : 'no posts yet';
+  list.hidden = !any;
+  empty.hidden = any;
+  box.open = any;
+}
+
+
+/* --------------------------------------------------------------------------
    Start-up
    -------------------------------------------------------------------------- */
 
@@ -838,5 +924,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initWriteupsPage();
   initTeamPage();
   initResetPage();
+  initHomeWriteups();
   refreshStatusUser();
 });

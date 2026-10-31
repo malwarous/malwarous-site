@@ -89,7 +89,7 @@
     <!-- =====================================================================
          // 01 — UPCOMING
          Same table as on the homepage. Difficulty: sev--low / medium / high /
-         critical. Status: status--open / full / live.
+         critical. Status: status--open / full / live / completed.
          ===================================================================== -->
     <section class="section" id="upcoming" aria-labelledby="upcoming-title">
       <div class="container">
@@ -113,39 +113,32 @@
           </thead>
           <tbody>
             <tr>
-              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__date">27 Sep 2026</td>
+              <td class="events-table__type">ctf</td>
+              <td class="events-table__title"><a href="#archive">Capture The Flag (CTF) Competition</a></td>
+              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">14 Oct 2026</td>
+              <td class="events-table__type">hackathon</td>
+              <td class="events-table__title"><a href="#archive">AI Mini Project Hackathon</a></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">20 Oct 2026</td>
               <td class="events-table__type">workshop</td>
-              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
+              <td class="events-table__title"><a href="#archive">Information Session: LUMS x ABL Hackathon</a></td>
+              <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">4 Nov 2026</td>
+              <td class="events-table__type">workshop</td>
+              <td class="events-table__title"><a href="index.html#next-event">Information Session: Malwarous Website and Online Weekly CTFs</a></td>
               <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
               <td class="events-table__status"><span class="status status--live">live</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">ctf</td>
-              <td class="events-table__title"><a href="index.html#next-event">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">workshop</td>
-              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">hackathon</td>
-              <td class="events-table__title"><a href="#">[HACKATHON NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
-              <td class="events-table__status"><span class="status status--full">full</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">ctf</td>
-              <td class="events-table__title"><a href="#">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--critical"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>critical</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
             </tr>
           </tbody>
         </table>
@@ -178,14 +171,14 @@
         </div>
 
         <div class="archive__year">
-          <h3 class="archive__year-title">[YEAR]</h3>
+          <h3 class="archive__year-title">2026</h3>
           <ol class="archive__list">
             <li class="past" data-type="ctf">
-              <span class="past__date">[DATE]</span>
+              <span class="past__date">27 Sep 2026</span>
               <span class="past__type">ctf</span>
               <div class="past__main">
-                <h4 class="past__title">[EVENT NAME]</h4>
-                <p class="past__meta">[VENUE] · top team: [TEAM NAME]</p>
+                <h4 class="past__title">Capture The Flag (CTF) Competition</h4>
+                <p class="past__meta">CS Department Seminar Room</p>
               </div>
               <ul class="past__links" aria-label="Links">
                 <li><a href="#">results</a></li>
@@ -193,51 +186,28 @@
                 <li><a href="#">photos</a></li>
               </ul>
             </li>
-            <li class="past" data-type="workshop">
-              <span class="past__date">[DATE]</span>
-              <span class="past__type">workshop</span>
+            <li class="past" data-type="hackathon">
+              <span class="past__date">14 Oct 2026</span>
+              <span class="past__type">hackathon</span>
               <div class="past__main">
-                <h4 class="past__title">[WORKSHOP TITLE]</h4>
-                <p class="past__meta">[VENUE] · led by [SPEAKER]</p>
+                <h4 class="past__title">AI Mini Project Hackathon</h4>
+                <p class="past__meta">Electronics Department Seminar Room</p>
               </div>
               <ul class="past__links" aria-label="Links">
                 <li><a href="#">slides</a></li>
                 <li><a href="#">recording</a></li>
               </ul>
             </li>
-            <li class="past" data-type="hackathon">
-              <span class="past__date">[DATE]</span>
-              <span class="past__type">hackathon</span>
+            <li class="past" data-type="workshop">
+              <span class="past__date">20 Oct 2026</span>
+              <span class="past__type">workshop</span>
               <div class="past__main">
-                <h4 class="past__title">[HACKATHON NAME]</h4>
-                <p class="past__meta">[VENUE] · winning project: [PROJECT NAME]</p>
+                <h4 class="past__title">Information Session: LUMS x ABL Hackathon</h4>
+                <p class="past__meta">QASMS Seminar Room</p>
               </div>
               <ul class="past__links" aria-label="Links">
                 <li><a href="#">projects</a></li>
                 <li><a href="#">photos</a></li>
-              </ul>
-            </li>
-            <li class="past" data-type="workshop">
-              <span class="past__date">[DATE]</span>
-              <span class="past__type">workshop</span>
-              <div class="past__main">
-                <h4 class="past__title">[WORKSHOP TITLE]</h4>
-                <p class="past__meta">[VENUE] · led by [SPEAKER]</p>
-              </div>
-              <ul class="past__links" aria-label="Links">
-                <li><a href="#">slides</a></li>
-              </ul>
-            </li>
-            <li class="past" data-type="ctf">
-              <span class="past__date">[DATE]</span>
-              <span class="past__type">ctf</span>
-              <div class="past__main">
-                <h4 class="past__title">[EVENT NAME]</h4>
-                <p class="past__meta">[VENUE] · top team: [TEAM NAME]</p>
-              </div>
-              <ul class="past__links" aria-label="Links">
-                <li><a href="#">results</a></li>
-                <li><a href="#">write-ups</a></li>
               </ul>
             </li>
           </ol>

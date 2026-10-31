@@ -9,7 +9,7 @@ const MALWAROUS_CONFIG = {
   // ---- Next event --------------------------------------------------------
   // The homepage // 01 panel and the status bar count down to this.
   // Leave it '' when there's no date yet: everything shows "tba".
-  nextEventStart: '',
+  nextEventStart: '2026-11-04T10:00:00+05:00',
   // How many hours it shows "live now" after it starts. After that: "tba".
   nextEventHours: 3,
 

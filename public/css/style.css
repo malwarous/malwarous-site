@@ -1155,6 +1155,7 @@ kbd {
 .status--open::before { background: currentColor; }
 
 .status--full { color: var(--muted); } /* hollow square */
+.status--completed { color: var(--muted); }
 
 .status--live { color: var(--live); }
 .status--live::before {

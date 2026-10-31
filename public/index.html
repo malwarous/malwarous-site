@@ -183,25 +183,25 @@
         <div class="event-panel" id="event-panel">
           <div class="event-panel__info">
             <p class="event-panel__tag">[ registration open ]</p>
-            <h3 class="event-panel__name">[EVENT NAME]</h3>
+            <h3 class="event-panel__name">Information Session: Malwarous Website and Online Weekly CTFs</h3>
 
             <dl class="kv">
               <div class="kv__row">
                 <dt>date</dt>
                 <!-- The time itself is set in js/config.js; this is just the readable text -->
-                <dd><time id="next-event-time">[DATE], [TIME] PKT</time></dd>
+                <dd><time id="next-event-time">4 Nov 2026, 10:00 AM PKT</time></dd>
               </div>
               <div class="kv__row">
                 <dt>venue</dt>
-                <dd>[VENUE]</dd>
+                <dd>CS Department Seminar Room</dd>
               </div>
               <div class="kv__row">
                 <dt>format</dt>
-                <dd>jeopardy ctf</dd> <!-- or: hackathon / workshop -->
+                <dd>Information Session</dd> <!-- or: hackathon / workshop -->
               </div>
               <div class="kv__row">
                 <dt>difficulty</dt>
-                <dd><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></dd>
+                <dd><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></dd>
               </div>
             </dl>
           </div>
@@ -283,16 +283,16 @@
     <!-- =====================================================================
          // 03 — UPCOMING EVENTS
          Difficulty badges: sev--low / sev--medium / sev--high / sev--critical
-         Status: status--open / status--full / status--live
+         Status: status--open / status--full / status--live / status--completed
          ===================================================================== -->
     <section class="section" id="events" aria-labelledby="events-title">
       <div class="container">
         <header class="section__head">
-          <h2 class="section__title" id="events-title"><span class="section__num">// 03 —</span> upcoming events</h2>
+          <h2 class="section__title" id="events-title"><span class="section__num">// 03 —</span> Events</h2>
           <a class="section__link" href="events.html">all events -&gt;</a>
         </header>
 
-        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> events --upcoming</p>
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> Recent events ++ upcoming</p>
 
         <table class="table events-table">
           <caption class="sr-only">Upcoming Malwarous events</caption>
@@ -307,39 +307,32 @@
           </thead>
           <tbody>
             <tr>
-              <td class="events-table__date">[DATE]</td>
+              <td class="events-table__date">27 Sep 2026</td>
+              <td class="events-table__type">ctf</td>
+              <td class="events-table__title"><a href="events.html#archive">Capture The Flag (CTF) Competition</a></td>
+              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">14 Oct 2026</td>
+              <td class="events-table__type">hackathon</td>
+              <td class="events-table__title"><a href="events.html#archive">AI Mini Project Hackathon</a></td>
+              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">20 Oct 2026</td>
               <td class="events-table__type">workshop</td>
-              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
+              <td class="events-table__title"><a href="events.html#archive">Information Session: LUMS x ABL Hackathon</a></td>
+              <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
+              <td class="events-table__status"><span class="status status--completed">completed</span></td>
+            </tr>
+            <tr>
+              <td class="events-table__date">4 Nov 2026</td>
+              <td class="events-table__type">workshop</td>
+              <td class="events-table__title"><a href="#next-event">Information Session: Malwarous Website and Online Weekly CTFs</a></td>
               <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
               <td class="events-table__status"><span class="status status--live">live</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">ctf</td>
-              <td class="events-table__title"><a href="#next-event">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--high"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>high</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">workshop</td>
-              <td class="events-table__title"><a href="#">[WORKSHOP TITLE]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">hackathon</td>
-              <td class="events-table__title"><a href="#">[HACKATHON NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--medium"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>medium</span></td>
-              <td class="events-table__status"><span class="status status--full">full</span></td>
-            </tr>
-            <tr>
-              <td class="events-table__date">[DATE]</td>
-              <td class="events-table__type">ctf</td>
-              <td class="events-table__title"><a href="#">[EVENT NAME]</a></td>
-              <td class="events-table__sev"><span class="sev sev--critical"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>critical</span></td>
-              <td class="events-table__status"><span class="status status--open">open</span></td>
             </tr>
           </tbody>
         </table>

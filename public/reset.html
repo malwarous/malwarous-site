@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reset password — Malwarous</title>
+  <meta name="description" content="Reset your Malwarous password.">
+  <meta name="robots" content="noindex"> <!-- no reason for search engines to list this page -->
+  <meta name="theme-color" content="#0E0E11">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://malwarous.dev/reset">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/account.js" defer></script> <!-- the reset logic is in account.js, section 9 -->
+</head>
+
+<body>
+  <!-- layout:top -->
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <!-- SVG sprite: the four-pointed star from the "O" in the logo.
+       Reuse it anywhere with: <svg><use href="#star"></use></svg> -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="star" viewBox="0 0 24 24">
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html" aria-label="Malwarous home">
+        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
+             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
+        <ul class="nav__menu" id="nav-menu">
+          <li><a href="events.html">events</a></li>
+          <li><a href="arena.html">arena</a></li>
+          <li><a href="academy.html">academy</a></li>
+          <li><a href="writeups.html">write-ups</a></li>
+          <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+          <li><a href="team.html">team</a></li>
+          <li><a href="index.html#what-we-do">about</a></li>
+          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
+        </ul>
+      </nav>
+
+      <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+    </div>
+  </header>
+  <!-- /layout:top -->
+
+
+  <main id="main">
+    <section class="section section--first" aria-labelledby="auth-title">
+      <div class="container">
+        <div class="split">
+
+          <div class="split__aside">
+            <p class="hero__kicker">// ~/reset</p>
+            <h1 class="lede" id="auth-title">Locked out?</h1>
+            <p class="read">Enter your account's email and we'll send you a link to choose a new password. The link works once and expires after a while.</p>
+          </div>
+
+          <div class="split__main">
+            <p class="prompt prompt--flush"><span class="prompt__user">guest@malwarous:~$</span> passwd</p>
+
+            <!-- Messages like "accounts aren't open yet." -->
+            <p class="notice" id="auth-notice" role="status" hidden></p>
+
+            <!-- Step 1: ask for the reset email -->
+            <form class="form" id="reset-request-form" novalidate>
+              <div class="field">
+                <label for="reset-email">email</label>
+                <input id="reset-email" name="email" type="email" autocomplete="email" spellcheck="false" required>
+              </div>
+              <p class="form__error" role="alert"></p>
+              <button class="btn btn--primary btn--wide" type="submit"><span class="btn__prompt" aria-hidden="true">&gt;</span> send_reset_link</button>
+            </form>
+
+            <div class="auth-done" id="reset-sent" tabindex="-1" hidden>
+              <p class="auth-done__title">check your inbox.</p>
+              <p class="read">If an account exists for that email, a reset link is on its way. Nothing there? Check spam, then try again in a few minutes.</p>
+            </div>
+
+            <!-- Step 2: shown when you arrive from the email link -->
+            <form class="form" id="reset-password-form" novalidate hidden>
+              <div class="field">
+                <label for="reset-password">new password</label>
+                <div class="field__row">
+                  <input id="reset-password" name="password" type="password" autocomplete="new-password" minlength="10" aria-describedby="reset-password-hint" required>
+                  <button class="field__toggle" type="button" data-password-toggle aria-controls="reset-password" aria-pressed="false">[ show ]</button>
+                </div>
+                <p class="field__hint" id="reset-password-hint">at least 10 characters.</p>
+              </div>
+              <p class="form__error" role="alert"></p>
+              <button class="btn btn--primary btn--wide" type="submit"><span class="btn__prompt" aria-hidden="true">&gt;</span> set_new_password</button>
+            </form>
+
+            <div class="auth-done" id="reset-done" tabindex="-1" hidden>
+              <p class="auth-done__title">password changed.</p>
+              <div class="auth-done__actions">
+                <a class="btn btn--primary" href="index.html"><span class="btn__prompt" aria-hidden="true">&gt;</span> cd ~</a>
+              </div>
+            </div>
+
+            <p class="auth__switch" id="auth-switch">remembered it? <a href="login.html">log in -&gt;</a></p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- layout:bottom -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
+
+      <div class="footer__ethics">
+        <p class="footer__ethics-line">We only hack with permission.</p>
+        <p class="footer__ethics-sub">CTFs, our own labs, and systems we're authorized to test. Nothing else.</p>
+      </div>
+
+      <div class="footer__grid">
+        <nav class="footer__col" aria-label="Site">
+          <p class="footer__label">// site</p>
+          <ul>
+            <li><a href="events.html">events</a></li>
+            <li><a href="arena.html">arena</a></li>
+            <li><a href="academy.html">academy</a></li>
+            <li><a href="writeups.html">write-ups</a></li>
+            <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+            <li><a href="team.html">team</a></li>
+            <li><a href="index.html#what-we-do">about</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Community">
+          <p class="footer__label">// community</p>
+          <ul>
+            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
+            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="signup.html">join</a></li>
+            <li><a href="login.html">login</a></li>
+            <li><a href="index.html#partners">sponsors</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social profiles">
+          <p class="footer__label">// elsewhere</p>
+          <ul>
+            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="https://github.com/malwarous">github</a></li>
+            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
+            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+          </ul>
+        </nav>
+      </div>
+
+      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+    </div>
+  </footer>
+
+  <!-- Status bar, pinned to the bottom like tmux -->
+  <aside class="statusbar" aria-label="Status bar">
+    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
+      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    </button>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
+    <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
+    <span class="statusbar__item statusbar__status">status: recruiting</span>
+    <span class="statusbar__spacer"></span>
+    <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
+    <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
+  </aside>
+
+  <!-- Command console (easter egg: press ` or click the status bar prompt) -->
+  <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
+    <div class="console__bar">
+      <span>console — type <kbd>help</kbd></span>
+      <button class="console__close" type="button" data-console-close aria-label="Close console">[ esc ]</button>
+    </div>
+    <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
+    <form class="console__form" id="console-form" autocomplete="off">
+      <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+  </div>
+  <!-- /layout:bottom -->
+
+</body>
+</html>

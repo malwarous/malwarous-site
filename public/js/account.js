@@ -21,6 +21,7 @@
      6. Signup page
      7. Write-ups page (read approved posts, submit new ones)
      8. Team page (application form)
+     9. Password reset page
    ========================================================================== */
 
 
@@ -292,6 +293,32 @@ const Account = {
     if (!user) return fail('log in first to submit a post.');
 
     const { error } = await client.from('posts').insert(post);
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
+  },
+
+  // Emails a password-reset link. Always says "sent", whether or not the
+  // email has an account, so the form can't be used to find out who's signed up.
+  requestPasswordReset: async function (email) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: new URL('reset.html', window.location.href).href
+    });
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
+  },
+
+  // Sets a new password for the person who arrived from the reset link
+  updatePassword: async function (password) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const { data } = await client.auth.getSession();
+    if (!data.session) return fail('this reset link has expired or was already used. request a new one below.');
+
+    const { error } = await client.auth.updateUser({ password: password });
     if (error) return fail(friendlyError(error));
     return { ok: true };
   },
@@ -733,6 +760,74 @@ async function initTeamPage() {
 
 
 /* --------------------------------------------------------------------------
+   9. Password reset (reset.html)
+   Step 1: enter your email, get a link.
+   Step 2: the link brings you back here, logged in for this one purpose,
+           and you choose a new password.
+   -------------------------------------------------------------------------- */
+
+async function initResetPage() {
+  const requestForm = document.getElementById('reset-request-form');
+  const passwordForm = document.getElementById('reset-password-form');
+  if (!requestForm || !passwordForm) return;
+
+  if (!Account.isConfigured()) {
+    showNotice("accounts aren't open yet. check back soon.");
+    disableForm(requestForm);
+    return;
+  }
+
+  // Arriving from the email link? (Supabase reads the link itself.)
+  const fromEmailLink = /type=recovery|access_token|code=/.test(window.location.hash + window.location.search);
+  if (fromEmailLink) {
+    const user = await Account.getCurrentUser();
+    if (user) {
+      requestForm.hidden = true;
+      passwordForm.hidden = false;
+      passwordForm.elements.password.focus();
+    } else {
+      showNotice('this reset link has expired or was already used. request a new one below.');
+    }
+  }
+
+  // Step 1: send the email
+  requestForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const email = requestForm.elements.email;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+      return showFormError(requestForm, "that email doesn't look right.", email);
+    }
+    clearFormError(requestForm);
+
+    setBusy(requestForm, true, '> sending...');
+    const result = await Account.requestPasswordReset(email.value.trim());
+    setBusy(requestForm, false);
+
+    if (!result.ok) return showFormError(requestForm, result.message, null);
+    showSent(requestForm, 'reset-sent');
+  });
+
+  // Step 2: save the new password
+  passwordForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const password = passwordForm.elements.password;
+    if (password.value.length < MIN_PASSWORD_LENGTH) {
+      return showFormError(passwordForm, 'passwords need at least ' + MIN_PASSWORD_LENGTH + ' characters.', password);
+    }
+    clearFormError(passwordForm);
+
+    setBusy(passwordForm, true, '> saving...');
+    const result = await Account.updatePassword(password.value);
+    setBusy(passwordForm, false);
+
+    if (!result.ok) return showFormError(passwordForm, result.message, null);
+    document.getElementById('auth-switch').hidden = true;
+    showSent(passwordForm, 'reset-done');
+  });
+}
+
+
+/* --------------------------------------------------------------------------
    Start-up
    -------------------------------------------------------------------------- */
 
@@ -742,5 +837,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initSignupPage();
   initWriteupsPage();
   initTeamPage();
+  initResetPage();
   refreshStatusUser();
 });

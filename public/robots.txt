@@ -10,6 +10,7 @@ Disallow: /ops/
 # No reason to list these in search results
 Disallow: /login
 Disallow: /signup
+Disallow: /reset
 
 # The sitemap: the list of pages search engines should know about
 Sitemap: https://malwarous.dev/sitemap.xml

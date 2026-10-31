@@ -64,6 +64,9 @@ fs.readdirSync(publicDir)
     let after = fillMarker(before, 'top', pageTop, file);
     after = fillMarker(after, 'bottom', pageBottom, file);
 
+    // Keep the file's own line endings (on Windows, files often use CRLF)
+    after = after.replace(/\r?\n/g, before.includes('\r\n') ? '\r\n' : '\n');
+
     if (after !== before) {
       fs.writeFileSync(fullPath, after);
       changed++;

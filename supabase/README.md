@@ -27,7 +27,8 @@ that's fine: the rules in `schema.sql` decide what it can do.
 
 ## 4. Auth settings (under Authentication)
 - **URL configuration.** Set the Site URL to your site's address. Add
-  `https://malwarous.dev/login.html` and `https://www.malwarous.dev/login.html` to the redirect URLs: the confirmation
+  `https://malwarous.dev/login.html` and `https://www.malwarous.dev/login.html` to the redirect URLs (plus the same two
+  with `reset.html` instead of `login.html`, for password resets): the confirmation
   email sends people there.
 - **Email provider.** Keep "Confirm email" on. Set the minimum password length
   to 10. The site checks this too, but only the server's check really counts.

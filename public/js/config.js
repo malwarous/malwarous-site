@@ -12,6 +12,9 @@ const MALWAROUS_CONFIG = {
   nextEventStart: '2026-11-04T10:00:00+05:00',
   // How many hours it shows "live now" after it starts. After that: "tba".
   nextEventHours: 3,
+  // Optional: when it ENDS. Set this and, once it starts, the timer counts
+  // down to the end instead (e.g. a room that locks for results). '' = off.
+  nextEventEnd: '2026-11-06T10:00:00+05:00',  // Inbox Under Siege locks 48h after it opened
 
   // ---- Current arena room (arena.html) -------------------------------------
   // A new room every 10 days: update these four lines each time.

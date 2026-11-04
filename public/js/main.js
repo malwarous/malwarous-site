@@ -287,8 +287,35 @@ function initCountdown() {
     if (panel) panel.classList.remove('is-live');
   }
 
+  // Optional end time (nextEventEnd in config.js): once the event has
+  // started, the timer counts DOWN to it, e.g. "room locks in 47:59:12".
+  const end = new Date(MALWAROUS_CONFIG.nextEventEnd).getTime();
+
+  function showDigits(t) {
+    setText(parts.days, pad(t.days));
+    setText(parts.hours, pad(t.hours));
+    setText(parts.minutes, pad(t.minutes));
+    setText(parts.seconds, pad(t.seconds));
+  }
+
   function tick() {
     if (clockEl) clockEl.textContent = pktFormat.format(new Date());
+
+    if (!isNaN(target) && !isNaN(end) && Date.now() >= target) {
+      const left = splitTime(end - Date.now());
+      if (left.done) {
+        showDigits({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setText(labelEl, 'room locked · results coming soon');
+        setText(statusEl, 'locked');
+        if (panel) panel.classList.remove('is-live');
+      } else {
+        showDigits(left);
+        setText(labelEl, 'live · room locks in');
+        setText(statusEl, 'locks in ' + pad(left.days) + 'd ' + pad(left.hours) + 'h ' + pad(left.minutes) + 'm');
+        if (panel) panel.classList.add('is-live');
+      }
+      return;
+    }
 
     // No date set yet, or the event is over: "tba" until there's a new date
     if (isNaN(target) || Date.now() > target + liveFor) {

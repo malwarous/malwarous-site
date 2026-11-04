@@ -182,7 +182,7 @@
 
         <div class="event-panel" id="event-panel">
           <div class="event-panel__info">
-            <p class="event-panel__tag">[ registration open ]</p>
+            <p class="event-panel__tag">[ online session ]</p>
             <h3 class="event-panel__name">Information Session: Malwarous Website and Online Weekly CTFs</h3>
 
             <dl class="kv">
@@ -193,11 +193,11 @@
               </div>
               <div class="kv__row">
                 <dt>venue</dt>
-                <dd>CS Department Seminar Room</dd>
+                <dd>online, on <a href="https://tryhackme.com/jr/inboxundersiege" target="_blank" rel="noopener">TryHackMe</a></dd>
               </div>
               <div class="kv__row">
                 <dt>format</dt>
-                <dd>Information Session</dd> <!-- or: hackathon / workshop -->
+                <dd>Online Session</dd> <!-- or: hackathon / workshop -->
               </div>
               <div class="kv__row">
                 <dt>difficulty</dt>
@@ -219,7 +219,11 @@
               <div class="clock__unit"><span class="clock__num" data-countdown="seconds">--</span><span class="clock__name">sec</span></div>
             </div>
             <!-- register.html?event=<slug>: the slug is the event's id in Supabase (table events) -->
-            <a class="btn btn--primary btn--wide" href="register.html?event=info-session-nov-2026"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
+            <!-- The room for this session. Opens TryHackMe in a new tab. -->
+            <div class="event-panel__actions">
+              <a class="btn btn--primary btn--wide" href="https://tryhackme.com/jr/inboxundersiege" target="_blank" rel="noopener" aria-label="play inbox under siege on tryhackme"><span class="btn__prompt" aria-hidden="true">&gt;</span> play_inbox_under_siege</a>
+              <a class="btn btn--wide" href="register.html?event=info-session-nov-2026"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
+            </div>
           </div>
         </div>
       </div>
@@ -329,8 +333,8 @@
             </tr>
             <tr>
               <td class="events-table__date">4 Nov 2026</td>
-              <td class="events-table__type">workshop</td>
-              <td class="events-table__title"><a href="#next-event">Information Session: Malwarous Website and Online Weekly CTFs</a></td>
+              <td class="events-table__type">online</td>
+              <td class="events-table__title"><a href="#next-event">Information Session: Malwarous Website and Online Weekly CTFs</a> <span class="events-table__room">· room: <a href="https://tryhackme.com/jr/inboxundersiege" target="_blank" rel="noopener">Inbox Under Siege</a></span></td>
               <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
               <td class="events-table__status"><span class="status status--live">live</span></td>
             </tr>

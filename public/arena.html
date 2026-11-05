@@ -82,21 +82,26 @@
 
 
     <!-- =====================================================================
-         // 01 — THIS ROOM
-         Everything in the card comes from currentRoom in js/config.js.
-         Every 10 days, update it there: no need to touch this page.
+         // 01 — ROOMS
+         Everything in the card comes from rooms in js/config.js. It opens on
+         the room that's live now; the < > arrows move between rooms.
+         Every 10 days, update the list there: no need to touch this page.
          ===================================================================== -->
     <section class="section" id="room-section" aria-labelledby="room-title">
       <div class="container">
         <header class="section__head">
-          <h2 class="section__title" id="room-title"><span class="section__num">// 01 —</span> this room</h2>
-          <span class="section__path">~/arena/current</span>
+          <h2 class="section__title" id="room-title"><span class="section__num">// 01 —</span> rooms</h2>
+          <span class="section__path">~/arena/rooms</span>
         </header>
 
         <div class="split">
           <div class="split__aside">
-            <div class="room" id="room">
-              <p class="room__number">room <span data-room="number">#--</span></p>
+            <div class="room" id="room" aria-roledescription="carousel" aria-label="Arena rooms">
+              <div class="room__nav">
+                <button class="room__arrow" id="room-prev" type="button" aria-label="Previous room">&lt;</button>
+                <p class="room__number">room <span data-room="number">#--</span> <span class="room__position" data-room="position" aria-live="polite"></span></p>
+                <button class="room__arrow" id="room-next" type="button" aria-label="Next room">&gt;</button>
+              </div>
               <h3 class="room__name" data-room="name">tba</h3>
               <p class="room__status" data-room="status" aria-live="polite">loading...</p>
 
@@ -117,8 +122,11 @@
               <div class="kv__row"><dt>rooms</dt><dd>a new one every 10 days</dd></div>
               <div class="kv__row"><dt>cost</dt><dd>free</dd></div>
               <div class="kv__row"><dt>you need</dt><dd>a free TryHackMe account</dd></div>
+              <div class="kv__row"><dt>server</dt><dd>Asia Pacific (Mumbai)</dd></div>
               <div class="kv__row"><dt>ranking</dt><dd>the room's TryHackMe scoreboard: highest score, then who got there first</dd></div>
               <div class="kv__row"><dt>rewards</dt><dd>top positions in every room, at the end of each month</dd></div>
+              <!-- TODO: put the WhatsApp community invite link in href -->
+              <div class="kv__row"><dt>room links</dt><dd>here, and in our <a href="#">WhatsApp community</a></dd></div>
             </dl>
             <p class="read arena__note">Past results and winners are in the <a href="hall-of-fame.html">hall of fame</a>.</p>
           </div>
@@ -129,6 +137,7 @@
 
     <!-- =====================================================================
          // 02 — HOW TO PLAY
+         Steps 1 to 3 once; every new room only needs steps 4 and 5.
          ===================================================================== -->
     <section class="section" id="how-to-play" aria-labelledby="how-title">
       <div class="container">
@@ -144,31 +153,72 @@
                  Empty = shows "video coming soon". Tip: upload it as "Unlisted". -->
             <div class="video" data-youtube="" data-title="How to play in the Malwarous arena"></div>
             <p class="video__caption">walkthrough: from signing up to your first flag</p>
+            <p class="read">Do steps 1 to 3 once. After that, every new room only needs steps 4 and 5.</p>
           </div>
 
           <div class="split__main">
             <ol class="steps">
               <li class="step">
                 <h3 class="step__title">Create a free TryHackMe account</h3>
-                <p class="step__text">Sign up at <a href="https://tryhackme.com/signup" target="_blank" rel="noopener">tryhackme.com</a>. Then put your TryHackMe username on your <a href="signup.html">Malwarous account</a>: it's how we match the room's scoreboard to you for rewards.</p>
+                <p class="step__text">Sign up at <a href="https://tryhackme.com/signup" target="_blank" rel="noopener">tryhackme.com/signup</a> with Google or an email and password, and verify your email if asked. A free account is enough for every Malwarous room. Each player needs their own.</p>
               </li>
               <li class="step">
-                <h3 class="step__title">Know your AttackBox hour</h3>
-                <p class="step__text">Free accounts get one hour of the AttackBox, TryHackMe's hacking machine in your browser. Read the task first, then start it when you're ready to work. Out of time? Connect your own Kali machine with TryHackMe's OpenVPN instead, which is free.</p>
+                <h3 class="step__title">Link your username to Malwarous</h3>
+                <p class="step__text"><a href="signup.html">Create your Malwarous account</a> (or log in) and add your TryHackMe username, spelled exactly as it appears on TryHackMe. Rewards only go to linked members: it's how the room's scoreboard gets matched to you.</p>
+              </li>
+              <li class="step">
+                <h3 class="step__title">Set your server to Asia Pacific (Mumbai)</h3>
+                <p class="step__text">Do this before you start a machine: changing region shuts down running machines. On TryHackMe, click your account icon, then <strong>Manage Account</strong>, then <strong>VM and VPN Settings</strong>. Set <strong>Virtual Machine Region</strong> to <strong>Asia Pacific (Mumbai)</strong> and click <strong>Change Region</strong>. OpenVPN users: download your configuration file again from the same page.</p>
               </li>
               <li class="step">
                 <h3 class="step__title">Join the room</h3>
-                <p class="step__text">When a room opens, its link appears in // 01 above (and on our Discord). Open it and click Join Room on TryHackMe.</p>
+                <p class="step__text">When a room goes live, its link appears in // 01 above and in our WhatsApp community. Open it and click <strong>Join Room</strong>. Read the tasks before you start a machine: free accounts get one hour of AttackBox time per day.</p>
               </li>
               <li class="step">
-                <h3 class="step__title">Solve the tasks</h3>
-                <p class="step__text">Answer each question on TryHackMe. Every correct answer adds to your score on the room's scoreboard.</p>
-              </li>
-              <li class="step">
-                <h3 class="step__title">Climb the board</h3>
-                <p class="step__text">When the room closes, we take the final standings from its scoreboard: highest score first, and on a tie, whoever got there first.</p>
+                <h3 class="step__title">Connect and solve</h3>
+                <p class="step__text">Start the AttackBox or connect with OpenVPN (see below), then submit each answer on TryHackMe. Every correct answer adds to your score. When the room closes, the highest score ranks first; on a tie, whoever got there first.</p>
               </li>
             </ol>
+
+            <!-- Connection options: click to expand -->
+            <div class="connect">
+              <details class="connect__option">
+                <summary class="connect__summary">Option A: AttackBox (easiest) <span class="collapse__icon" aria-hidden="true"></span></summary>
+                <p class="step__text">A Linux machine in your browser with the tools already installed. Nothing to install.</p>
+                <ol class="connect__list">
+                  <li>Click <strong>Start AttackBox</strong> at the top of the room. It can take 2 to 3 minutes to load.</li>
+                  <li>Work in the split view, or click <strong>Open in a new tab</strong> for full screen.</li>
+                  <li>Click <strong>Shut down</strong> when you finish.</li>
+                </ol>
+              </details>
+
+              <details class="connect__option">
+                <summary class="connect__summary">Option B: OpenVPN (your own computer) <span class="collapse__icon" aria-hidden="true"></span></summary>
+                <p class="step__text">Use this when your AttackBox hour runs out, or if you prefer your own Kali machine. Use the <code>.ovpn</code> file you downloaded after switching to Mumbai.</p>
+                <p class="connect__os">windows</p>
+                <ol class="connect__list">
+                  <li>Install OpenVPN from <a href="https://openvpn.net/community-downloads/" target="_blank" rel="noopener">openvpn.net/community-downloads</a>.</li>
+                  <li>Open <strong>OpenVPN GUI</strong> as Administrator.</li>
+                  <li>Click the up arrow in the taskbar, then right-click the OpenVPN icon (a monitor with a plug).</li>
+                  <li>Choose <strong>Import</strong>, then <strong>Import file</strong>, and select your <code>.ovpn</code> file.</li>
+                  <li>Right-click the icon again and click <strong>Connect</strong>.</li>
+                </ol>
+                <p class="connect__os">linux / kali</p>
+                <ol class="connect__list">
+                  <li>Install OpenVPN: <code>sudo apt install openvpn</code></li>
+                  <li>Connect: <code>sudo openvpn ~/Downloads/&lt;your-file&gt;.ovpn</code></li>
+                  <li>Wait for <code>Initialization Sequence Completed</code>, and keep that terminal open while you play.</li>
+                  <li>Press <code>Ctrl + C</code> to disconnect.</li>
+                </ol>
+                <p class="connect__os">macos</p>
+                <ol class="connect__list">
+                  <li>Install OpenVPN for macOS and open it from the top bar.</li>
+                  <li>Right-click the icon, choose <strong>Import File</strong>, then <strong>Local file</strong>, and select your <code>.ovpn</code> file.</li>
+                  <li>Right-click the icon again and click <strong>Connect</strong>.</li>
+                </ol>
+                <p class="step__text">To check you're connected: on TryHackMe's <strong>VM and VPN Settings</strong> page, <strong>Connection</strong> shows a green <strong>Connected</strong>.</p>
+              </details>
+            </div>
           </div>
         </div>
       </div>
@@ -177,7 +227,6 @@
 
     <!-- =====================================================================
          // 03 — RULES
-         DRAFT: replace these with the rules from our first room.
          ===================================================================== -->
     <section class="section" id="rules" aria-labelledby="rules-title">
       <div class="container">
@@ -190,23 +239,54 @@
 
         <ol class="rules">
           <li class="rule"><span class="rule__num">01</span><p class="rule__text"><strong>Play solo.</strong> One person, one TryHackMe account. No shared or team accounts.</p></li>
-          <li class="rule"><span class="rule__num">02</span><p class="rule__text"><strong>No spoilers while a room is open.</strong> Don't share flags, answers or hints anywhere: Discord, WhatsApp, in person. Write-ups are welcome once the room closes.</p></li>
-          <li class="rule"><span class="rule__num">03</span><p class="rule__text"><strong>Only attack what the room gives you.</strong> Never TryHackMe's own systems, other players, or anything outside the room. We only hack with permission.</p></li>
+          <li class="rule"><span class="rule__num">02</span><p class="rule__text"><strong>No spoilers.</strong> Don't share flags, answers or hints anywhere while a room is open, including our WhatsApp community, Discord and in person. Write-ups are allowed after the room closes.</p></li>
+          <li class="rule"><span class="rule__num">03</span><p class="rule__text"><strong>Attack only what the room gives you.</strong> Never TryHackMe's own systems, other players, or anything outside the room. We only hack with permission.</p></li>
           <li class="rule"><span class="rule__num">04</span><p class="rule__text"><strong>No automated guessing.</strong> Don't script or spam answer submissions.</p></li>
-          <li class="rule"><span class="rule__num">05</span><p class="rule__text"><strong>Link your account to get rewarded.</strong> Rewards only go to members whose TryHackMe username is on their Malwarous account.</p></li>
-          <li class="rule"><span class="rule__num">06</span><p class="rule__text"><strong>Play fair, stay kind.</strong> Breaking a rule removes you from that month's rankings; doing it again bans you from the arena. The organizers' decision is final. TryHackMe's own terms apply too.</p></li>
+          <li class="rule"><span class="rule__num">05</span><p class="rule__text"><strong>Link your account.</strong> Only members whose TryHackMe username is on their Malwarous account can receive rewards.</p></li>
+          <li class="rule"><span class="rule__num">06</span><p class="rule__text"><strong>Play fair and stay kind.</strong></p></li>
         </ol>
+        <p class="rules__note">Breaking a rule removes you from that month's rankings. Repeating it bans you from the arena. The organizers' decision is final, and TryHackMe's terms also apply.</p>
       </div>
     </section>
 
 
     <!-- =====================================================================
-         // 04 — REWARDS
+         // 04 — TROUBLESHOOTING
+         ===================================================================== -->
+    <section class="section" id="troubleshooting" aria-labelledby="trouble-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="trouble-title"><span class="section__num">// 04 —</span> troubleshooting</h2>
+          <a class="section__link" href="https://help.tryhackme.com/en/articles/6496029-openvpn-general-troubleshooting" target="_blank" rel="noopener">tryhackme help -&gt;</a>
+        </header>
+
+        <table class="table trouble">
+          <caption class="sr-only">Common problems and fixes</caption>
+          <thead>
+            <tr><th scope="col">problem</th><th scope="col">fix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A target's website won't load in your own browser</td><td>Lab machines aren't on the public internet. Connect with OpenVPN or use the AttackBox.</td></tr>
+            <tr><td>Your AttackBox hour is used up</td><td>Switch to OpenVPN for the rest of the room.</td></tr>
+            <tr><td>OpenVPN is slow, or normal websites stop loading</td><td>Check your home internet first. Then confirm your region is Mumbai and download a new configuration file.</td></tr>
+            <tr><td>OpenVPN fails on Windows</td><td>Run OpenVPN GUI as Administrator.</td></tr>
+            <tr><td>An old <code>.ovpn</code> file stops working</td><td>Download a new configuration file from VM and VPN Settings.</td></tr>
+            <tr><td>Mumbai is unstable, or TryHackMe suggests another region</td><td>Change to the suggested region, then download a new configuration file if you use OpenVPN.</td></tr>
+            <tr><td>Shells don't connect back when you attack from a virtual machine</td><td>Run OpenVPN inside that virtual machine, not on your main computer.</td></tr>
+            <tr><td>Your score isn't linked to you</td><td>Check that the TryHackMe username on your Malwarous account matches exactly.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 05 — REWARDS
          ===================================================================== -->
     <section class="section" id="rewards" aria-labelledby="rewards-title">
       <div class="container">
         <header class="section__head">
-          <h2 class="section__title" id="rewards-title"><span class="section__num">// 04 —</span> rewards</h2>
+          <h2 class="section__title" id="rewards-title"><span class="section__num">// 05 —</span> rewards</h2>
           <a class="section__link" href="hall-of-fame.html">past winners -&gt;</a>
         </header>
 
@@ -260,7 +340,7 @@
         <nav class="footer__col" aria-label="Social profiles">
           <p class="footer__label">// elsewhere</p>
           <ul>
-            <li><a href="#">discord</a></li>   <!-- TODO: [DISCORD LINK] -->
+            <li><a href="#">whatsapp</a></li>  <!-- TODO: [WHATSAPP COMMUNITY LINK] -->
             <li><a href="https://github.com/malwarous">github</a></li>
             <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
             <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->

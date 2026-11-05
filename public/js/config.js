@@ -16,15 +16,27 @@ const MALWAROUS_CONFIG = {
   // down to the end instead (e.g. a room that locks for results). '' = off.
   nextEventEnd: '2026-11-06T10:00:00+05:00',  // Inbox Under Siege locks 48h after it opened
 
-  // ---- Current arena room (arena.html) -------------------------------------
-  // A new room every 10 days: update these four lines each time.
-  currentRoom: {
-    number: 2,
-    name: '[ROOM NAME]',
-    url: '',     // the TryHackMe room link. '' = shows "link coming soon"
-    opens: '',   // when the room opens, e.g. '2026-11-01T18:00:00+05:00'
-    closes: ''   // usually 10 days after it opens
-  },
+  // ---- Arena rooms (arena.html) --------------------------------------------
+  // One entry per room, oldest first. The arena card opens on the room
+  // that's live right now; the < > arrows move between rooms.
+  // New room every 10 days: fill in the next entry, then add a new
+  // "coming soon" one after it.
+  rooms: [
+    {
+      number: 2,
+      name: 'Inbox Under Siege',
+      url: 'https://tryhackme.com/jr/inboxundersiege',
+      opens: '2026-11-04T10:00:00+05:00',
+      closes: '2026-11-06T10:00:00+05:00'
+    },
+    {
+      number: 3,
+      name: 'tba',
+      url: '',     // the TryHackMe room link. '' = "link appears when the room opens"
+      opens: '',   // e.g. '2026-11-14T18:00:00+05:00'
+      closes: ''
+    }
+  ],
 
   // ---- Supabase (accounts, posts, team applications, guestbook) -----------
   // Find both values in your Supabase dashboard: Project Settings -> API.

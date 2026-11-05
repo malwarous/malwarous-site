@@ -32,7 +32,7 @@ wrangler.jsonc       Cloudflare settings: publish only public/
 | You want to... | Do this |
 |---|---|
 | Set the next event's countdown | `nextEventStart` in `public/js/config.js` (leave `''` for "tba") |
-| Post a new arena room (every 10 days) | `currentRoom` in `public/js/config.js`: number, name, link, opens, closes |
+| Post a new arena room (every 10 days) | `rooms` in `public/js/config.js`: fill in the "coming soon" entry (name, link, opens, closes), then add a new "coming soon" entry after it |
 | Add a PSP lecture video | Copy a `<li class="lesson">` block in `academy-psp.html` (instructions in the comment there) |
 | Add the arena walkthrough video | Put the YouTube ID in `data-youtube=""` in `arena.html` |
 | Add results | Copy the `// 01` section in `hall-of-fame.html`, update `// 02`, and the top-5 table on the homepage |

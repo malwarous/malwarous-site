@@ -791,37 +791,56 @@ function initNotFound() {
 
 
 /* --------------------------------------------------------------------------
-   8. Arena: current room card
-   Fills in the room on arena.html from currentRoom in js/config.js, and
-   keeps its status up to date: "opens in ..." / "live" / "closed".
+   8. Arena: room card with < > arrows
+   Shows one room at a time from rooms in js/config.js. It opens on the
+   room that's live right now (or the next one to open), and the arrows
+   move between rooms. The status keeps itself up to date:
+   "opens in ..." / "live · closes in ..." / "closed".
    -------------------------------------------------------------------------- */
 
 function initArenaRoom() {
   const card = document.getElementById('room');
   if (!card) return;
 
-  const room = MALWAROUS_CONFIG.currentRoom || {};
-  const opens = new Date(room.opens).getTime();
-  const closes = new Date(room.closes).getTime();
+  const rooms = MALWAROUS_CONFIG.rooms || [];
+  if (!rooms.length) return;
+
   const field = function (name) { return card.querySelector('[data-room="' + name + '"]'); };
+  const prev = document.getElementById('room-prev');
+  const next = document.getElementById('room-next');
 
   const dateFormat = new Intl.DateTimeFormat('en-GB', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Karachi'
   });
   const showDate = function (time) { return isNaN(time) ? 'tba' : dateFormat.format(time) + ' PKT'; };
+  const timeOf = function (value) { return new Date(value).getTime(); };
 
-  setText(field('number'), '#' + pad(room.number || 0));
-  setText(field('name'), room.name || 'tba');
-  setText(field('opens'), showDate(opens));
-  setText(field('closes'), showDate(closes));
-
-  // Only accept real TryHackMe links, so a typo can't send people somewhere odd
-  const link = field('link');
-  const hasLink = /^https:\/\/tryhackme\.com\//.test(room.url || '');
-  if (hasLink) link.href = room.url;
-
-  function update() {
+  // live = opened and not closed yet. Which room to start on?
+  function startIndex() {
     const now = Date.now();
+    const live = rooms.findIndex(function (r) {
+      return timeOf(r.opens) <= now && (isNaN(timeOf(r.closes)) || now < timeOf(r.closes));
+    });
+    if (live !== -1) return live;
+    // nothing live: the first room that hasn't closed yet (the next one)
+    const upcoming = rooms.findIndex(function (r) { return !(timeOf(r.closes) <= now); });
+    return upcoming !== -1 ? upcoming : rooms.length - 1;
+  }
+
+  let index = startIndex();
+
+  function render() {
+    const room = rooms[index];
+    const opens = timeOf(room.opens);
+    const closes = timeOf(room.closes);
+    const now = Date.now();
+
+    setText(field('number'), '#' + pad(room.number || 0));
+    setText(field('name'), room.name || 'tba');
+    setText(field('opens'), showDate(opens));
+    setText(field('closes'), showDate(closes));
+    setText(field('position'), (index + 1) + ' / ' + rooms.length);
+
     let status;
     let live = false;
     if (isNaN(opens)) {
@@ -836,12 +855,38 @@ function initArenaRoom() {
     }
     setText(field('status'), status);
     card.classList.toggle('is-live', live);
+
+    // Only accept real TryHackMe links, so a typo can't send people somewhere odd
+    const link = field('link');
+    const hasLink = /^https:\/\/tryhackme\.com\//.test(room.url || '');
+    link.href = hasLink ? room.url : '#';
     link.hidden = !(live && hasLink);
     field('nolink').hidden = live && hasLink;
+
+    // Arrows: greyed out at either end of the list
+    if (prev) prev.disabled = index === 0;
+    if (next) next.disabled = index === rooms.length - 1;
   }
 
-  update();
-  setInterval(update, 30000);
+  function move(step) {
+    const target = index + step;
+    if (target < 0 || target >= rooms.length) return;
+    index = target;
+    render();
+  }
+
+  if (prev) prev.addEventListener('click', function () { move(-1); });
+  if (next) next.addEventListener('click', function () { move(1); });
+
+  // Left/right arrow keys work too while the card (or an arrow) has focus
+  card.addEventListener('keydown', function (event) {
+    if (event.target.closest('a')) return;
+    if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+  });
+
+  render();
+  setInterval(render, 30000);
 }
 
 // 3 days 4 hours -> "3d 04h"; under a day -> "4h 12m"

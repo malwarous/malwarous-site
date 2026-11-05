@@ -14,7 +14,7 @@ const MALWAROUS_CONFIG = {
   nextEventHours: 3,
   // Optional: when it ENDS. Set this and, once it starts, the timer counts
   // down to the end instead (e.g. a room that locks for results). '' = off.
-  nextEventEnd: '2026-11-06T10:00:00+05:00',  // Inbox Under Siege locks 48h after it opened
+  nextEventEnd: '2026-11-08T10:00:00+05:00',  // Inbox Under Siege locks 48h after it opened
 
   // ---- Arena rooms (arena.html) --------------------------------------------
   // One entry per room, oldest first. The arena card opens on the room

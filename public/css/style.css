@@ -2979,3 +2979,210 @@ details[open] > summary .collapse__icon::before {
     padding-block: var(--space-2);
   }
 }
+
+
+/* ==========================================================================
+   Gallery (gallery.html)
+   Photos get the indigo duotone (see .duotone above) in the grid, and turn
+   full colour on hover/focus and in the lightbox.
+   ========================================================================== */
+
+/* ---- all events ---- */
+.gallery-events {
+  border-top: var(--hairline);
+}
+
+.gallery-event {
+  border-bottom: var(--hairline);
+}
+
+.gallery-event__link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-5) var(--gutter);
+  color: var(--text);
+  text-decoration: none;
+}
+
+@media (min-width: 720px) {
+  .gallery-event__link {
+    grid-template-columns: 240px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-6);
+  }
+}
+
+.gallery-event__link:hover {
+  background: var(--surface);
+}
+
+.gallery-event__link:hover .gallery-event__title {
+  color: var(--brand-tint);
+}
+
+.gallery-event__cover {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--hairline);
+}
+
+.gallery-event__cover img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-event__link:hover .gallery-event__cover img,
+.gallery-event__link:focus-visible .gallery-event__cover img {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+.gallery-event__cover--empty {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.gallery-event__meta,
+.gallery__meta {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.gallery-event__title {
+  margin-top: var(--space-2);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+
+.gallery-event__count {
+  margin-top: var(--space-2);
+  color: var(--brand-tint);
+  font-size: var(--fs-sm);
+}
+
+/* ---- one event's photos ---- */
+.gallery__head {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--gutter) var(--space-5);
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: var(--space-2);
+  padding: 0 var(--gutter) var(--space-7);
+}
+
+@media (min-width: 960px) {
+  .gallery__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.gallery__thumb {
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  overflow: hidden;
+  border: var(--hairline);
+  cursor: zoom-in;
+}
+
+.gallery__thumb--wide {
+  grid-column: span 2;
+}
+
+.gallery__thumb--tall {
+  grid-row: span 2;
+  aspect-ratio: auto;
+}
+
+.gallery__thumb img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery__thumb:hover img,
+.gallery__thumb:focus-visible img {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+.gallery__missing {
+  margin: var(--space-5) auto 0;
+  max-width: calc(var(--container) - 2 * var(--gutter));
+}
+
+/* ---- lightbox ---- */
+.lightbox {
+  width: min(100vw - 2 * var(--space-4), 1280px);
+  max-height: calc(100vh - 2 * var(--space-4));
+  padding: 0;
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.lightbox::backdrop {
+  background: rgba(14, 14, 17, 0.92); /* --bg, nearly opaque */
+}
+
+.lightbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-xs);
+}
+
+.lightbox__img {
+  width: 100%;
+  max-height: calc(100vh - 140px);
+  object-fit: contain;
+  background: var(--surface);
+}
+
+.lightbox__count {
+  color: var(--muted);
+}
+
+.lightbox__caption {
+  flex: 1;
+  color: var(--muted);
+  font-family: var(--font-read);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+
+.lightbox__btn {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: var(--hairline);
+  border-color: var(--muted);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lightbox__btn:hover {
+  background: var(--brand-tint);
+  border-color: var(--brand-tint);
+  color: var(--bg);
+}
+
+/* Phones: events without photos get a slim bar instead of a big empty box */
+@media (max-width: 719px) {
+  .gallery-event__cover--empty {
+    aspect-ratio: auto;
+    min-height: 3rem;
+  }
+}

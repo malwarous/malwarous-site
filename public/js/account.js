@@ -117,8 +117,9 @@ function friendlyError(error) {
   if (/already registered/i.test(text)) return 'that email already has an account. try logging in.';
   if (/rate limit|too many/i.test(text) || status === 429) return 'too many attempts. wait a minute and try again.';
   if (/database error saving new user/i.test(text)) return "that handle or TryHackMe username can't be used (it may be taken). try another.";
+  if (/provider is not enabled|unsupported provider/i.test(text)) return 'that sign-in provider is not enabled yet. use email for now.';
   // Our own database rules ("slow down: ...", "already applied: ...") are already readable
-  if (/^(slow down|already applied|closed|full)/i.test(text)) return text;
+  if (/^(slow down|already applied|closed|full|that handle|this account)/i.test(text)) return text;
   if (code === '23505' && /registrations/i.test(text)) return "you're already registered for this event.";
   if (code === '23514') return 'something you entered is too short, too long, or in the wrong format.';
   return text ? text.toLowerCase() : 'something went wrong. try again.';
@@ -140,7 +141,7 @@ const Account = {
     }
   },
 
-  // The logged-in member as { id, email, handle }, or null
+  // The logged-in member as { id, email, handle, autoHandle }, or null
   getCurrentUser: async function () {
     const client = await getClient();
     if (!client) return null;
@@ -150,10 +151,38 @@ const Account = {
     if (!user) return null;
 
     if (!cachedProfile || cachedProfile.userId !== user.id) {
-      const profile = await client.from('profiles').select('handle').eq('id', user.id).maybeSingle();
-      cachedProfile = { userId: user.id, handle: profile.data ? profile.data.handle : null };
+      // auto_handle exists after supabase/003-oauth.sql. Falling back keeps the
+      // site working on a database that hasn't run the migration yet.
+      let profile = await client
+        .from('profiles')
+        .select('handle, auto_handle')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (profile.error && /auto_handle/i.test(profile.error.message || '')) {
+        profile = await client.from('profiles').select('handle').eq('id', user.id).maybeSingle();
+      }
+
+      // Last-resort repair for an auth user whose profile row is missing.
+      if (!profile.error && !profile.data) {
+        const repair = await client.rpc('ensure_profile');
+        if (!repair.error) {
+          profile = await client.from('profiles').select('handle, auto_handle').eq('id', user.id).maybeSingle();
+          if (profile.error) profile = await client.from('profiles').select('handle').eq('id', user.id).maybeSingle();
+        }
+      }
+
+      cachedProfile = {
+        userId: user.id,
+        handle: profile.data ? profile.data.handle : null,
+        autoHandle: Boolean(profile.data && profile.data.auto_handle)
+      };
     }
-    return { id: user.id, email: user.email, handle: cachedProfile.handle };
+    return {
+      id: user.id,
+      email: user.email,
+      handle: cachedProfile.handle,
+      autoHandle: cachedProfile.autoHandle
+    };
   },
 
   // thmUsername is optional ('' = none)
@@ -195,6 +224,46 @@ const Account = {
     const { error } = await client.auth.signInWithPassword({ email: email, password: password });
     if (error) return fail(friendlyError(error));
     return { ok: true };
+  },
+
+  // Google / GitHub. Supabase redirects the whole page, so this usually
+  // never returns: the browser leaves for the provider and comes back.
+  signInWithOAuth: async function (provider) {
+    const client = await getClient();
+    if (!client) return offline();
+    if (provider !== 'google' && provider !== 'github') {
+      return fail('that sign-in provider is not supported.');
+    }
+
+    const redirect = new URL('login.html', window.location.href);
+    if (nextPage()) redirect.searchParams.set('next', nextPage());
+
+    const { error } = await client.auth.signInWithOAuth({
+      provider: provider,
+      options: { redirectTo: redirect.href }
+    });
+    if (error) return fail(friendlyError(error));
+    return { ok: true };
+  },
+
+  // OAuth accounts start with a generated handle so signup can never fail on
+  // a missing username. This lets the member replace it once.
+  claimHandle: async function (handle) {
+    const client = await getClient();
+    if (!client) return offline();
+
+    const wanted = String(handle || '').trim().toLowerCase();
+    if (!HANDLE_PATTERN.test(wanted)) {
+      return fail('handles are 3 to 20 characters: a-z, 0-9, _ and -.');
+    }
+
+    const { data, error } = await client.rpc('claim_handle', { p_handle: wanted });
+    if (error) return fail(friendlyError(error));
+
+    const { data: sessionData } = await client.auth.getSession();
+    const id = sessionData.session ? sessionData.session.user.id : null;
+    if (id) cachedProfile = { userId: id, handle: data || wanted, autoHandle: false };
+    return { ok: true, handle: data || wanted };
   },
 
   signOut: async function () {
@@ -464,6 +533,27 @@ function nextPage() {
   return /^[a-z0-9-]+\.html(\?event=[a-z0-9-]+)?$/.test(next) ? next : '';
 }
 
+// Google / GitHub buttons on login and signup.
+function initOAuthButtons() {
+  document.querySelectorAll('[data-oauth]').forEach(function (button) {
+    button.addEventListener('click', async function () {
+      if (!Account.isConfigured()) {
+        showNotice("accounts aren't open yet. check back soon.");
+        return;
+      }
+      const original = button.innerHTML;
+      button.disabled = true;
+      button.textContent = '> connecting...';
+      const result = await Account.signInWithOAuth(button.dataset.oauth);
+      if (!result.ok) {
+        button.disabled = false;
+        button.innerHTML = original;
+        showNotice(result.message);
+      }
+    });
+  });
+}
+
 // [ show ] / [ hide ] buttons next to password fields
 function initPasswordToggles() {
   document.querySelectorAll('[data-password-toggle]').forEach(function (button) {
@@ -488,18 +578,42 @@ async function initLoginPage() {
 
   const signedIn = document.getElementById('signed-in');
   const switchLine = document.getElementById('auth-switch');
+  const claim = document.getElementById('claim-handle');
+  const oauthBox = document.getElementById('auth-oauth');
 
   function showSignedIn(user) {
     document.getElementById('signed-in-handle').textContent = '@' + (user.handle || 'member');
     form.hidden = true;
     switchLine.hidden = true;
     signedIn.hidden = false;
+    if (claim) claim.hidden = true;
+    if (oauthBox) oauthBox.hidden = true;
   }
 
   function showForm() {
     form.hidden = false;
     switchLine.hidden = false;
     signedIn.hidden = true;
+    if (claim) claim.hidden = true;
+    if (oauthBox) oauthBox.hidden = false;
+  }
+
+  // OAuth users get a generated handle. Ask them to choose the public one
+  // before they wander off, but never trap them here.
+  function showClaim(user) {
+    if (!claim) return showSignedIn(user);
+    form.hidden = true;
+    switchLine.hidden = true;
+    signedIn.hidden = true;
+    if (oauthBox) oauthBox.hidden = true;
+    claim.hidden = false;
+    document.getElementById('claim-current').textContent = '@' + (user.handle || 'member');
+    const skip = document.getElementById('claim-skip');
+    if (skip) skip.href = nextPage() || 'index.html';
+    const input = claim.querySelector('input[name="handle"]');
+    if (input) input.value = '';
+    claim.focus();
+    if (input) input.focus();
   }
 
   if (!Account.isConfigured()) {
@@ -517,15 +631,51 @@ async function initLoginPage() {
     if (signupLink) signupLink.href = 'signup.html?next=' + encodeURIComponent(nextPage());
   }
 
+  // An OAuth provider can send an error back in the address.
+  const query = new URLSearchParams(window.location.search);
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const oauthError = query.get('error_description') || hash.get('error_description');
+  if (oauthError) showNotice(decodeURIComponent(oauthError.replace(/\+/g, ' ')));
+
   const user = await Account.getCurrentUser();
   if (user) {
-    if (fromEmailLink) showNotice('email confirmed. welcome to malwarous.');
-    // Logged in and on the way somewhere (e.g. registering)? Go straight there.
-    if (nextPage()) {
+    if (fromEmailLink && !user.autoHandle) showNotice('email confirmed. welcome to malwarous.');
+    if (user.autoHandle) {
+      showClaim(user);
+    } else if (nextPage()) {
+      // Logged in and on the way somewhere (e.g. registering)? Go there.
       window.location.href = nextPage();
       return;
+    } else {
+      showSignedIn(user);
     }
-    showSignedIn(user);
+  }
+
+  if (claim) {
+    const claimForm = claim.querySelector('form');
+    const claimInput = claimForm ? claimForm.elements.handle : null;
+    if (claimForm && claimInput) {
+      claimInput.addEventListener('input', function () {
+        claimInput.value = claimInput.value.toLowerCase();
+      });
+      claimForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearFormError(claimForm);
+        setBusy(claimForm, true, '> claiming...');
+        const result = await Account.claimHandle(claimInput.value);
+        setBusy(claimForm, false);
+        if (!result.ok) return showFormError(claimForm, result.message, claimInput);
+        // Use the new handle everywhere, then finish the journey.
+        const fresh = await Account.getCurrentUser();
+        if (nextPage()) {
+          window.location.href = nextPage();
+          return;
+        }
+        showSignedIn(fresh || { handle: result.handle });
+        showNotice('handle claimed. welcome to malwarous.');
+        refreshStatusUser();
+      });
+    }
   }
 
   form.addEventListener('submit', async function (event) {
@@ -1096,6 +1246,7 @@ async function initRegisterPage() {
 
 document.addEventListener('DOMContentLoaded', function () {
   initPasswordToggles();
+  initOAuthButtons();
   initLoginPage();
   initSignupPage();
   initWriteupsPage();

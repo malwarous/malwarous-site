@@ -24,6 +24,16 @@
    drawn. That lets us turn the boot screen on without a flash of content.
    -------------------------------------------------------------------------- */
 
+// Theme is chosen before the first paint so there is never a flash of the
+// wrong palette. ui.js adds the control that changes it.
+(function initThemeEarly() {
+  let saved = null;
+  try { saved = localStorage.getItem('malwarous:theme'); } catch (error) { /* storage off */ }
+  const theme = saved === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+})();
+
 const root = document.documentElement;
 root.classList.add('js'); // tells the CSS that JavaScript is running
 
@@ -43,6 +53,8 @@ if (shouldBoot) {
 document.addEventListener('DOMContentLoaded', function () {
   initNav();
   initCountdown();
+  initEventStatus();
+  initEventCalendar();
   initConsole();
   initFilters();
   initNotFound();
@@ -252,6 +264,8 @@ function initNav() {
 
 function initCountdown() {
   const timeEl = document.getElementById('next-event-time');
+  const lockEl = document.getElementById('next-event-end');
+  const lockRow = document.getElementById('event-lock-row');
   const panel = document.getElementById('event-panel');
   const statusEl = document.getElementById('status-countdown');
   const clockEl = document.getElementById('status-clock');
@@ -264,10 +278,34 @@ function initCountdown() {
     seconds: document.querySelector('[data-countdown="seconds"]')
   };
 
-  const start = MALWAROUS_CONFIG.nextEventStart;
-  const target = new Date(start).getTime();
+  // Everything readable on the page is generated from config.js, so changing
+  // the date there can never leave the visible date behind.
+  const startValue = MALWAROUS_CONFIG.nextEventStart;
+  const endValue = MALWAROUS_CONFIG.nextEventEnd;
+  const target = configDate(startValue);
+  const end = configDate(endValue);
   const liveFor = (MALWAROUS_CONFIG.nextEventHours || 3) * 3600 * 1000;
-  if (timeEl && start) timeEl.setAttribute('datetime', start); // keeps the HTML accurate
+
+  if (timeEl && !isNaN(target)) {
+    timeEl.setAttribute('datetime', startValue);
+    timeEl.textContent = formatPkt(target);
+  }
+
+  if (lockEl) {
+    if (!isNaN(end)) {
+      lockEl.setAttribute('datetime', endValue);
+      lockEl.textContent = formatPkt(end);
+    } else if (lockRow) {
+      lockRow.hidden = true;
+    }
+  }
+
+  // Keep the registration button pointed at the current event, not a slug
+  // typed into the HTML months ago.
+  const registerLink = document.getElementById('next-event-register');
+  if (registerLink && MALWAROUS_CONFIG.nextEventSlug) {
+    registerLink.href = 'register.html?event=' + encodeURIComponent(MALWAROUS_CONFIG.nextEventSlug);
+  }
 
   // Pakistan time for the status bar clock
   const pktFormat = new Intl.DateTimeFormat('en-GB', {
@@ -287,10 +325,6 @@ function initCountdown() {
     if (panel) panel.classList.remove('is-live');
   }
 
-  // Optional end time (nextEventEnd in config.js): once the event has
-  // started, the timer counts DOWN to it, e.g. "room locks in 47:59:12".
-  const end = new Date(MALWAROUS_CONFIG.nextEventEnd).getTime();
-
   function showDigits(t) {
     setText(parts.days, pad(t.days));
     setText(parts.hours, pad(t.hours));
@@ -299,15 +333,19 @@ function initCountdown() {
   }
 
   function tick() {
+    const now = Date.now();
     if (clockEl) clockEl.textContent = pktFormat.format(new Date());
 
-    if (!isNaN(target) && !isNaN(end) && Date.now() >= target) {
-      const left = splitTime(end - Date.now());
+    // Event is live and has an explicit end: count down to the lock.
+    if (!isNaN(target) && !isNaN(end) && now >= target) {
+      const left = splitTime(end - now);
       if (left.done) {
         showDigits({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         setText(labelEl, 'room locked · results coming soon');
         setText(statusEl, 'locked');
         if (panel) panel.classList.remove('is-live');
+        // After a day of "locked", the slot is free for the next event.
+        if (now > end + 24 * 3600 * 1000) showTba();
       } else {
         showDigits(left);
         setText(labelEl, 'live · room locks in');
@@ -318,12 +356,12 @@ function initCountdown() {
     }
 
     // No date set yet, or the event is over: "tba" until there's a new date
-    if (isNaN(target) || Date.now() > target + liveFor) {
+    if (isNaN(target) || now > target + liveFor) {
       showTba();
       return;
     }
 
-    const left = splitTime(target - Date.now());
+    const left = splitTime(target - now);
 
     if (left.done) {
       setText(parts.days, '00');
@@ -346,6 +384,147 @@ function initCountdown() {
 
   tick();
   setInterval(tick, 1000);
+}
+
+// An ISO string from config.js -> milliseconds, or NaN when unset.
+function configDate(value) {
+  return typeof value === 'string' && value.trim() ? new Date(value).getTime() : NaN;
+}
+
+// 4 Nov 2026, 10:00 AM PKT
+function formatPkt(ms) {
+  const text = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Karachi'
+  }).format(new Date(ms));
+  return text.replace(/\b(am|pm)\b/i, function (match) { return match.toUpperCase(); }) + ' PKT';
+}
+
+// 4 Nov 2026
+function formatPktDay(ms) {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Asia/Karachi'
+  }).format(new Date(ms));
+}
+
+// Keeps every event row that opts in with data-event-start in sync with the
+// clock. The homepage and /events can never say "live" after the room closed.
+function initEventStatus() {
+  const rows = document.querySelectorAll('[data-event-start]');
+  if (!rows.length) return;
+
+  // A row can point at the shared event ("nextEventStart") so changing
+  // config.js updates every table at once, or carry its own ISO date.
+  function eventDate(value) {
+    if (value === 'nextEventStart') return configDate(MALWAROUS_CONFIG.nextEventStart);
+    if (value === 'nextEventEnd') return configDate(MALWAROUS_CONFIG.nextEventEnd);
+    return configDate(value);
+  }
+
+  function display() {
+    const now = Date.now();
+    rows.forEach(function (row) {
+      const start = eventDate(row.dataset.eventStart);
+      const end = eventDate(row.dataset.eventEnd);
+      if (isNaN(start)) return;
+
+      const dateCell = row.querySelector('.events-table__date');
+      if (dateCell) dateCell.textContent = formatPktDay(start);
+
+      let status = row.querySelector('.status');
+      if (!status) {
+        const cell = row.querySelector('.events-table__status');
+        if (!cell) return;
+        status = document.createElement('span');
+        cell.appendChild(status);
+      }
+
+      let label = 'completed';
+      let className = 'status status--completed';
+      if (now < start) {
+        label = 'open';
+        className = 'status status--open';
+      } else if (isNaN(end) || now < end) {
+        label = 'live';
+        className = 'status status--live';
+      }
+      status.className = className;
+      status.textContent = label;
+    });
+  }
+
+  display();
+  setInterval(display, 60000);
+}
+
+// "add to calendar" writes a real .ics file from config.js. No server needed.
+function initEventCalendar() {
+  const button = document.querySelector('[data-add-calendar]');
+  if (!button) return;
+
+  button.addEventListener('click', function () {
+    const start = configDate(MALWAROUS_CONFIG.nextEventStart);
+    if (isNaN(start)) {
+      notify('no event date is set yet.');
+      return;
+    }
+    let end = configDate(MALWAROUS_CONFIG.nextEventEnd);
+    if (isNaN(end) || end <= start) end = start + (MALWAROUS_CONFIG.nextEventHours || 3) * 3600 * 1000;
+
+    const title = MALWAROUS_CONFIG.nextEventTitle || 'Malwarous event';
+    const description = MALWAROUS_CONFIG.nextEventDescription || 'A Malwarous event. Break things, with permission.';
+    const location = MALWAROUS_CONFIG.nextEventVenue || 'Online';
+    const url = MALWAROUS_CONFIG.nextEventUrl || 'https://malwarous.dev/';
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Malwarous//Events//EN',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      'UID:malwarous-' + start + '@malwarous.dev',
+      'DTSTAMP:' + stamp,
+      'DTSTART:' + icsDate(start),
+      'DTEND:' + icsDate(end),
+      'SUMMARY:' + icsEscape(title),
+      'DESCRIPTION:' + icsEscape(description),
+      'LOCATION:' + icsEscape(location),
+      'URL:' + url,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'malwarous-next-event.ics';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+    notify('calendar file downloaded.');
+  });
+}
+
+function icsDate(ms) {
+  return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+function icsEscape(text) {
+  return String(text).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+}
+
+// Use the experience layer's toast when it is available.
+function notify(message) {
+  if (window.MalwarousUI && window.MalwarousUI.toast) window.MalwarousUI.toast(message);
 }
 
 // Turns milliseconds into days / hours / minutes / seconds

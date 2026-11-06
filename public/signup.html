@@ -15,9 +15,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/experience.css">
 
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/ui.js" defer></script>
   <script src="js/account.js" defer></script> <!-- the signup logic is in account.js, section 6 -->
 </head>
 
@@ -81,6 +83,21 @@
             <!-- Messages like "accounts aren't open yet." -->
             <p class="notice" id="auth-notice" role="status" hidden></p>
 
+            <div class="oauth" id="auth-oauth">
+              <div class="oauth__buttons">
+                <button class="oauth-btn" type="button" data-oauth="google" aria-label="Sign up with Google">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8H1.4v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.4 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8Z"/></svg>
+                  sign_up_with_google
+                </button>
+                <button class="oauth-btn" type="button" data-oauth="github" aria-label="Sign up with GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+                  sign_up_with_github
+                </button>
+              </div>
+              <p class="oauth__divider">or use email</p>
+              <p class="oauth__note">OAuth is quicker and skips the confirmation email. We'll ask you to pick a public handle on the next screen.</p>
+            </div>
+
             <form class="form" id="signup-form" novalidate>
               <div class="field">
                 <label for="signup-handle">handle</label>
@@ -110,7 +127,7 @@
 
               <label class="check">
                 <input type="checkbox" name="agree" required>
-                <span>I'll only hack with permission, and I'll follow the <a href="#">code of conduct</a>.</span> <!-- later: code-of-conduct.html -->
+                <span>I'll only hack with permission, and I'll follow the <a href="code-of-conduct.html">code of conduct</a>.</span>
               </label>
 
               <!-- Errors appear here, and are read out by screen readers -->
@@ -161,8 +178,8 @@
         <nav class="footer__col" aria-label="Community">
           <p class="footer__label">// community</p>
           <ul>
-            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
-            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
             <li><a href="index.html#partners">sponsors</a></li>
@@ -171,10 +188,9 @@
         <nav class="footer__col" aria-label="Social profiles">
           <p class="footer__label">// elsewhere</p>
           <ul>
-            <li><a href="#">whatsapp</a></li>  <!-- TODO: [WHATSAPP COMMUNITY LINK] -->
-            <li><a href="https://github.com/malwarous">github</a></li>
-            <li><a href="#">linkedin</a></li>  <!-- TODO: [LINKEDIN LINK] -->
-            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
+            <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
+            <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
           </ul>
         </nav>
       </div>

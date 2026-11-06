@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/experience.css">
 
   <!-- Scripts. config.js holds the settings you edit. main.js is loaded here
        in <head> (not at the end of <body>) on purpose: its first few lines
@@ -36,6 +37,7 @@
        loading (see "DOMContentLoaded"). account.js handles Supabase. -->
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/ui.js" defer></script>
   <script src="js/account.js" defer></script>
 </head>
 
@@ -135,12 +137,15 @@
           <ul class="hero__meta">
             <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> 33.75°N 73.14°E</li>
             <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> islamabad, pk</li>
-            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> est. [YEAR]</li>
+            <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> est. 2026</li>
           </ul>
         </div>
 
-        <!-- ASCII star: only shown on large screens (see .hero__art in style.css) -->
+        <!-- The star: a static ASCII fallback, replaced by an interactive
+             canvas when JavaScript and motion are available. Only shown on
+             large screens (see .hero__art in style.css). -->
         <figure class="hero__art" aria-hidden="true">
+          <div class="star-stage" data-star-stage>
 <pre class="ascii-star">
                     .
                     |
@@ -162,7 +167,10 @@
                     |
                     '
 </pre>
-          <figcaption>fig. 01 — the star from the o</figcaption>
+            <canvas class="star-canvas" data-star-canvas></canvas>
+            <p class="star-stage__hint">move to disturb &middot; click to pulse</p>
+          </div>
+          <figcaption class="star-stage__telemetry"><span class="star-stage__live">&bull; live</span> &middot; <b data-star-count>--</b> glyphs &middot; fig. 01 &mdash; the star from the o</figcaption>
         </figure>
 
       </div>
@@ -189,8 +197,12 @@
             <dl class="kv">
               <div class="kv__row">
                 <dt>date</dt>
-                <!-- The time itself is set in js/config.js; this is just the readable text -->
+                <!-- Both the date and the lock time are generated from js/config.js -->
                 <dd><time id="next-event-time">4 Nov 2026, 10:00 AM PKT</time></dd>
+              </div>
+              <div class="kv__row" id="event-lock-row">
+                <dt>locks</dt>
+                <dd><time id="next-event-end">8 Nov 2026, 10:00 AM PKT</time></dd>
               </div>
               <div class="kv__row">
                 <dt>venue</dt>
@@ -223,7 +235,8 @@
             <!-- The room for this session. Opens TryHackMe in a new tab. -->
             <div class="event-panel__actions">
               <a class="btn btn--primary btn--wide" href="https://tryhackme.com/jr/inboxundersiege" target="_blank" rel="noopener" aria-label="play inbox under siege on tryhackme"><span class="btn__prompt" aria-hidden="true">&gt;</span> play_inbox_under_siege</a>
-              <a class="btn btn--wide" href="register.html?event=info-session-nov-2026"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
+              <a class="btn btn--wide" id="next-event-register" href="register.html?event=info-session-nov-2026"><span aria-hidden="true">[</span> register <span aria-hidden="true">]</span></a>
+              <button class="btn btn--wide" type="button" data-add-calendar><span aria-hidden="true">[</span> add_to_calendar <span aria-hidden="true">]</span></button>
             </div>
           </div>
         </div>
@@ -332,7 +345,7 @@
               <td class="events-table__sev"><span class="sev sev--low"><span class="sev__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>low</span></td>
               <td class="events-table__status"><span class="status status--completed">completed</span></td>
             </tr>
-            <tr>
+            <tr data-event-start="nextEventStart" data-event-end="nextEventEnd">
               <td class="events-table__date">4 Nov 2026</td>
               <td class="events-table__type">online</td>
               <td class="events-table__title"><a href="#next-event">Information Session: Malwarous Website and Online Weekly CTFs</a> <span class="events-table__room">· room: <a href="https://tryhackme.com/jr/inboxundersiege" target="_blank" rel="noopener">Inbox Under Siege</a></span></td>
@@ -556,8 +569,7 @@
           <p class="read join__text">No experience needed. Come to a workshop, play a CTF, or lurk in our WhatsApp community until you're ready. If you can open a terminal — or want to learn how — you're in.</p>
           <div class="join__actions">
             <a class="btn btn--primary" href="signup.html" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
-            <!-- TODO: replace # with [WHATSAPP COMMUNITY LINK] -->
-            <a class="btn" href="#"><span aria-hidden="true">[</span> whatsapp community <span aria-hidden="true">]</span></a>
+            <a class="btn" href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener"><span aria-hidden="true">[</span> whatsapp community <span aria-hidden="true">]</span></a>
           </div>
           <p class="join__note">already have an account? <a href="login.html">log in -&gt;</a> · room links are also posted in our WhatsApp community</p>
         </div>
@@ -579,8 +591,7 @@
           <div class="split__aside">
             <p class="lede">This space is unclaimed.</p>
             <p class="read">We're looking for partners to fund prizes, contribute challenges, or run a workshop with us. If your team hires people who like taking things apart, we should talk.</p>
-            <!-- TODO: replace # with mailto:[SPONSOR EMAIL] -->
-            <a class="btn" href="#"><span aria-hidden="true">[</span> get in touch <span aria-hidden="true">]</span></a>
+            <a class="btn" href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener"><span aria-hidden="true">[</span> talk to the team <span aria-hidden="true">]</span></a>
           </div>
 
           <div class="split__main">
@@ -626,8 +637,8 @@
         <nav class="footer__col" aria-label="Community">
           <p class="footer__label">// community</p>
           <ul>
-            <li><a href="#">code of conduct</a></li> <!-- later: code-of-conduct.html -->
-            <li><a href="#">contact</a></li>         <!-- TODO: mailto:[EMAIL] -->
+            <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
             <li><a href="#partners">sponsors</a></li>
@@ -636,11 +647,9 @@
         <nav class="footer__col" aria-label="Social profiles">
           <p class="footer__label">// elsewhere</p>
           <ul>
-            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs">whatsapp</a></li>  <!-- TODO: [WHATSAPP COMMUNITY LINK] -->
-            <li><a href="https://github.com/malwarous">github</a></li>
-            <li><a href="https://linkedin.com/company/malwarous">linkedin</a></li>
-
-            <li><a href="#">instagram</a></li> <!-- TODO: [INSTAGRAM LINK] -->
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
+            <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
+            <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
           </ul>
         </nav>
       </div>

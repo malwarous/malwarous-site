@@ -1,0 +1,898 @@
+/* ==========================================================================
+   Malwarous — experience.css
+   Motion, theme, cursor, command palette and the interactive star.
+   Loaded after style.css. Everything here is optional: if JS is off, the
+   site keeps its original Night Ops look and behaviour.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Theme tokens
+   ========================================================================== */
+
+:root {
+  --on-brand: #E7E5DF;                 /* text placed on an indigo surface */
+  --backdrop: rgba(14, 14, 17, 0.92);  /* lightbox / palette scrim */
+}
+
+:root[data-theme="light"] {
+  --bg: #F5F3EC;          /* warm paper */
+  --surface: #ECE9DF;
+  --line: #D7D2C5;
+  --text: #17171B;
+  --muted: #62606A;
+  --brand: #3F2DB5;
+  --brand-tint: #4A35C8;
+  --live: #A65C00;
+  --critical: #C3272B;
+  --on-brand: #FFFFFF;
+  --backdrop: rgba(245, 243, 236, 0.94);
+}
+
+/* Smooth the swap when View Transitions are unavailable. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 360ms ease, color 360ms ease, border-color 360ms ease, fill 360ms ease, stroke 360ms ease !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+/* The old rules referred to --text; on light mode that is now dark. */
+.btn--primary,
+.statusbar__session,
+.video__label,
+.skip-link {
+  color: var(--on-brand);
+}
+
+.btn--primary .btn__prompt,
+.statusbar__session .statusbar__win {
+  color: var(--on-brand);
+}
+
+::selection {
+  color: var(--on-brand);
+}
+
+.lightbox::backdrop {
+  background: var(--backdrop);
+}
+
+[data-theme="light"] .duotone img {
+  filter: grayscale(100%) contrast(1.08) brightness(1.04);
+}
+
+[data-theme="light"] .palette__box {
+  box-shadow: 0 24px 80px rgba(40, 36, 28, 0.18);
+}
+
+
+/* ==========================================================================
+   2. Theme toggle
+   ========================================================================== */
+
+.theme-toggle {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--speed), border-color var(--speed), background-color var(--speed);
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--live);
+  border-color: var(--live);
+}
+
+.theme-toggle__icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.theme-toggle__icon svg {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  transition: opacity 240ms ease, transform 420ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.theme-toggle__sun { opacity: 1; transform: rotate(0) scale(1); }
+.theme-toggle__moon { opacity: 0; transform: rotate(-75deg) scale(.4); }
+
+[data-theme="light"] .theme-toggle__sun { opacity: 0; transform: rotate(75deg) scale(.4); }
+[data-theme="light"] .theme-toggle__moon { opacity: 1; transform: rotate(0) scale(1); }
+
+.theme-toggle.is-spinning .theme-toggle__icon svg {
+  animation: theme-spin 500ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.theme-toggle__beam {
+  position: absolute;
+  inset: 0;
+  background: var(--live);
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.theme-toggle:hover .theme-toggle__beam { opacity: .08; }
+
+.theme-toggle--floating {
+  position: fixed;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 55;
+  background: var(--bg);
+}
+
+@keyframes theme-spin {
+  from { transform: rotate(-90deg) scale(.5); }
+  to { transform: rotate(0) scale(1); }
+}
+
+
+/* ==========================================================================
+   3. Scroll progress + page motion
+   ========================================================================== */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 55;
+  pointer-events: none;
+  background: transparent;
+}
+
+.scroll-progress i {
+  display: block;
+  height: 100%;
+  background: var(--brand-tint);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 90ms linear;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js main {
+    animation: page-in 420ms ease both;
+  }
+
+  .js .hero__kicker,
+  .js .hero__lede,
+  .js .hero__actions,
+  .js .hero__meta {
+    animation: rise-in 760ms cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  .js .hero__kicker { animation-delay: 80ms; }
+  .js .hero__lede { animation-delay: 220ms; }
+  .js .hero__actions { animation-delay: 320ms; }
+  .js .hero__meta { animation-delay: 420ms; }
+}
+
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 640ms cubic-bezier(.2, .8, .2, 1),
+    transform 640ms cubic-bezier(.2, .8, .2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Table rows look better with a smaller travel. */
+tr.reveal { transform: translateY(8px); }
+
+/* A tiny hover lift for rows that already have a hover background. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .past,
+  .gallery-event,
+  .member,
+  .log__row {
+    transition: background-color var(--speed), transform 220ms ease;
+  }
+
+  .past:hover,
+  .gallery-event:hover,
+  .member:hover,
+  .log__row:hover {
+    transform: translateX(2px);
+  }
+}
+
+
+/* ==========================================================================
+   4. Magnetic buttons
+   ========================================================================== */
+
+.is-magnetic {
+  transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
+  transition:
+    transform 180ms ease-out,
+    background-color var(--speed),
+    color var(--speed),
+    border-color var(--speed);
+  will-change: transform;
+}
+
+
+/* ==========================================================================
+   5. Site cursor
+   ========================================================================== */
+
+.site-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 130ms linear;
+}
+
+.site-cursor.is-visible { opacity: 1; }
+
+.site-cursor__trail {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .55;
+}
+
+.site-cursor__ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--brand-tint);
+  transition:
+    width 180ms ease,
+    height 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease;
+  will-change: transform;
+}
+
+.site-cursor__dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  fill: var(--live);
+  will-change: transform;
+}
+
+.site-cursor__corner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border: 0 solid var(--live);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.site-cursor__corner--tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.site-cursor__corner--tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+.site-cursor__corner--bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+.site-cursor__corner--br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.site-cursor__label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%);
+  color: var(--live);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.site-cursor.is-active .site-cursor__ring {
+  width: 40px;
+  height: 40px;
+  border-color: var(--live);
+  background: color-mix(in srgb, var(--live) 7%, transparent);
+}
+
+.site-cursor.is-active .site-cursor__corner,
+.site-cursor.is-active .site-cursor__label {
+  opacity: 1;
+}
+
+.site-cursor.is-pressed .site-cursor__ring {
+  width: 15px;
+  height: 15px;
+  border-color: var(--live);
+}
+
+.site-cursor.is-pressed .site-cursor__dot {
+  fill: var(--brand-tint);
+}
+
+html.has-site-cursor,
+html.has-site-cursor * {
+  cursor: none !important;
+}
+
+/* Do not hide the cursor over system dialogs or iframes. */
+html.has-site-cursor iframe { cursor: auto !important; }
+
+
+/* ==========================================================================
+   6. Status bar additions
+   ========================================================================== */
+
+.statusbar__visitors {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.statusbar__pulse {
+  width: 6px;
+  height: 6px;
+  background: var(--live);
+  animation: status-pulse 2.2s ease-in-out infinite;
+}
+
+.statusbar__visitors-label { color: var(--muted); }
+
+.statusbar__palette {
+  padding: 0 var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.statusbar__palette:hover { color: var(--live); }
+
+.statusbar__palette kbd {
+  padding: 0 var(--space-1);
+  border: var(--hairline);
+  border-color: var(--muted);
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: .35; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 1079px) {
+  .statusbar__palette { display: none; }
+}
+
+@media (max-width: 719px) {
+  .statusbar__visitors-label { display: none; }
+}
+
+
+/* ==========================================================================
+   7. Command palette
+   ========================================================================== */
+
+.palette {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: grid;
+  place-items: start center;
+  padding: clamp(56px, 11vh, 110px) var(--space-4) var(--space-4);
+}
+
+.palette[hidden] { display: none; }
+
+html.palette-open { overflow: hidden; }
+
+.palette__scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.palette__box {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: min(70vh, 620px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--brand-tint);
+  background: var(--bg);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 170ms ease, transform 220ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.palette.is-open .palette__box {
+  opacity: 1;
+  transform: none;
+}
+
+.palette__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.palette__close {
+  min-height: 30px;
+  padding: 0 var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.palette__close:hover { color: var(--text); }
+
+.palette__search {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  padding: var(--space-4) var(--space-4);
+  border-bottom: var(--hairline);
+  color: var(--brand-tint);
+}
+
+.palette__search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  outline: none;
+  caret-color: var(--live);
+}
+
+.palette__search input::placeholder { color: var(--muted); }
+
+.palette__list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.palette__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--hairline);
+  cursor: pointer;
+}
+
+.palette__item:last-child { border-bottom: 0; }
+
+.palette__item[aria-selected="true"],
+.palette__item:hover {
+  background: var(--surface);
+}
+
+.palette__item[aria-selected="true"] .palette__label {
+  color: var(--brand-tint);
+}
+
+.palette__item[aria-selected="true"]::before {
+  content: ">";
+  margin-right: calc(-1 * var(--space-3));
+  color: var(--live);
+}
+
+.palette__label {
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+
+.palette__hint-text {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.palette__empty {
+  padding: var(--space-5) var(--space-4);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.palette__hint {
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--hairline);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.palette__hint kbd {
+  padding: 0 4px;
+  border: var(--hairline);
+  color: var(--text);
+}
+
+.palette__hint span { padding: 0 var(--space-1); }
+
+@media (max-width: 520px) {
+  .palette { padding: var(--space-4); }
+  .palette__hint { display: none; }
+}
+
+
+/* ==========================================================================
+   8. Interactive star
+   ========================================================================== */
+
+.star-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  flex: 1;
+  min-height: 380px;
+}
+
+.star-stage .ascii-star {
+  position: relative;
+  z-index: 1;
+  transition: opacity 420ms ease;
+}
+
+.star-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.star-stage.is-live .ascii-star {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.star-stage.is-live .star-canvas {
+  display: block;
+  touch-action: none;
+}
+
+.star-stage__hint {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 3;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.star-stage.is-live .star-stage__hint { opacity: 1; }
+
+.star-stage__telemetry {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.star-stage__telemetry b {
+  color: var(--brand-tint);
+  font-weight: 500;
+}
+
+.star-stage__live {
+  color: var(--live);
+}
+
+
+/* ==========================================================================
+   9. OAuth buttons
+   ========================================================================== */
+
+.oauth {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.oauth__buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.oauth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--muted);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.2;
+  cursor: pointer;
+  transition: color var(--speed), border-color var(--speed), background-color var(--speed);
+}
+
+.oauth-btn:hover,
+.oauth-btn:focus-visible {
+  border-color: var(--brand-tint);
+  background: var(--surface);
+  color: var(--brand-tint);
+}
+
+.oauth-btn:disabled {
+  opacity: .55;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.oauth-btn svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.oauth__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.oauth__divider::before,
+.oauth__divider::after {
+  content: "";
+  flex: 1;
+  border-top: var(--hairline);
+}
+
+.oauth__note {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+@media (max-width: 520px) {
+  .oauth__buttons { grid-template-columns: minmax(0, 1fr); }
+}
+
+
+/* ==========================================================================
+   10. Toast + Konami rain
+   ========================================================================== */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--statusbar-h) + var(--space-4));
+  z-index: 9500;
+  max-width: min(90vw, 42rem);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--brand-tint);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 240ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.star-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star-rain i {
+  position: absolute;
+  top: -6vh;
+  color: var(--brand-tint);
+  font-style: normal;
+  animation-name: star-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes star-fall {
+  to {
+    transform: translateY(116vh) rotate(420deg);
+    opacity: 0;
+  }
+}
+
+
+/* ==========================================================================
+   11. Small refinements
+   ========================================================================== */
+
+/* The nav gets a scan-line underline instead of a plain colour swap. */
+.nav__menu a {
+  position: relative;
+  transition: color var(--speed);
+}
+
+.nav__menu a::after {
+  content: "";
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: 2px;
+  height: 1px;
+  background: var(--brand-tint);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.nav__menu a:hover::after,
+.nav__menu a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* Boot screen: a progress hairline and a breathing star. */
+.boot__star {
+  animation: boot-breathe 2.4s ease-in-out infinite;
+}
+
+.boot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 14vh;
+  width: min(34rem, calc(100% - 2 * var(--gutter)));
+  height: 1px;
+  background: var(--line);
+  transform: translateX(-50%);
+}
+
+.boot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 14vh;
+  z-index: 1;
+  width: min(34rem, calc(100% - 2 * var(--gutter)));
+  height: 1px;
+  background: var(--brand-tint);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: left;
+  animation: boot-bar 1.25s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+@keyframes boot-breathe {
+  0%, 100% { opacity: .7; transform: scale(.985); }
+  50% { opacity: 1; transform: scale(1.015); }
+}
+
+@keyframes boot-bar {
+  to { transform: translateX(-50%) scaleX(1); }
+}
+
+/* Give the page a little more breathing room when the theme button appears. */
+@media (min-width: 1080px) {
+  .site-header__join { margin-left: var(--space-1); }
+}
+
+@media (max-width: 400px) {
+  .theme-toggle { width: 32px; height: 32px; }
+  .theme-toggle__icon svg { width: 14px; height: 14px; }
+}
+
+/* The code of conduct reads as a numbered log, not a bulleted list. */
+.rules {
+  margin: 0;
+  padding: 0;
+  border-bottom: var(--hairline);
+  list-style: none;
+}
+
+/* Anchor targets should not be hidden by the fixed scroll progress. */
+:target { scroll-margin-top: calc(var(--header-h) + var(--space-4)); }
+
+
+/* ==========================================================================
+   12. Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .site-cursor,
+  .site-cursor__trail {
+    display: none !important;
+  }
+
+  html.has-site-cursor,
+  html.has-site-cursor * {
+    cursor: auto !important;
+  }
+
+  .scroll-progress i,
+  .theme-toggle__icon svg,
+  .nav__menu a::after,
+  .is-magnetic {
+    transition: none !important;
+  }
+
+  .boot__star,
+  .boot::before,
+  .statusbar__pulse {
+    animation: none !important;
+  }
+}

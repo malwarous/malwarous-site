@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code of conduct — Malwarous</title>
+  <meta name="description" content="How we work together at Malwarous: permission first, respect always, and a community that learns in public.">
+  <meta name="theme-color" content="#0E0E11">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://malwarous.dev/code-of-conduct">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/experience.css">
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/account.js" defer></script>
+</head>
+
+<body>
+  <!-- layout:top -->
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <!-- SVG sprite: the four-pointed star from the "O" in the logo.
+       Reuse it anywhere with: <svg><use href="#star"></use></svg> -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="star" viewBox="0 0 24 24">
+      <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24">
+      <path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.4 4.3 18.4 4.6 18.4 4.6c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/>
+    </symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24">
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.6 15.6 0 0 0-1.3-3.7A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4ZM4.3 14a8 8 0 0 1 0-4h3.4a17.5 17.5 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.3.8 2.5 1.3 3.7A8 8 0 0 1 5.1 16Zm3.1-8H5.1a8 8 0 0 1 4.4-3.7A15.6 15.6 0 0 0 8.2 8Zm3.8 12c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4Zm2.2-6H9.8a15.6 15.6 0 0 1 0-4h4.4a15.6 15.6 0 0 1 0 4Zm.6 5.7c.5-1.2 1-2.4 1.3-3.7h3.1a8 8 0 0 1-4.4 3.7ZM16.3 14a17.5 17.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html" aria-label="Malwarous home">
+        <!-- LOGO: when assets/logo-light.svg is ready, replace the two lines below with:
+             <img class="brand__logo" src="assets/logo-light.svg" alt="" width="168" height="24"> -->
+        <svg class="brand__star" aria-hidden="true"><use href="#star"></use></svg>
+        <span class="brand__word">MALWAROUS</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">[ menu ]</button>
+        <ul class="nav__menu" id="nav-menu">
+          <li><a href="events.html">events</a></li>
+          <li><a href="arena.html">arena</a></li>
+          <li><a href="academy.html">academy</a></li>
+          <li><a href="writeups.html">write-ups</a></li>
+          <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+          <li><a href="gallery.html">gallery</a></li>
+          <li><a href="team.html">team</a></li>
+          <li><a href="index.html#what-we-do">about</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <a class="site-header__login" href="login.html" data-header-user>login</a>
+        <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      </div>
+    </div>
+  </header>
+  <!-- /layout:top -->
+
+  <main id="main">
+    <section class="page-hero" aria-labelledby="page-title">
+      <div class="container page-hero__inner">
+        <p class="hero__kicker">// ~/code-of-conduct</p>
+        <h1 class="page-title" id="page-title">Code of conduct</h1>
+        <p class="hero__lede">We are a student community that takes systems apart to understand them. The same care applies to the people around us.</p>
+      </div>
+    </section>
+
+    <section class="section section--first" aria-labelledby="rules-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="rules-title"><span class="section__num">// 01 —</span> the short version</h2>
+          <span class="section__path">last updated: 7 Nov 2026</span>
+        </header>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> cat code-of-conduct.txt</p>
+
+        <ol class="rules">
+          <li class="rule">
+            <span class="rule__num">01</span>
+            <div class="rule__text"><strong>Permission first.</strong> Only test systems you own or have explicit written permission to test. CTFs, our labs, and authorized engagements are fair game. Everything else is not. Curiosity is not consent.</div>
+          </li>
+          <li class="rule">
+            <span class="rule__num">02</span>
+            <div class="rule__text"><strong>Respect people.</strong> No harassment, discrimination, doxxing, or personal attacks. Disagree with an idea as hard as you like; leave the person alone. Beginners are welcome, and questions are not a weakness.</div>
+          </li>
+          <li class="rule">
+            <span class="rule__num">03</span>
+            <div class="rule__text"><strong>Protect privacy.</strong> Do not share someone else's personal data, credentials, private messages, or unpublished vulnerabilities. When in doubt, ask before you post.</div>
+          </li>
+          <li class="rule">
+            <span class="rule__num">04</span>
+            <div class="rule__text"><strong>Disclose responsibly.</strong> Found a real vulnerability? Report it privately to the owner, give them time to fix it, and do not use it for profit or clout. We will help you write a clear report.</div>
+          </li>
+          <li class="rule">
+            <span class="rule__num">05</span>
+            <div class="rule__text"><strong>Credit others.</strong> Share write-ups, tools, and ideas with attribution. Plagiarism and flag-sharing during a live competition undermine the point of the exercise.</div>
+          </li>
+          <li class="rule">
+            <span class="rule__num">06</span>
+            <div class="rule__text"><strong>Keep the room usable.</strong> No spam, malware, or unsolicited advertising in community spaces. Keep chat on topic, and move long debugging threads somewhere sensible.</div>
+          </li>
+        </ol>
+
+        <div class="rules__note">
+          <p>Something went wrong, or you saw someone cross a line? Message an organizer in the <a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">WhatsApp community</a> or contact the team directly. Reports are handled privately. We may warn, mute, remove content, or ban an account depending on severity.</p>
+          <p>This applies to the website, the arena, our events, and every space where you represent Malwarous.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- layout:bottom -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="divider" aria-hidden="true"><svg class="star"><use href="#star"></use></svg></div>
+
+      <div class="footer__ethics">
+        <p class="footer__ethics-line">We only hack with permission.</p>
+        <p class="footer__ethics-sub">CTFs, our own labs, and systems we're authorized to test. Nothing else.</p>
+      </div>
+
+      <div class="footer__grid">
+        <nav class="footer__col" aria-label="Site">
+          <p class="footer__label">// site</p>
+          <ul>
+            <li><a href="events.html">events</a></li>
+            <li><a href="arena.html">arena</a></li>
+            <li><a href="academy.html">academy</a></li>
+            <li><a href="writeups.html">write-ups</a></li>
+            <li><a href="hall-of-fame.html">hall-of-fame</a></li>
+            <li><a href="gallery.html">gallery</a></li>
+            <li><a href="team.html">team</a></li>
+            <li><a href="index.html#what-we-do">about</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Community">
+          <p class="footer__label">// community</p>
+          <ul>
+            <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="terms.html">terms of service</a></li>
+            <li><a href="privacy.html">privacy policy</a></li>
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
+            <li><a href="signup.html">join</a></li>
+            <li><a href="login.html">login</a></li>
+            <li><a href="index.html#partners">sponsors</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social profiles">
+          <p class="footer__label">// elsewhere</p>
+          <ul>
+            <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
+            <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
+            <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
+            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-coming-soon="instagram link coming soon. we'll post it here.">instagram</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+        <p class="footer__legal"><a href="terms.html">terms</a><span aria-hidden="true">·</span><a href="privacy.html">privacy</a><span aria-hidden="true">·</span><a href="code-of-conduct.html">code of conduct</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Status bar, pinned to the bottom like tmux -->
+  <aside class="statusbar" aria-label="Status bar">
+    <button class="statusbar__session" type="button" data-console-open>
+      <span aria-hidden="true"><span class="statusbar__win">[0]</span> malwarous@qau:~$</span>
+      <span class="sr-only">open command console</span>
+    </button>
+    <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
+    <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>
+    <span class="statusbar__item statusbar__status">status: recruiting</span>
+    <span class="statusbar__spacer"></span>
+    <span class="statusbar__item statusbar__hint"><kbd>`</kbd> console</span>
+    <a class="statusbar__item statusbar__user" id="status-user" href="login.html">login</a> <!-- becomes @handle when logged in -->
+    <span class="statusbar__item statusbar__clock"><span id="status-clock">--:--</span> PKT</span>
+  </aside>
+
+  <!-- Command console (easter egg: press ` or click the status bar prompt) -->
+  <div class="console" id="console" role="dialog" aria-label="Command console" hidden>
+    <div class="console__bar">
+      <span>console — type <kbd>help</kbd></span>
+      <button class="console__close" type="button" data-console-close aria-label="Close console">[ esc ]</button>
+    </div>
+    <div class="console__output" id="console-output" role="log" aria-live="polite"></div>
+    <form class="console__form" id="console-form" autocomplete="off">
+      <label class="console__prompt" for="console-input">guest@malwarous:~$</label>
+      <input class="console__input" id="console-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+  </div>
+  <!-- /layout:bottom -->
+</body>
+</html>

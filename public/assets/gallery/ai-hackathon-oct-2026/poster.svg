@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" role="img" aria-label="Poster for the AI Mini Project Hackathon, 14 October 2026">
+  <rect width="1600" height="1200" fill="#0E0E11"/>
+  <g stroke="#2A2A31" stroke-width="1">
+    <path d="M0 100h1600M0 200h1600M0 300h1600M0 400h1600M0 500h1600M0 600h1600M0 700h1600M0 800h1600M0 900h1600M0 1000h1600M0 1100h1600"/>
+    <path d="M100 0v1200M200 0v1200M300 0v1200M400 0v1200M500 0v1200M600 0v1200M700 0v1200M800 0v1200M900 0v1200M1000 0v1200M1100 0v1200M1200 0v1200M1300 0v1200M1400 0v1200M1500 0v1200"/>
+  </g>
+  <g stroke="#9D90FF" stroke-width="2" opacity=".55">
+    <path d="M1120 160 1360 330 1180 560 1420 740 1250 980"/>
+    <path d="M1120 160 1240 420 1040 540 1180 560 1020 760 1250 980"/>
+    <path d="M1360 330 1420 740M1240 420 1020 760M1040 540 1180 560"/>
+  </g>
+  <g fill="#F2A93B">
+    <circle cx="1120" cy="160" r="9"/><circle cx="1360" cy="330" r="9"/><circle cx="1180" cy="560" r="9"/><circle cx="1420" cy="740" r="9"/><circle cx="1250" cy="980" r="9"/>
+  </g>
+  <g fill="#9D90FF">
+    <circle cx="1240" cy="420" r="7"/><circle cx="1040" cy="540" r="7"/><circle cx="1020" cy="760" r="7"/>
+  </g>
+  <g font-family="JetBrains Mono, Consolas, monospace" fill="#8B8A93" font-size="22" letter-spacing="5">
+    <text x="90" y="86">MALWAROUS // BUILD WEEKEND</text>
+    <text x="1510" y="86" text-anchor="end">FILE 003 / 2026</text>
+  </g>
+  <g font-family="Archivo, Arial Black, Arial, sans-serif" fill="#E7E5DF" font-weight="800" letter-spacing="-7">
+    <text x="82" y="380" font-size="154">AI MINI</text>
+    <text x="82" y="520" font-size="154">PROJECT</text>
+    <text x="82" y="648" font-size="120" fill="#F2A93B">HACKATHON</text>
+  </g>
+  <text x="88" y="730" font-family="Archivo, Arial, sans-serif" font-size="40" font-weight="700" fill="#9D90FF">Ship a model. Break one. Explain both.</text>
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#E7E5DF">
+    <text x="90" y="836">DATE</text>
+    <text x="340" y="836" fill="#F2A93B">14 OCT 2026</text>
+    <text x="90" y="884">VENUE</text>
+    <text x="340" y="884">ELECTRONICS DEPARTMENT SEMINAR ROOM</text>
+    <text x="90" y="932">TRACKS</text>
+    <text x="340" y="932">TOOLING · DEFENSE · PRIVACY</text>
+  </g>
+  <g fill="#8B8A93" font-family="JetBrains Mono, Consolas, monospace" font-size="18" letter-spacing="3">
+    <text x="90" y="1100">MALWAROUS.DEV</text>
+    <text x="1510" y="1100" text-anchor="end">ONE WEEKEND. ONE WORKING DEMO.</text>
+  </g>
+  <g fill="#F2A93B">
+    <rect x="90" y="1020" width="150" height="10"/>
+    <rect x="252" y="1020" width="34" height="10"/>
+    <rect x="298" y="1020" width="90" height="10"/>
+    <rect x="400" y="1020" width="18" height="10"/>
+  </g>
+  <path d="M0 0h1600v1200H0z" fill="none" stroke="#9D90FF" stroke-width="18"/>
+</svg>

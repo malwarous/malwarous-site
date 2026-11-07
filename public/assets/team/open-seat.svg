@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Open seat on the Malwarous team">
+  <rect width="400" height="400" fill="#16161B"/>
+  <g stroke="#2A2A31" stroke-width="1">
+    <path d="M0 80h400M0 160h400M0 240h400M0 320h400M80 0v400M160 0v400M240 0v400M320 0v400"/>
+  </g>
+  <path d="M12 12h376v376H12z" fill="none" stroke="#8B8A93" stroke-width="2" stroke-dasharray="10 9"/>
+  <text x="200" y="226" fill="#8B8A93" text-anchor="middle" font-family="Archivo, Arial Black, Arial, sans-serif" font-size="150" font-weight="800">[+]</text>
+  <text x="200" y="292" fill="#9D90FF" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" letter-spacing="5">OPEN_SEAT</text>
+  <text x="200" y="322" fill="#8B8A93" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="13" letter-spacing="2">APPLY IN /team#apply</text>
+</svg>

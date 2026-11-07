@@ -1,0 +1,15 @@
+{
+  "name": "malwarous-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Malwarous community website: plain HTML, CSS and JavaScript.",
+  "scripts": {
+    "dev": "node tools/serve.js",
+    "start": "node tools/serve.js",
+    "check": "node tools/check-site.js",
+    "sync": "node tools/sync-layout.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

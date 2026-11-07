@@ -10,11 +10,19 @@ const MALWAROUS_CONFIG = {
   // The homepage // 01 panel and the status bar count down to this.
   // Leave it '' when there's no date yet: everything shows "tba".
   nextEventStart: '2026-11-04T10:00:00+05:00',
-  // How many hours it shows "live now" after it starts. After that: "tba".
+  // Used only when nextEventEnd is empty: how many hours it shows
+  // "live now" after the start. After that: "tba".
   nextEventHours: 3,
   // Optional: when it ENDS. Set this and, once it starts, the timer counts
   // down to the end instead (e.g. a room that locks for results). '' = off.
-  nextEventEnd: '2026-11-08T10:00:00+05:00',  // Inbox Under Siege locks 48h after it opened
+  nextEventEnd: '2026-11-08T10:00:00+05:00',  // Inbox Under Siege locks 4 days after it opened
+  // The readable details, used by the page, the calendar file and the
+  // registration link. Change them here, not in the HTML.
+  nextEventTitle: 'Information Session: Malwarous Website and Online Weekly CTFs',
+  nextEventSlug: 'info-session-nov-2026',
+  nextEventVenue: 'Online, on TryHackMe',
+  nextEventUrl: 'https://tryhackme.com/jr/inboxundersiege',
+  nextEventDescription: 'A Malwarous information session and online CTF. Room: Inbox Under Siege on TryHackMe.',
 
   // ---- Arena rooms (arena.html) --------------------------------------------
   // One entry per room, oldest first. The arena card opens on the room
@@ -27,7 +35,7 @@ const MALWAROUS_CONFIG = {
       name: 'Inbox Under Siege',
       url: 'https://tryhackme.com/jr/inboxundersiege',
       opens: '2026-11-04T10:00:00+05:00',
-      closes: '2026-11-06T10:00:00+05:00'
+      closes: '2026-11-08T10:00:00+05:00'  // same moment the homepage timer locks
     },
     {
       number: 3,

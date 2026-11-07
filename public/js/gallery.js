@@ -9,7 +9,8 @@
      1. put the files in public/assets/gallery/<slug>/
      2. add one { alt: '...' } line per photo to that event's photos list
         (photo 1 = 01.jpg, photo 2 = 02.jpg, ...). The first is the cover.
-   An event with an empty photos list shows "photos coming soon".
+   An event with an empty photos list shows its poster (poster) and a
+   "photos coming soon" note. Without a poster it shows an empty state.
 
    Links: gallery.html lists every event; gallery.html?event=<slug> opens
    that event's photos. The events page links to these.
@@ -22,6 +23,7 @@ const GALLERY_EVENTS = [
     date: '4 Nov 2026',
     type: 'online',
     venue: 'CS Department Seminar Room',
+    poster: 'assets/gallery/info-session-nov-2026/poster.svg',
     photos: []
   },
   {
@@ -30,6 +32,7 @@ const GALLERY_EVENTS = [
     date: '20 Oct 2026',
     type: 'workshop',
     venue: 'QASMS Seminar Room',
+    poster: 'assets/gallery/lums-abl-info-oct-2026/poster.svg',
     photos: []
   },
   {
@@ -38,6 +41,7 @@ const GALLERY_EVENTS = [
     date: '14 Oct 2026',
     type: 'hackathon',
     venue: 'Electronics Department Seminar Room',
+    poster: 'assets/gallery/ai-hackathon-oct-2026/poster.svg',
     photos: []
   },
   {
@@ -87,10 +91,17 @@ function renderGalleryList(list) {
     const link = el('a', 'gallery-event__link');
     link.href = 'gallery.html?event=' + event.slug;
 
-    const cover = el('div', 'gallery-event__cover duotone');
+    const cover = el('div', 'gallery-event__cover' + (event.photos.length ? ' duotone' : ''));
     if (event.photos.length) {
       const img = el('img');
       img.src = galleryPhotoPath(event, 0, true);
+      img.alt = '';
+      img.loading = 'lazy';
+      cover.appendChild(img);
+    } else if (event.poster) {
+      cover.classList.add('gallery-event__cover--poster');
+      const img = el('img');
+      img.src = event.poster;
       img.alt = '';
       img.loading = 'lazy';
       cover.appendChild(img);
@@ -105,7 +116,7 @@ function renderGalleryList(list) {
       el('h3', 'gallery-event__title', event.title),
       el('p', 'gallery-event__count', event.photos.length
         ? event.photos.length + ' photos -> open gallery'
-        : 'photos coming soon')
+        : event.poster ? 'event poster · photos coming soon' : 'photos coming soon')
     );
 
     link.append(cover, info);
@@ -129,7 +140,17 @@ function renderGalleryEvent(event) {
 
   const grid = document.getElementById('gallery-grid');
   const empty = document.getElementById('gallery-empty');
-  empty.hidden = event.photos.length > 0;
+  empty.hidden = event.photos.length > 0 || Boolean(event.poster);
+
+  if (event.poster) {
+    const figure = el('figure', 'gallery__poster');
+    const img = el('img');
+    img.src = event.poster;
+    img.alt = 'Poster for ' + event.title;
+    img.loading = 'eager';
+    figure.appendChild(img);
+    grid.appendChild(figure);
+  }
 
   event.photos.forEach(function (photo, index) {
     const button = el('button', 'gallery__thumb duotone' +

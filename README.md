@@ -17,6 +17,8 @@ public/              everything that goes online (and nothing else)
   hall-of-fame.html  winners and all-time standings
   team.html          members, projects, application form
   code-of-conduct.html
+  terms.html         terms of service
+  privacy.html       privacy policy
   login.html, signup.html, 404.html
   css/style.css      all styling (colors, fonts, spacing are variables at the top)
   css/experience.css theme, cursor, motion, palette, star (loaded after style.css)
@@ -43,7 +45,7 @@ wrangler.jsonc       Cloudflare settings: publish only public/
 | Add a PSP lecture video | Copy a `<li class="lesson">` block in `academy-psp.html` (instructions in the comment there) |
 | Add the arena walkthrough video | Put the YouTube ID in `data-youtube=""` in `arena.html` |
 | Add results | Copy the `// 01` section in `hall-of-fame.html`, update `// 02`, and the top-5 table on the homepage |
-| Add a team member or project | Copy a `<li class="member">` or `<li class="project">` block in `team.html` |
+| Add a team member or project | Copy a `<li class="crew__card">` or `<li class="project">` block in `team.html` |
 | Add an event | Copy a row in the events tables (`events.html` and the homepage) |
 | Change the nav or footer | Edit `layout/top.html` or `layout/bottom.html`, then run `node tools/sync-layout.js` |
 

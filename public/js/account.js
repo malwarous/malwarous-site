@@ -466,15 +466,19 @@ const Account = {
 
 async function refreshStatusUser() {
   const link = document.getElementById('status-user');
-  if (!link) return;
+  const headerUser = document.querySelector('[data-header-user]');
+  if (!link && !headerUser) return;
 
   // Only download Supabase if this browser has a saved login
   if (!Account.isConfigured() || !Account.hasSavedSession()) {
-    link.textContent = 'login';
+    if (link) link.textContent = 'login';
+    if (headerUser) headerUser.textContent = 'login';
     return;
   }
   const user = await Account.getCurrentUser();
-  link.textContent = user && user.handle ? '@' + user.handle : 'login';
+  const label = user && user.handle ? '@' + user.handle : 'login';
+  if (link) link.textContent = label;
+  if (headerUser) headerUser.textContent = label;
 }
 
 
@@ -1132,12 +1136,15 @@ async function initHomeWriteups() {
     list.appendChild(row);
   });
 
-  // Open the section when there's something to show; stay collapsed otherwise
+  // Open the section when there's something to show; show the starter shelf
+  // when the queue is still empty, so the section never looks abandoned.
   const any = posts.length > 0;
+  const starters = document.getElementById('home-writeups-starters');
   count.textContent = any ? posts.length + (posts.length === 1 ? ' post' : ' posts') : 'no posts yet';
   list.hidden = !any;
   empty.hidden = any;
-  box.open = any;
+  if (starters) starters.hidden = any;
+  box.open = true;
 }
 
 

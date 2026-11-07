@@ -25,6 +25,8 @@
           <p class="footer__label">// community</p>
           <ul>
             <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="terms.html">terms of service</a></li>
+            <li><a href="privacy.html">privacy policy</a></li>
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
@@ -37,18 +39,23 @@
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
             <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
             <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
+            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-coming-soon="instagram link coming soon. we'll post it here.">instagram</a></li>
           </ul>
         </nav>
       </div>
 
-      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+      <div class="footer__bottom">
+        <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+        <p class="footer__legal"><a href="terms.html">terms</a><span aria-hidden="true">·</span><a href="privacy.html">privacy</a><span aria-hidden="true">·</span><a href="code-of-conduct.html">code of conduct</a></p>
+      </div>
     </div>
   </footer>
 
   <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
-    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
-      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    <button class="statusbar__session" type="button" data-console-open>
+      <span aria-hidden="true"><span class="statusbar__win">[0]</span> malwarous@qau:~$</span>
+      <span class="sr-only">open command console</span>
     </button>
     <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>

@@ -1,6 +1,6 @@
 /* ==========================================================================
    Malwarous — experience.css
-   Motion, theme, cursor, command palette and the interactive star.
+   Motion, theme, cursor, command palette and the live intrusion mesh.
    Loaded after style.css. Everything here is optional: if JS is off, the
    site keeps its original Night Ops look and behaviour.
    ========================================================================== */
@@ -575,49 +575,85 @@ html.palette-open { overflow: hidden; }
 
 
 /* ==========================================================================
-   8. Interactive star
+   8. Live intrusion mesh (homepage hero)
    ========================================================================== */
 
-.star-stage {
+.mesh-stage {
   position: relative;
   display: grid;
   place-items: center;
   width: 100%;
   flex: 1;
-  min-height: 380px;
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(120% 90% at 50% 45%, color-mix(in srgb, var(--brand-tint) 7%, transparent), transparent 70%),
+    var(--bg);
 }
 
-.star-stage .ascii-star {
+.mesh-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: .22;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 18%, transparent 78%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 18%, transparent 78%);
+  pointer-events: none;
+}
+
+.mesh-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: radial-gradient(90% 80% at 50% 50%, transparent 45%, color-mix(in srgb, var(--bg) 78%, transparent) 100%);
+  pointer-events: none;
+}
+
+.mesh-fallback {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  margin: 0;
+  color: var(--brand-tint);
+  font-family: var(--font-mono);
+  font-size: clamp(.65rem, .15rem + .8vw, .95rem);
+  line-height: 1.2;
+  white-space: pre;
+  opacity: .9;
   transition: opacity 420ms ease;
 }
 
-.star-canvas {
+.mesh-canvas {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   display: none;
   width: 100%;
   height: 100%;
 }
 
-.star-stage.is-live .ascii-star {
+.mesh-stage.is-live .mesh-fallback {
   opacity: 0;
   pointer-events: none;
 }
 
-.star-stage.is-live .star-canvas {
+.mesh-stage.is-live .mesh-canvas {
   display: block;
   touch-action: none;
 }
 
-.star-stage__hint {
+.mesh-stage__hint {
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   left: 50%;
-  z-index: 3;
+  z-index: 5;
   transform: translateX(-50%);
+  margin: 0;
   color: var(--muted);
   font-size: 10px;
   letter-spacing: .08em;
@@ -626,20 +662,60 @@ html.palette-open { overflow: hidden; }
   transition: opacity 420ms ease;
 }
 
-.star-stage.is-live .star-stage__hint { opacity: 1; }
+.mesh-stage.is-live .mesh-stage__hint { opacity: .8; }
 
-.star-stage__telemetry {
+.mesh-telemetry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px 14px;
   color: var(--muted);
   font-size: var(--fs-xs);
+  text-align: center;
 }
 
-.star-stage__telemetry b {
+.mesh-telemetry b {
   color: var(--brand-tint);
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
-.star-stage__live {
+.mesh-telemetry__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--live);
+}
+
+.mesh-telemetry__live i {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  animation: mesh-pulse 1.6s ease-in-out infinite;
+}
+
+.mesh-telemetry__state {
+  color: var(--brand-tint);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.mesh-telemetry__state.is-breach {
+  color: var(--critical);
+  animation: blink 1.06s step-end infinite;
+}
+
+.mesh-telemetry__fig {
+  flex-basis: 100%;
+  font-size: 10px;
+  letter-spacing: .04em;
+  opacity: .8;
+}
+
+@keyframes mesh-pulse {
+  0%, 100% { opacity: .35; transform: scale(.8); }
+  50%      { opacity: 1; transform: scale(1.15); }
 }
 
 
@@ -801,43 +877,248 @@ html.palette-open { overflow: hidden; }
   transform: scaleX(1);
 }
 
-/* Boot screen: a progress hairline and a breathing star. */
-.boot__star {
-  animation: boot-breathe 2.4s ease-in-out infinite;
+/* ==========================================================================
+   Boot screen
+   A short, cinematic handshake. The overlay sits below the custom cursor so
+   the pointer stays visible, and above the page so nothing leaks through.
+   ========================================================================== */
+
+.is-booting .boot {
+  z-index: 8500;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 180ms linear;
 }
 
-.boot::after {
-  content: "";
+.boot__grid {
   position: absolute;
-  left: 50%;
-  bottom: 14vh;
-  width: min(34rem, calc(100% - 2 * var(--gutter)));
-  height: 1px;
-  background: var(--line);
-  transform: translateX(-50%);
+  inset: -32px;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: .2;
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 12%, transparent 72%);
+  mask-image: radial-gradient(circle at 50% 45%, #000 12%, transparent 72%);
+  animation: boot-grid 12s linear infinite;
+  pointer-events: none;
 }
 
-.boot::before {
+.boot__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30vh;
+  height: 30vh;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--brand-tint) 9%, transparent), transparent);
+  animation: boot-scan 3.6s linear infinite;
+  pointer-events: none;
+}
+
+.boot__inner {
+  position: relative;
+  width: min(100%, 46rem);
+  padding: clamp(20px, 4vw, 42px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.boot__inner::before,
+.boot__inner::after {
   content: "";
   position: absolute;
-  left: 50%;
-  bottom: 14vh;
-  z-index: 1;
-  width: min(34rem, calc(100% - 2 * var(--gutter)));
   height: 1px;
+  width: 56px;
   background: var(--brand-tint);
-  transform: translateX(-50%) scaleX(0);
+}
+
+.boot__inner::before {
+  top: -1px;
+  left: -1px;
+}
+
+.boot__inner::after {
+  right: -1px;
+  bottom: -1px;
+  background: var(--live);
+}
+
+.boot__eyebrow {
+  margin: 0 0 var(--space-4);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.boot__word {
+  display: flex;
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 7vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .06em;
+}
+
+.boot__word span {
+  display: inline-block;
+  width: .74em;
+  text-align: center;
+}
+
+.boot__word span.is-pending {
+  color: var(--brand-tint);
+  opacity: .72;
+  text-shadow: 1px 0 var(--critical), -1px 0 var(--live);
+  animation: boot-glyph .16s steps(2, end) infinite;
+}
+
+.boot__tagline {
+  margin: var(--space-2) 0 clamp(26px, 5vw, 42px);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: .16em;
+  text-transform: lowercase;
+}
+
+.boot__meter {
+  margin-bottom: var(--space-5);
+}
+
+.boot__bar {
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.boot__bar i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-tint), var(--live));
+  transform: scaleX(0);
   transform-origin: left;
-  animation: boot-bar 1.25s cubic-bezier(.2, .8, .2, 1) forwards;
+  will-change: transform;
 }
 
-@keyframes boot-breathe {
-  0%, 100% { opacity: .7; transform: scale(.985); }
-  50% { opacity: 1; transform: scale(1.015); }
+.boot__meter-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 1.4em;
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
-@keyframes boot-bar {
-  to { transform: translateX(-50%) scaleX(1); }
+.boot__meter-meta span:last-child {
+  color: var(--brand-tint);
+  font-variant-numeric: tabular-nums;
+}
+
+.boot__log {
+  min-height: calc(7 * 1.5em);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.boot__log li {
+  display: flex;
+  gap: var(--space-2);
+  white-space: nowrap;
+  overflow: hidden;
+  animation: boot-line-in 240ms ease both;
+}
+
+.boot__log .stamp {
+  flex: none;
+  color: var(--muted);
+}
+
+.boot__log .boot__cmd {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+.boot__log .ok {
+  flex: none;
+  color: var(--brand-tint);
+}
+
+.boot__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-5) 0 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.boot__key {
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.boot__pulse {
+  width: 5px;
+  height: 5px;
+  margin-left: auto;
+  background: var(--live);
+  animation: blink 1.06s step-end infinite;
+}
+
+.boot.is-leaving {
+  animation: boot-out 520ms cubic-bezier(.7, 0, .3, 1) forwards;
+  pointer-events: none;
+}
+
+.boot.is-leaving .boot__inner {
+  animation: boot-inner-out 520ms cubic-bezier(.7, 0, .3, 1) forwards;
+}
+
+@keyframes boot-grid {
+  to { transform: translate3d(0, 32px, 0); }
+}
+
+@keyframes boot-scan {
+  to { transform: translate3d(0, 160vh, 0); }
+}
+
+@keyframes boot-line-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes boot-glyph {
+  50% { transform: translateX(1px); }
+}
+
+@keyframes boot-inner-out {
+  to { opacity: 0; transform: translateY(-12px); filter: blur(3px); }
+}
+
+@keyframes boot-out {
+  0%   { opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { opacity: 0; clip-path: inset(0 0 100% 0); }
 }
 
 /* Give the page a little more breathing room when the theme button appears. */
@@ -890,8 +1171,11 @@ html.palette-open { overflow: hidden; }
     transition: none !important;
   }
 
-  .boot__star,
-  .boot::before,
+  .boot__grid,
+  .boot__scan,
+  .boot__word span.is-pending,
+  .boot__pulse,
+  .mesh-telemetry__live i,
   .statusbar__pulse {
     animation: none !important;
   }

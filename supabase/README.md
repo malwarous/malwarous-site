@@ -64,6 +64,15 @@ created and switched on in two places.
    add the app name, support email and your own email as a test user. While the
    app is in "Testing", only listed test users can sign in. Publish it when
    you are ready.
+7. Before publishing, fill in the **OAuth consent screen** branding:
+   - **App name:** Malwarous
+   - **User support email:** hasnaat.hussain.2@gmail.com
+   - **Application home page:** `https://malwarous.dev/`
+   - **Privacy policy:** `https://malwarous.dev/privacy`
+   - **Terms of service:** `https://malwarous.dev/terms`
+   - **Authorized domain:** `malwarous.dev`
+   Google will not let the app leave "Testing" until the privacy and terms
+   URLs are reachable.
 
 ### GitHub
 1. Open **GitHub -> Settings -> Developer settings -> OAuth Apps -> New OAuth App**

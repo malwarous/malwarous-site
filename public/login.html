@@ -33,6 +33,18 @@
     <symbol id="star" viewBox="0 0 24 24">
       <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
     </symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24">
+      <path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.4 4.3 18.4 4.6 18.4 4.6c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/>
+    </symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24">
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.6 15.6 0 0 0-1.3-3.7A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4ZM4.3 14a8 8 0 0 1 0-4h3.4a17.5 17.5 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.3.8 2.5 1.3 3.7A8 8 0 0 1 5.1 16Zm3.1-8H5.1a8 8 0 0 1 4.4-3.7A15.6 15.6 0 0 0 8.2 8Zm3.8 12c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4Zm2.2-6H9.8a15.6 15.6 0 0 1 0-4h4.4a15.6 15.6 0 0 1 0 4Zm.6 5.7c.5-1.2 1-2.4 1.3-3.7h3.1a8 8 0 0 1-4.4 3.7ZM16.3 14a17.5 17.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
+    </symbol>
   </svg>
 
   <header class="site-header">
@@ -55,11 +67,13 @@
           <li><a href="gallery.html">gallery</a></li>
           <li><a href="team.html">team</a></li>
           <li><a href="index.html#what-we-do">about</a></li>
-          <li class="nav__login"><a href="login.html" aria-current="page">login</a></li> <!-- only shown in the phone menu -->
         </ul>
       </nav>
 
-      <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      <div class="site-header__actions">
+        <a class="site-header__login" href="login.html" data-header-user>login</a>
+        <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      </div>
     </div>
   </header>
   <!-- /layout:top -->
@@ -85,13 +99,15 @@
 
             <div class="oauth" id="auth-oauth">
               <div class="oauth__buttons">
-                <button class="oauth-btn" type="button" data-oauth="google" aria-label="Continue with Google">
+                <button class="oauth-btn" type="button" data-oauth="google">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.7-3.8H1.4v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.4 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8Z"/></svg>
-                  continue_with_google
+                  <span aria-hidden="true">continue_with_google</span>
+                  <span class="sr-only">continue with Google</span>
                 </button>
-                <button class="oauth-btn" type="button" data-oauth="github" aria-label="Continue with GitHub">
+                <button class="oauth-btn" type="button" data-oauth="github">
                   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
-                  continue_with_github
+                  <span aria-hidden="true">continue_with_github</span>
+                  <span class="sr-only">continue with GitHub</span>
                 </button>
               </div>
               <p class="oauth__divider">or use email</p>
@@ -180,6 +196,8 @@
           <p class="footer__label">// community</p>
           <ul>
             <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="terms.html">terms of service</a></li>
+            <li><a href="privacy.html">privacy policy</a></li>
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
@@ -192,18 +210,23 @@
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
             <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
             <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
+            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-coming-soon="instagram link coming soon. we'll post it here.">instagram</a></li>
           </ul>
         </nav>
       </div>
 
-      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+      <div class="footer__bottom">
+        <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+        <p class="footer__legal"><a href="terms.html">terms</a><span aria-hidden="true">·</span><a href="privacy.html">privacy</a><span aria-hidden="true">·</span><a href="code-of-conduct.html">code of conduct</a></p>
+      </div>
     </div>
   </footer>
 
   <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
-    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
-      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    <button class="statusbar__session" type="button" data-console-open>
+      <span aria-hidden="true"><span class="statusbar__win">[0]</span> malwarous@qau:~$</span>
+      <span class="sr-only">open command console</span>
     </button>
     <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>

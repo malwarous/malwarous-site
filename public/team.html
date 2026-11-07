@@ -42,6 +42,18 @@
     <symbol id="star" viewBox="0 0 24 24">
       <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
     </symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24">
+      <path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.4 4.3 18.4 4.6 18.4 4.6c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/>
+    </symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24">
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.6 15.6 0 0 0-1.3-3.7A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4ZM4.3 14a8 8 0 0 1 0-4h3.4a17.5 17.5 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.3.8 2.5 1.3 3.7A8 8 0 0 1 5.1 16Zm3.1-8H5.1a8 8 0 0 1 4.4-3.7A15.6 15.6 0 0 0 8.2 8Zm3.8 12c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4Zm2.2-6H9.8a15.6 15.6 0 0 1 0-4h4.4a15.6 15.6 0 0 1 0 4Zm.6 5.7c.5-1.2 1-2.4 1.3-3.7h3.1a8 8 0 0 1-4.4 3.7ZM16.3 14a17.5 17.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
+    </symbol>
   </svg>
 
   <header class="site-header">
@@ -64,11 +76,13 @@
           <li><a href="gallery.html">gallery</a></li>
           <li><a href="team.html" aria-current="page">team</a></li>
           <li><a href="index.html#what-we-do">about</a></li>
-          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
         </ul>
       </nav>
 
-      <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      <div class="site-header__actions">
+        <a class="site-header__login" href="login.html" data-header-user>login</a>
+        <a class="btn btn--small site-header__join" href="index.html#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      </div>
     </div>
   </header>
   <!-- /layout:top -->
@@ -86,7 +100,8 @@
 
     <!-- =====================================================================
          // 01 — ACTIVE MEMBERS
-         To add someone: copy a <li class="member"> block and fill it in.
+         Each person is a .crew__card. Photos can be swapped by changing the
+         <img src="...">. The open seat points people to // 04 apply.
          ===================================================================== -->
     <section class="section" id="members" aria-labelledby="members-title">
       <div class="container">
@@ -97,32 +112,80 @@
 
         <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> finger @malwarous</p>
 
-        <ul class="team team--page">
-          <li class="member">
-            <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Kabir Niazi</h3>
-            <dl class="member__info">
-              <div><dt>role</dt><dd>team lead</dd></div>
-              <div><dt>focus</dt><dd>[FOCUS]</dd></div>
-              <div><dt>projects</dt><dd><a href="#projects">malwarous.dev</a></dd></div>
-            </dl>
+        <ul class="season" aria-label="Team at a glance">
+          <li class="season__stat"><span class="season__value">03</span><span class="season__label">core members</span></li>
+          <li class="season__stat"><span class="season__value">02</span><span class="season__label">active projects</span></li>
+          <li class="season__stat"><span class="season__value">04</span><span class="season__label">events run</span></li>
+          <li class="season__stat"><span class="season__value"><em>01</em></span><span class="season__label">open seat</span></li>
+        </ul>
+
+        <ul class="crew">
+          <li class="crew__card">
+            <div class="crew__portrait"><img src="assets/team/kabir.svg" alt="Kabir Niazi" width="400" height="400"></div>
+            <div class="crew__body">
+              <div class="crew__top"><span class="crew__tag">[ core · lead ]</span><span class="crew__index">01/04</span></div>
+              <h3 class="crew__name">Kabir Niazi</h3>
+              <p class="crew__role">team lead · red teaming &amp; web exploitation</p>
+              <p class="crew__bio">Runs the calendar, writes the harder challenges and keeps the arena moving. Red teaming, web exploitation, and the person who asks whether the scope document is actually signed.</p>
+              <ul class="crew__tags" aria-label="Focus areas">
+                <li>red teaming</li><li>web exploitation</li><li>ctf design</li>
+              </ul>
+              <ul class="crew__links" aria-label="Kabir Niazi links">
+                <li><a href="https://www.linkedin.com/in/kabir-kahn-niazi/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-linkedin"></use></svg> linkedin</a></li>
+                <li><a href="https://github.com/kabeerniazi" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-github"></use></svg> github</a></li>
+              </ul>
+            </div>
           </li>
-          <li class="member">
-            <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Younas Rehmatullah</h3>
-            <dl class="member__info">
-              <div><dt>role</dt><dd>mobile app dev</dd></div>
-              <div><dt>projects</dt><dd><a href="https://www.potentialai.app" target="_blank" rel="noopener">potentialai.app</a>, <a href="https://bayaan.site" target="_blank" rel="noopener">bayaan.site</a></dd></div>
-            </dl>
+
+          <li class="crew__card">
+            <div class="crew__portrait"><img src="assets/team/hasnaat.png" alt="Hasnaat Hussain" width="400" height="400"></div>
+            <div class="crew__body">
+              <div class="crew__top"><span class="crew__tag">[ core · web ]</span><span class="crew__index">02/04</span></div>
+              <h3 class="crew__name">Hasnaat Hussain</h3>
+              <p class="crew__role">web development · platforms &amp; auth</p>
+              <p class="crew__bio">Builds and maintains malwarous.dev: the account flow, the event pages and the small details that make the site feel alive. Also on the leaderboard when there is a flag to find.</p>
+              <ul class="crew__tags" aria-label="Focus areas">
+                <li>web platforms</li><li>authentication</li><li>front-end</li>
+              </ul>
+              <ul class="crew__links" aria-label="Hasnaat Hussain links">
+                <li><a href="https://www.linkedin.com/in/hasnaathussain/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-linkedin"></use></svg> linkedin</a></li>
+                <li><a href="https://github.com/Hasnaathussain" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-github"></use></svg> github</a></li>
+                <li><a href="https://hasnaat.vercel.app/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-globe"></use></svg> website</a></li>
+              </ul>
+            </div>
           </li>
-          <li class="member">
-            <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Hasnaat Hussain</h3>
-            <dl class="member__info">
-              <div><dt>role</dt><dd>web dev</dd></div>
-              <div><dt>projects</dt><dd><a href="https://hasnaat.vercel.app/" target="_blank" rel="noopener">hasnaat.vercel.app</a></dd></div>
-            </dl>
+
+          <li class="crew__card">
+            <div class="crew__portrait"><img src="assets/team/younas.svg" alt="Younas Rehmatullah" width="400" height="400"></div>
+            <div class="crew__body">
+              <div class="crew__top"><span class="crew__tag">[ core · mobile ]</span><span class="crew__index">03/04</span></div>
+              <h3 class="crew__name">Younas Rehmatullah</h3>
+              <p class="crew__role">mobile app development · event tooling</p>
+              <p class="crew__bio">Mobile developer behind potentialai.app and bayaan.site. Helps with tooling, event logistics and the last-minute fixes that happen ten minutes before a session starts.</p>
+              <ul class="crew__tags" aria-label="Focus areas">
+                <li>mobile apps</li><li>tooling</li><li>logistics</li>
+              </ul>
+              <ul class="crew__links" aria-label="Younas Rehmatullah links">
+                <li><a href="https://www.potentialai.app" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-globe"></use></svg> potentialai.app</a></li>
+                <li><a href="https://bayaan.site" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-globe"></use></svg> bayaan.site</a></li>
+              </ul>
+            </div>
           </li>
-          <li class="member member--open">
-            <h3 class="member__name">[ open seat ]</h3>
-            <p class="member__note">status: recruiting. <a href="#apply">apply below -&gt;</a></p>
+
+          <li class="crew__card crew__card--open">
+            <div class="crew__portrait"><img src="assets/team/open-seat.svg" alt="Open seat on the Malwarous team" width="400" height="400"></div>
+            <div class="crew__body">
+              <div class="crew__top"><span class="crew__tag">[ open seat ]</span><span class="crew__index">04/04</span></div>
+              <h3 class="crew__name">Your name here</h3>
+              <p class="crew__role">challenge author · workshop lead · builder</p>
+              <p class="crew__bio">We keep one seat open for someone who wants to write challenges, run a workshop or build tools. No formal experience required, just a thing you want to understand properly.</p>
+              <ul class="crew__tags" aria-label="Open roles">
+                <li>challenges</li><li>workshops</li><li>tooling</li>
+              </ul>
+              <ul class="crew__links" aria-label="Open seat links">
+                <li><a href="#apply"><svg class="icon" aria-hidden="true"><use href="#icon-arrow"></use></svg> apply below</a></li>
+              </ul>
+            </div>
           </li>
         </ul>
       </div>
@@ -149,18 +212,27 @@
             <div class="project__main">
               <h3 class="project__name">malwarous.dev</h3>
               <p class="project__desc">This website: events, the arena, the academy and member accounts. Plain HTML, CSS and JavaScript, with Supabase for accounts.</p>
-              <p class="project__meta">team: Kabir Niazi · stack: html, css, js, supabase</p>
+              <p class="project__meta">team: Kabir Niazi · Hasnaat Hussain · stack: html, css, js, supabase</p>
             </div>
             <a class="project__link" href="https://github.com/malwarous/malwarous-site">repo -&gt;</a>
           </li>
           <li class="project">
+            <span class="project__status project__status--active">active</span>
+            <div class="project__main">
+              <h3 class="project__name">Event archive</h3>
+              <p class="project__desc">Photos, posters and results from every event, kept in one place so the community has a record that outlives the group chat. Posters are designed in-house for events whose photos are still being collected.</p>
+              <p class="project__meta">team: Younas Rehmatullah · Hasnaat Hussain · stack: svg, html, css</p>
+            </div>
+            <a class="project__link" href="gallery.html">gallery -&gt;</a>
+          </li>
+          <li class="project">
             <span class="project__status project__status--planned">planned</span>
             <div class="project__main">
-              <h3 class="project__name">[PROJECT NAME]</h3>
-              <p class="project__desc">[ONE OR TWO LINES ABOUT THE PROJECT]</p>
-              <p class="project__meta">team: [MEMBERS] · stack: [STACK]</p>
+              <h3 class="project__name">Your project here</h3>
+              <p class="project__desc">We back member-led security projects with time, review and a stage. Pitch one in the WhatsApp community.</p>
+              <p class="project__meta">team: open &middot; stack: whatever fits</p>
             </div>
-            <a class="project__link" href="#">repo -&gt;</a>
+            <a class="project__link" href="https://github.com/malwarous" target="_blank" rel="noopener">org -&gt;</a>
           </li>
         </ul>
       </div>
@@ -168,7 +240,53 @@
 
 
     <!-- =====================================================================
-         // 03 — JOIN THE TEAM (application form)
+         // 03 — HOW WE WORK
+         ===================================================================== -->
+    <section class="section" id="how-we-work" aria-labelledby="how-title">
+      <div class="container">
+        <header class="section__head">
+          <h2 class="section__title" id="how-title"><span class="section__num">// 03 —</span> how we work</h2>
+          <span class="section__path">~/team/principles</span>
+        </header>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> cat principles.txt</p>
+
+        <ol class="log">
+          <li class="log__row">
+            <span class="log__num">01</span>
+            <div class="log__main">
+              <h3 class="log__title">Ship in public.</h3>
+              <p class="log__desc">The site, the challenges and the notes are built where people can see them. A rough working thing teaches more than a perfect plan in a private document.</p>
+            </div>
+          </li>
+          <li class="log__row">
+            <span class="log__num">02</span>
+            <div class="log__main">
+              <h3 class="log__title">Permission first.</h3>
+              <p class="log__desc">Every lab, every challenge and every engagement has a boundary. We write it down, and we stay inside it. Curiosity is not consent.</p>
+            </div>
+          </li>
+          <li class="log__row">
+            <span class="log__num">03</span>
+            <div class="log__main">
+              <h3 class="log__title">Teach what you learn.</h3>
+              <p class="log__desc">If you solve something interesting, turn it into a write-up, a workshop or a hint for the next person. The community gets stronger when knowledge does not stop at one laptop.</p>
+            </div>
+          </li>
+          <li class="log__row">
+            <span class="log__num">04</span>
+            <div class="log__main">
+              <h3 class="log__title">Leave the door open.</h3>
+              <p class="log__desc">Beginners are not a nuisance. They are the reason the community exists. Answer the question, review the pull request, and make the next person's first step easier.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+
+    <!-- =====================================================================
+         // 04 — JOIN THE TEAM (application form)
          Applications are saved in Supabase (team_applications). Only admins
          can read them, in the dashboard. The form only shows to logged-in
          members (see "Members-only forms" in js/account.js).
@@ -176,7 +294,7 @@
     <section class="section" id="apply" aria-labelledby="apply-title">
       <div class="container">
         <header class="section__head">
-          <h2 class="section__title" id="apply-title"><span class="section__num">// 03 —</span> join the team</h2>
+          <h2 class="section__title" id="apply-title"><span class="section__num">// 04 —</span> join the team</h2>
           <span class="section__path">~/team/apply</span>
         </header>
 
@@ -258,6 +376,8 @@
           <p class="footer__label">// community</p>
           <ul>
             <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="terms.html">terms of service</a></li>
+            <li><a href="privacy.html">privacy policy</a></li>
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
@@ -270,18 +390,23 @@
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
             <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
             <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
+            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-coming-soon="instagram link coming soon. we'll post it here.">instagram</a></li>
           </ul>
         </nav>
       </div>
 
-      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+      <div class="footer__bottom">
+        <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+        <p class="footer__legal"><a href="terms.html">terms</a><span aria-hidden="true">·</span><a href="privacy.html">privacy</a><span aria-hidden="true">·</span><a href="code-of-conduct.html">code of conduct</a></p>
+      </div>
     </div>
   </footer>
 
   <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
-    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
-      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    <button class="statusbar__session" type="button" data-console-open>
+      <span aria-hidden="true"><span class="statusbar__win">[0]</span> malwarous@qau:~$</span>
+      <span class="sr-only">open command console</span>
     </button>
     <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>

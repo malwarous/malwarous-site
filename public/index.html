@@ -38,6 +38,7 @@
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
   <script src="js/ui.js" defer></script>
+  <script src="js/hero-mesh.js" defer></script>
   <script src="js/account.js" defer></script>
 </head>
 
@@ -51,6 +52,18 @@
   <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="star" viewBox="0 0 24 24">
       <path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/>
+    </symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24">
+      <path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.4 4.3 18.4 4.6 18.4 4.6c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/>
+    </symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24">
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.6 15.6 0 0 0-1.3-3.7A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4ZM4.3 14a8 8 0 0 1 0-4h3.4a17.5 17.5 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.3.8 2.5 1.3 3.7A8 8 0 0 1 5.1 16Zm3.1-8H5.1a8 8 0 0 1 4.4-3.7A15.6 15.6 0 0 0 8.2 8Zm3.8 12c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4Zm2.2-6H9.8a15.6 15.6 0 0 1 0-4h4.4a15.6 15.6 0 0 1 0 4Zm.6 5.7c.5-1.2 1-2.4 1.3-3.7h3.1a8 8 0 0 1-4.4 3.7ZM16.3 14a17.5 17.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4Z"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/>
     </symbol>
   </svg>
 
@@ -74,11 +87,13 @@
           <li><a href="gallery.html">gallery</a></li>
           <li><a href="team.html">team</a></li>
           <li><a href="#what-we-do">about</a></li>
-          <li class="nav__login"><a href="login.html">login</a></li> <!-- only shown in the phone menu -->
         </ul>
       </nav>
 
-      <a class="btn btn--small site-header__join" href="#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      <div class="site-header__actions">
+        <a class="site-header__login" href="login.html" data-header-user>login</a>
+        <a class="btn btn--small site-header__join" href="#join"><span aria-hidden="true">[</span> join <span aria-hidden="true">]</span></a>
+      </div>
     </div>
   </header>
   <!-- /layout:top -->
@@ -89,22 +104,23 @@
        the first visit of a browser session, which makes this visible.
        ===================================================================== -->
   <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot__grid" aria-hidden="true"></div>
+    <div class="boot__scan" aria-hidden="true"></div>
     <div class="boot__inner">
-<pre class="boot__star">
-            .
-            |
-           :#:
-          .###.
-        .:#####:.
- --==*#############*==--
-        ':#####:'
-          '###'
-           :#:
-            |
-            '
-</pre>
+      <p class="boot__eyebrow">// node 01 &mdash; secure shell</p>
+      <p class="boot__word" id="boot-word" aria-label="MALWAROUS"></p>
+      <p class="boot__tagline">break things. with permission.</p>
+
+      <div class="boot__meter">
+        <div class="boot__bar" aria-hidden="true"><i data-boot-bar></i></div>
+        <div class="boot__meter-meta">
+          <span data-boot-status>initializing secure channel</span>
+          <span data-boot-percent>000%</span>
+        </div>
+      </div>
+
       <ol class="boot__log" id="boot-log"></ol> <!-- lines are typed in by main.js -->
-      <p class="boot__hint">press any key to skip</p>
+      <p class="boot__hint"><span class="boot__key">any key</span> to skip &middot; <span class="boot__pulse" aria-hidden="true"></span> live</p>
     </div>
   </div>
 
@@ -130,8 +146,8 @@
           <p class="hero__lede">CTFs, hackathons and hands-on workshops at QAU, Islamabad — from web exploitation to red-teaming LLMs.</p>
 
           <div class="hero__actions">
-            <a class="btn btn--primary" href="#next-event" aria-label="register for next ctf"><span class="btn__prompt" aria-hidden="true">&gt;</span> register_for_next_ctf</a>
-            <a class="btn" href="#join" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
+            <a class="btn btn--primary" href="#next-event"><span class="btn__prompt" aria-hidden="true">&gt;</span><span aria-hidden="true">register_for_next_ctf</span><span class="sr-only">register for the next CTF</span></a>
+            <a class="btn" href="#join"><span class="btn__prompt" aria-hidden="true">&gt;</span><span aria-hidden="true">join_malwarous</span><span class="sr-only">join Malwarous</span></a>
           </div>
 
           <ul class="hero__meta">
@@ -141,47 +157,61 @@
           </ul>
         </div>
 
-        <!-- The star: a static ASCII fallback, replaced by an interactive
-             canvas when JavaScript and motion are available. Only shown on
-             large screens (see .hero__art in style.css). -->
+        <!-- The live intrusion mesh: a static topology is the fallback,
+             replaced by an interactive canvas when JavaScript and motion are
+             available. Only shown on large screens (see .hero__art). -->
         <figure class="hero__art" aria-hidden="true">
-          <div class="star-stage" data-star-stage>
-<pre class="ascii-star">
-                    .
-                    |
-                   .#.
-                   *#*
-                  :###:
-                 :#####:
-               .*#######*.
-             .*###########*.
-         .:*#################*:.
- --==**###########################**==--
-         ':*#################*:'
-             '*###########*'
-               '*#######*'
-                 :#####:
-                  :###:
-                   *#*
-                   '#'
-                    |
-                    '
+          <div class="mesh-stage" data-mesh-stage>
+<pre class="mesh-fallback">
+          .─────────.
+     .────┤  0x4f   ├────.
+    /     '─────────'     \
+ .──┤  .──.         .──.  ├──.
+ │  '──┤  │─────────│  ├──'  │
+ '──.  '──'         '──'  .──'
+    \     .─────────.    /
+     '────┤  0x1a   ├────'
+          '─────────'
+     [ mesh offline · secure ]
 </pre>
-            <canvas class="star-canvas" data-star-canvas></canvas>
-            <p class="star-stage__hint">move to disturb &middot; click to pulse</p>
+            <canvas class="mesh-canvas" data-mesh-canvas></canvas>
+            <p class="mesh-stage__hint">move to scan &middot; click to breach</p>
           </div>
-          <figcaption class="star-stage__telemetry"><span class="star-stage__live">&bull; live</span> &middot; <b data-star-count>--</b> glyphs &middot; fig. 01 &mdash; the star from the o</figcaption>
+          <figcaption class="mesh-telemetry">
+            <span class="mesh-telemetry__live"><i aria-hidden="true"></i> live</span>
+            <span><b data-mesh-nodes>--</b> nodes</span>
+            <span><b data-mesh-rate>0</b> pkt/s</span>
+            <span class="mesh-telemetry__state" data-mesh-state>secure</span>
+            <span class="mesh-telemetry__fig">fig. 01 &mdash; live intrusion topology</span>
+          </figcaption>
         </figure>
 
       </div>
     </section>
 
 
-    <!-- =====================================================================
-         // 01 — NEXT EVENT
-         The countdown reads nextEventStart in js/config.js. Change it there
-         and BOTH countdowns (this panel + the status bar) update.
-         ===================================================================== -->
+    <!-- Live signal strip: a quiet ticker between the hero and the next event. -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <div class="ticker__group">
+          <span><b>now live</b> inbox under siege <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>locks <b>08 nov 2026 · 10:00 pkt</b> <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span><b>04</b> events run <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span><b>09</b> photos in the archive <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>next up <i>weekly online ctfs</i> <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>qau · islamabad · <i>33.75n 73.14e</i> <svg class="ticker__star"><use href="#star"></use></svg></span>
+        </div>
+        <div class="ticker__group">
+          <span><b>now live</b> inbox under siege <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>locks <b>08 nov 2026 · 10:00 pkt</b> <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span><b>04</b> events run <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span><b>09</b> photos in the archive <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>next up <i>weekly online ctfs</i> <svg class="ticker__star"><use href="#star"></use></svg></span>
+          <span>qau · islamabad · <i>33.75n 73.14e</i> <svg class="ticker__star"><use href="#star"></use></svg></span>
+        </div>
+      </div>
+    </div>
+    <p class="sr-only">Now live: Inbox Under Siege on TryHackMe, locking 8 November 2026 at 10:00 AM Pakistan time. Four events have run and nine photos are in the gallery.</p>
     <section class="section" id="next-event" aria-labelledby="next-event-title">
       <div class="container">
         <header class="section__head">
@@ -195,14 +225,10 @@
             <h3 class="event-panel__name">Information Session: Malwarous Website and Online Weekly CTFs</h3>
 
             <dl class="kv">
-              <div class="kv__row">
-                <dt>date</dt>
-                <!-- Both the date and the lock time are generated from js/config.js -->
+              <div class="kv__row" id="event-date-row">
+                <dt id="event-date-label">date</dt>
+                <!-- One date only: the start while upcoming, the lock once live. -->
                 <dd><time id="next-event-time">4 Nov 2026, 10:00 AM PKT</time></dd>
-              </div>
-              <div class="kv__row" id="event-lock-row">
-                <dt>locks</dt>
-                <dd><time id="next-event-end">8 Nov 2026, 10:00 AM PKT</time></dd>
               </div>
               <div class="kv__row">
                 <dt>venue</dt>
@@ -354,6 +380,34 @@
             </tr>
           </tbody>
         </table>
+
+        <p class="prompt"><span class="prompt__user">malwarous@qau:~$</span> ls ~/gallery --recent</p>
+        <div class="strip">
+          <a class="strip__card" href="gallery.html?event=ctf-sep-2026">
+            <span class="strip__media"><img src="assets/gallery/ctf-sep-2026/01-thumb.jpg" alt="" loading="lazy"></span>
+            <span class="strip__body">
+              <span class="strip__tag">ctf · 27 sep 2026</span>
+              <span class="strip__title">Capture The Flag Competition</span>
+              <span class="strip__meta">9 photos from the room</span>
+            </span>
+          </a>
+          <a class="strip__card" href="gallery.html?event=info-session-nov-2026">
+            <span class="strip__media strip__media--poster"><img src="assets/gallery/info-session-nov-2026/poster.svg" alt="" loading="lazy"></span>
+            <span class="strip__body">
+              <span class="strip__tag">online · live now</span>
+              <span class="strip__title">Information Session: Website and Weekly CTFs</span>
+              <span class="strip__meta">poster · photos coming soon</span>
+            </span>
+          </a>
+          <a class="strip__card" href="gallery.html?event=ai-hackathon-oct-2026">
+            <span class="strip__media strip__media--poster"><img src="assets/gallery/ai-hackathon-oct-2026/poster.svg" alt="" loading="lazy"></span>
+            <span class="strip__body">
+              <span class="strip__tag">hackathon · 14 oct 2026</span>
+              <span class="strip__title">AI Mini Project Hackathon</span>
+              <span class="strip__meta">poster · photos coming soon</span>
+            </span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -414,7 +468,7 @@
          ===================================================================== -->
     <section class="section" id="writeups" aria-labelledby="writeups-title">
       <div class="container">
-        <details class="collapse" data-home-writeups>
+        <details class="collapse" data-home-writeups open>
           <summary class="section__head collapse__head">
             <h2 class="section__title" id="writeups-title"><span class="section__num">// 05 —</span> latest write-ups</h2>
             <span class="section__path"><span id="home-writeups-count">no posts yet</span> <span class="collapse__icon" aria-hidden="true"></span></span>
@@ -429,6 +483,31 @@
           </ul>
 
           <p class="archive__empty" id="home-writeups-empty">no write-ups yet. solved an arena room after it closed? <a href="writeups.html#submit">be the first to write one up -&gt;</a></p>
+
+          <div class="starter-shelf" id="home-writeups-starters">
+            <p class="prompt prompt--flush"><span class="prompt__user">malwarous@qau:~$</span> cat ~/reading-list.txt</p>
+            <ul class="shelf">
+              <li class="shelf__item">
+                <p class="shelf__tag">web · free</p>
+                <h3 class="shelf__title"><a href="https://portswigger.net/web-security" target="_blank" rel="noopener">PortSwigger Web Security Academy</a></h3>
+                <p class="shelf__text">Labs that start with a broken login form and end with server-side request forgery. The fastest way to make web challenges feel familiar.</p>
+                <a class="shelf__link" href="https://portswigger.net/web-security" target="_blank" rel="noopener">open academy</a>
+              </li>
+              <li class="shelf__item">
+                <p class="shelf__tag">reference · owasp</p>
+                <h3 class="shelf__title"><a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener">OWASP Top 10</a></h3>
+                <p class="shelf__text">The list every web security conversation eventually cites. Read the categories, then look for them in a lab you are allowed to break.</p>
+                <a class="shelf__link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener">read the list</a>
+              </li>
+              <li class="shelf__item">
+                <p class="shelf__tag">practice · rooms</p>
+                <h3 class="shelf__title"><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe</a></h3>
+                <p class="shelf__text">Where our arena rooms live. Start with the beginner paths, then join the current room and compare notes in the community.</p>
+                <a class="shelf__link" href="https://tryhackme.com/" target="_blank" rel="noopener">start a room</a>
+              </li>
+            </ul>
+          </div>
+
           <p class="collapse__more"><a class="section__link" href="writeups.html">all write-ups and opportunities -&gt;</a></p>
         </details>
       </div>
@@ -529,18 +608,23 @@
                 <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Kabir Niazi</h3>
                 <dl class="member__info">
                   <div><dt>role</dt><dd>team lead</dd></div>
+                  <div><dt>focus</dt><dd>red teaming &middot; web exploitation</dd></div>
+                  <div><dt>links</dt><dd><a href="https://www.linkedin.com/in/kabir-kahn-niazi/" target="_blank" rel="noopener">linkedin</a>, <a href="https://github.com/kabeerniazi" target="_blank" rel="noopener">github</a></dd></div>
                 </dl>
               </li>
               <li class="member">
                 <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Younas Rehmatullah</h3>
                 <dl class="member__info">
                   <div><dt>role</dt><dd>mobile app dev</dd></div>
+                  <div><dt>focus</dt><dd>apps &middot; event tooling</dd></div>
                 </dl>
               </li>
               <li class="member">
                 <h3 class="member__name"><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Hasnaat Hussain</h3>
                 <dl class="member__info">
                   <div><dt>role</dt><dd>web dev</dd></div>
+                  <div><dt>focus</dt><dd>web platforms &middot; auth</dd></div>
+                  <div><dt>links</dt><dd><a href="https://www.linkedin.com/in/hasnaathussain/" target="_blank" rel="noopener">linkedin</a>, <a href="https://github.com/Hasnaathussain" target="_blank" rel="noopener">github</a></dd></div>
                 </dl>
               </li>
               <li class="member member--open">
@@ -568,7 +652,7 @@
           <p class="join__title">Curiosity is the only prerequisite.</p>
           <p class="read join__text">No experience needed. Come to a workshop, play a CTF, or lurk in our WhatsApp community until you're ready. If you can open a terminal — or want to learn how — you're in.</p>
           <div class="join__actions">
-            <a class="btn btn--primary" href="signup.html" aria-label="join malwarous"><span class="btn__prompt" aria-hidden="true">&gt;</span> join_malwarous</a>
+            <a class="btn btn--primary" href="signup.html"><span class="btn__prompt" aria-hidden="true">&gt;</span><span aria-hidden="true">join_malwarous</span><span class="sr-only">join Malwarous</span></a>
             <a class="btn" href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener"><span aria-hidden="true">[</span> whatsapp community <span aria-hidden="true">]</span></a>
           </div>
           <p class="join__note">already have an account? <a href="login.html">log in -&gt;</a> · room links are also posted in our WhatsApp community</p>
@@ -591,6 +675,11 @@
           <div class="split__aside">
             <p class="lede">This space is unclaimed.</p>
             <p class="read">We're looking for partners to fund prizes, contribute challenges, or run a workshop with us. If your team hires people who like taking things apart, we should talk.</p>
+            <ul class="guidelines">
+              <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Fund a prize pool for a CTF or the monthly arena.</li>
+              <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Contribute a challenge with a real-world story behind it.</li>
+              <li><svg class="star" aria-hidden="true"><use href="#star"></use></svg> Run a workshop or a recruitment session with our members.</li>
+            </ul>
             <a class="btn" href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener"><span aria-hidden="true">[</span> talk to the team <span aria-hidden="true">]</span></a>
           </div>
 
@@ -638,6 +727,8 @@
           <p class="footer__label">// community</p>
           <ul>
             <li><a href="code-of-conduct.html">code of conduct</a></li>
+            <li><a href="terms.html">terms of service</a></li>
+            <li><a href="privacy.html">privacy policy</a></li>
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">contact</a></li>
             <li><a href="signup.html">join</a></li>
             <li><a href="login.html">login</a></li>
@@ -650,18 +741,23 @@
             <li><a href="https://chat.whatsapp.com/KH2JPvkNBVl4ZqPslutRWs" target="_blank" rel="noopener">whatsapp</a></li>
             <li><a href="https://github.com/malwarous" target="_blank" rel="noopener">github</a></li>
             <li><a href="https://linkedin.com/company/malwarous" target="_blank" rel="noopener">linkedin</a></li>
+            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-coming-soon="instagram link coming soon. we'll post it here.">instagram</a></li>
           </ul>
         </nav>
       </div>
 
-      <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+      <div class="footer__bottom">
+        <p class="footer__copy">© <span id="year">2026</span> Malwarous · student-run at Quaid-i-Azam University, Islamabad</p>
+        <p class="footer__legal"><a href="terms.html">terms</a><span aria-hidden="true">·</span><a href="privacy.html">privacy</a><span aria-hidden="true">·</span><a href="code-of-conduct.html">code of conduct</a></p>
+      </div>
     </div>
   </footer>
 
   <!-- Status bar, pinned to the bottom like tmux -->
   <aside class="statusbar" aria-label="Status bar">
-    <button class="statusbar__session" type="button" data-console-open aria-label="Open command console">
-      <span class="statusbar__win">[0]</span> malwarous@qau:~$
+    <button class="statusbar__session" type="button" data-console-open>
+      <span aria-hidden="true"><span class="statusbar__win">[0]</span> malwarous@qau:~$</span>
+      <span class="sr-only">open command console</span>
     </button>
     <span class="statusbar__item">next_ctf: <span class="statusbar__countdown" id="status-countdown">tba</span></span>
     <span class="statusbar__sep statusbar__status" aria-hidden="true">|</span>

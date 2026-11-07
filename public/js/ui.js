@@ -1,7 +1,8 @@
 /* ==========================================================================
    Malwarous — ui.js
    The "experience" layer: theme switching, the site cursor, scroll motion,
-   the command palette, the live visitor count and the interactive star.
+   the command palette and the live visitor count. The homepage hero mesh
+   lives in js/hero-mesh.js.
 
    This file is deliberately independent of account.js and main.js. Everything
    here is progressive: if a feature cannot run, the site behaves exactly like
@@ -26,9 +27,9 @@
     initMagnets();
     initPalette();
     initCursor();
-    initStarCanvas();
     initPresence();
     initKonami();
+    initComingSoon();
     document.documentElement.classList.add('ui-ready');
   });
 
@@ -60,6 +61,7 @@
 
   function initThemeToggle() {
     var header = document.querySelector('.site-header__inner');
+    var actions = header ? header.querySelector('.site-header__actions') : null;
     var join = header ? header.querySelector('.site-header__join') : null;
     var button = document.querySelector('[data-theme-toggle]');
 
@@ -80,7 +82,7 @@
         '</span>' +
         '<span class="theme-toggle__beam" aria-hidden="true"></span>';
 
-      if (header) header.insertBefore(button, join || null);
+      if (header) header.insertBefore(button, actions || join || null);
       else {
         button.classList.add('theme-toggle--floating');
         document.body.appendChild(button);
@@ -107,16 +109,40 @@
     });
   }
 
+  var activeTransition = null;
+  var pendingTheme = null;
+
   function switchTheme(next, source) {
-    if (reducedMotion || !document.startViewTransition) {
-      root.classList.add('theme-transition');
-      applyTheme(next, true);
-      setTimeout(function () { root.classList.remove('theme-transition'); }, 420);
+    // No transition support, reduced motion, a hidden tab or a transition
+    // already in flight: switch instantly so the command never gets lost.
+    if (reducedMotion || !document.startViewTransition || document.visibilityState !== 'visible') {
+      applyThemeInstant(next);
+      return;
+    }
+    if (activeTransition) {
+      pendingTheme = next;
       return;
     }
 
-    var transition = document.startViewTransition(function () { applyTheme(next, true); });
-    transition.ready.then(function () {
+    try {
+      activeTransition = document.startViewTransition(function () { applyTheme(next, true); });
+    } catch (error) {
+      activeTransition = null;
+      applyThemeInstant(next);
+      return;
+    }
+
+    var done = function () {
+      activeTransition = null;
+      if (pendingTheme) {
+        var queued = pendingTheme;
+        pendingTheme = null;
+        switchTheme(queued, source);
+      }
+    };
+    activeTransition.finished.then(done, done);
+
+    activeTransition.ready.then(function () {
       var rect = source && source.getBoundingClientRect ? source.getBoundingClientRect() : null;
       var x = rect ? rect.left + rect.width / 2 : window.innerWidth - 48;
       var y = rect ? rect.top + rect.height / 2 : 48;
@@ -126,6 +152,12 @@
         { duration: 520, easing: 'cubic-bezier(.2,.8,.2,1)', pseudoElement: '::view-transition-new(root)' }
       );
     }).catch(function () { /* the theme already switched */ });
+  }
+
+  function applyThemeInstant(next) {
+    root.classList.add('theme-transition');
+    applyTheme(next, true);
+    setTimeout(function () { root.classList.remove('theme-transition'); }, 420);
   }
 
 
@@ -164,7 +196,7 @@
 
     var groups = [
       { selector: '.section__head, .event-panel, .split__aside, .split__main, .join > *, .page-hero__inner > *', step: 0 },
-      { selector: '.log__row, .member, .past, .post, .gallery-event, .lesson, .roadmap__stage, .step, .rule, .project', step: 55 },
+      { selector: '.log__row, .member, .past, .post, .gallery-event, .lesson, .roadmap__stage, .step, .rule, .project, .crew__card, .shelf__item, .season__stat, .podium__place, .module, .kit__item', step: 55 },
       { selector: '.events-table tbody tr, .ls__row', step: 35 }
     ];
 
@@ -431,7 +463,21 @@
       '</div>' +
       '<svg class="site-cursor__dot" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.7 6.6 17.4 11.3 24 12C17.4 12.7 12.7 17.4 12 24C11.3 17.4 6.6 12.7 0 12C6.6 11.3 11.3 6.6 12 0Z"/></svg>';
     document.body.appendChild(wrap);
-    root.classList.add('has-site-cursor');
+
+    // A <dialog> paints in the browser's top layer, above every z-index. Move
+    // the cursor into the open dialog so it never vanishes over the gallery
+    // lightbox, then put it back when the dialog closes.
+    document.addEventListener('toggle', function (event) {
+      var dialog = event.target;
+      if (!dialog || dialog.tagName !== 'DIALOG') return;
+      if (dialog.open) {
+        dialog.appendChild(wrap);
+        wrap.classList.add('is-top-layer');
+      } else if (wrap.parentElement !== document.body) {
+        document.body.appendChild(wrap);
+        wrap.classList.remove('is-top-layer');
+      }
+    }, true);
 
     var ring = wrap.querySelector('.site-cursor__ring');
     var dot = wrap.querySelector('.site-cursor__dot');
@@ -531,7 +577,14 @@
       targetY = event.clientY;
       if (!active) {
         active = true;
+        ringX = targetX;
+        ringY = targetY;
+        dotX = targetX;
+        dotY = targetY;
         wrap.classList.add('is-visible');
+        // Only hide the native cursor once the custom one is actually on
+        // screen, so there is never a cursor-less first frame.
+        root.classList.add('has-site-cursor');
       }
       if (frame % 2 === 0) {
         particles.push({
@@ -548,7 +601,7 @@
     }, { passive: true });
 
     document.addEventListener('pointerover', function (event) {
-      var interactive = event.target.closest('a, button, input, textarea, select, label, [role="button"], [data-console-open], .gallery__thumb');
+      var interactive = event.target.closest('a, button, input, textarea, select, label, [role="button"], [data-console-open], .gallery__thumb, [data-mesh-stage], .lightbox');
       wrap.classList.toggle('is-active', Boolean(interactive));
       if (!interactive) {
         label.textContent = '';
@@ -558,7 +611,9 @@
       if (interactive.matches('input, textarea, select')) text = 'type';
       else if (interactive.matches('.gallery__thumb')) text = 'zoom';
       else if (interactive.matches('[data-console-open]')) text = 'shell';
+      else if (interactive.matches('[data-mesh-stage]')) text = 'scan';
       else if (interactive.matches('button, .filter, .room__arrow, [role="button"]')) text = 'run';
+      else if (interactive.matches('.lightbox')) text = 'view';
       else if (interactive.matches('a') && /github|whatsapp|tryhackme/i.test(interactive.href || '')) text = 'visit';
       label.textContent = text;
     });
@@ -593,210 +648,10 @@
 
 
   /* ==========================================================================
-     5. The interactive star (homepage)
-     The static ASCII star is the fallback. When motion is allowed we hide it
-     and draw the same four-pointed star as a field of characters that reacts
-     to the pointer.
+     5. The live intrusion mesh
+     The homepage hero animation lives in js/hero-mesh.js so it only loads
+     on the page that uses it. This file keeps the shared experience layer.
      ========================================================================== */
-
-  function initStarCanvas() {
-    var canvas = document.querySelector('[data-star-canvas]');
-    if (!canvas || reducedMotion) return;
-    // The hero art is display:none below 1024px (see style.css). Don't burn
-    // a frame loop drawing into something nobody can see.
-    if (window.matchMedia('(max-width: 1023px)').matches) return;
-    var stage = canvas.closest('[data-star-stage]');
-    if (!stage) return;
-    var context = canvas.getContext('2d');
-    if (!context) return;
-
-    var particles = [];
-    var ripples = [];
-    var width = 0;
-    var height = 0;
-    var dpr = 1;
-    var mouse = { x: -9999, y: -9999, active: false };
-    var raf = null;
-    var last = 0;
-    var text = '#';
-    var tint = '#9D90FF';
-    var accent = '#F2A93B';
-
-    function readColors() {
-      var styles = getComputedStyle(root);
-      tint = styles.getPropertyValue('--brand-tint').trim() || '#9D90FF';
-      accent = styles.getPropertyValue('--live').trim() || '#F2A93B';
-    }
-
-    function size() {
-      var rect = stage.getBoundingClientRect();
-      width = Math.max(260, rect.width);
-      height = Math.max(360, rect.height);
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = width + 'px';
-      canvas.style.height = height + 'px';
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
-    }
-
-    function build() {
-      var area = width * height;
-      var count = Math.max(340, Math.min(760, Math.round(area / 230)));
-      particles = [];
-      for (var i = 0; i < count; i++) {
-        var angle = Math.random() * Math.PI * 2;
-        var depth = Math.sqrt(Math.random());
-        var chars = depth > 0.72 ? ['#', '#', '*'] : depth > 0.35 ? ['*', '+', ':'] : ['.', ':', '+'];
-        particles.push({
-          angle: angle,
-          depth: depth,
-          phase: Math.random() * Math.PI * 2,
-          jitter: (Math.random() - 0.5) * 12,
-          speed: (0.00012 + Math.random() * 0.00028) * (Math.random() > 0.5 ? 1 : -1),
-          char: chars[Math.floor(Math.random() * chars.length)],
-          size: 8 + Math.round(depth * 5),
-          x: 0,
-          y: 0,
-          vx: 0,
-          vy: 0,
-          init: false
-        });
-      }
-      context.clearRect(0, 0, width, height);
-      stage.classList.add('is-live');
-      var countEl = document.querySelector('[data-star-count]');
-      if (countEl) countEl.textContent = String(count);
-    }
-
-    function starRadius(angle, radius) {
-      // Four points: up, right, down, left. Valleys sit at 45 degrees.
-      return radius * (0.30 + 0.70 * Math.pow(Math.abs(Math.cos(2 * angle)), 1.35));
-    }
-
-    function frame(time) {
-      var dt = Math.min(32, time - last || 16);
-      last = time;
-      var cx = width / 2;
-      var cy = height / 2;
-      var radius = Math.min(width, height) * 0.43;
-      var now = performance.now() / 1000;
-
-      context.clearRect(0, 0, width, height);
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        p.angle += p.speed * dt;
-        var breathe = 1 + Math.sin(now * 0.7 + p.phase) * 0.025;
-        var r = starRadius(p.angle, radius) * p.depth * breathe;
-        var homeX = cx + Math.cos(p.angle) * r;
-        var homeY = cy + Math.sin(p.angle) * r;
-
-        if (!p.init) { p.x = homeX; p.y = homeY; p.init = true; }
-
-        if (mouse.active) {
-          var dx = p.x - mouse.x;
-          var dy = p.y - mouse.y;
-          var distSq = dx * dx + dy * dy;
-          if (distSq < 110 * 110 && distSq > 1) {
-            var force = (1 - Math.sqrt(distSq) / 110) * 0.55;
-            p.vx += (dx / Math.sqrt(distSq)) * force;
-            p.vy += (dy / Math.sqrt(distSq)) * force;
-          }
-        }
-
-        p.vx += (homeX - p.x) * 0.035;
-        p.vy += (homeY - p.y) * 0.035;
-        p.vx *= 0.9;
-        p.vy *= 0.9;
-        p.x += p.vx;
-        p.y += p.vy;
-
-        var flicker = 0.45 + 0.35 * Math.sin(now * 2 + p.phase);
-        context.globalAlpha = Math.max(0.06, Math.min(0.95, 0.16 + p.depth * 0.6 + flicker * 0.12));
-        context.fillStyle = p.depth > 0.83 ? accent : tint;
-        context.font = '500 ' + p.size + 'px "JetBrains Mono", monospace';
-        context.fillText(p.char, p.x + Math.sin(now + p.phase) * 0.7, p.y);
-      }
-
-      // A slow orbit of sparks around the star.
-      context.globalAlpha = 0.5;
-      context.fillStyle = accent;
-      context.font = '9px "JetBrains Mono", monospace';
-      for (var k = 0; k < 9; k++) {
-        var orbit = now * 0.18 + k * (Math.PI * 2 / 9);
-        var ox = cx + Math.cos(orbit) * radius * 1.17;
-        var oy = cy + Math.sin(orbit) * radius * 1.17;
-        context.fillText(k % 3 === 0 ? '+' : '\u00b7', ox, oy);
-      }
-
-      ripples = ripples.filter(function (ripple) { return ripple.life > 0; });
-      ripples.forEach(function (ripple) {
-        ripple.life -= 0.018;
-        ripple.radius += 3.4;
-        context.globalAlpha = Math.max(0, ripple.life) * 0.55;
-        context.strokeStyle = accent;
-        context.lineWidth = 1;
-        context.beginPath();
-        context.arc(cx, cy, ripple.radius, 0, Math.PI * 2);
-        context.stroke();
-      });
-
-      context.globalAlpha = 1;
-      raf = requestAnimationFrame(frame);
-    }
-
-    function start() {
-      if (raf === null) {
-        last = performance.now();
-        raf = requestAnimationFrame(frame);
-      }
-    }
-
-    function stop() {
-      if (raf !== null) {
-        cancelAnimationFrame(raf);
-        raf = null;
-      }
-    }
-
-    stage.addEventListener('pointermove', function (event) {
-      var rect = canvas.getBoundingClientRect();
-      mouse.x = event.clientX - rect.left;
-      mouse.y = event.clientY - rect.top;
-      mouse.active = true;
-    });
-    stage.addEventListener('pointerleave', function () { mouse.active = false; });
-    stage.addEventListener('pointerdown', function () { ripples.push({ radius: 0, life: 1 }); });
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) stop(); else start();
-    });
-
-    var observer = new ResizeObserver(function () { size(); });
-    observer.observe(stage);
-    readColors();
-    size();
-
-    // Only animate while the star is on screen. This keeps the fan quiet
-    // when someone has scrolled down to the event panel.
-    if ('IntersectionObserver' in window) {
-      var visibility = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) start(); else stop();
-        });
-      }, { threshold: 0.02 });
-      visibility.observe(stage);
-    } else {
-      start();
-    }
-
-    window.addEventListener('malwarous:theme', readColors);
-  }
-
 
   /* ==========================================================================
      6. Live visitor count (Supabase Realtime presence, native WebSocket)
@@ -952,8 +807,19 @@
 
 
   /* ==========================================================================
-     7. Small extras: clipboard, toast, Konami
+     7. Small extras: clipboard, toast, coming-soon links, Konami
      ========================================================================== */
+
+  // Links whose real destination is not public yet still respond instead of
+  // jumping to the top of the page. The message comes from the data attribute.
+  function initComingSoon() {
+    document.addEventListener('click', function (event) {
+      var link = event.target.closest('[data-coming-soon]');
+      if (!link) return;
+      event.preventDefault();
+      toast(link.getAttribute('data-coming-soon') || 'that link is coming soon.');
+    });
+  }
 
   function copyText(text) {
     function done() { toast('copied to clipboard.'); }

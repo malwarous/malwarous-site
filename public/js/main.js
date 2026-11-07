@@ -71,15 +71,28 @@ document.addEventListener('DOMContentLoaded', function () {
    -------------------------------------------------------------------------- */
 
 const BOOT_LINES = [
-  ['initializing malwarous...', 'ok'],
-  ['mounting /dev/curiosity...', 'ok'],
-  ['loading ctf arena...', 'ok'],
-  ['checking permissions...', 'granted'],
-  ['ready.', '']
+  ['handshake', 'establishing secure channel', 'ok'],
+  ['route', 'edge -> islamabad/pk', '14ms'],
+  ['crypto', 'verifying payload signature', 'ok'],
+  ['fs', 'mounting /dev/curiosity', 'ok'],
+  ['auth', 'guest session accepted', 'read-only'],
+  ['arena', 'loading weekly ctf index', 'ok'],
+  ['ready', 'welcome to malwarous', '']
 ];
 
-const BOOT_LINE_DELAY = 180; // ms between log lines
-const BOOT_TOTAL = 1250;     // ms before the screen starts fading (+200 ms fade)
+const BOOT_LINE_DELAY = 185; // ms between log lines
+const BOOT_TOTAL = 2150;     // ms of progress before the wipe
+const BOOT_EXIT = 520;       // ms of transition
+const BOOT_WORD = 'MALWAROUS';
+const BOOT_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*';
+const BOOT_STAGES = [
+  [0, 'initializing secure channel'],
+  [26, 'verifying payload signature'],
+  [48, 'mounting /dev/curiosity'],
+  [68, 'negotiating guest session'],
+  [86, 'loading arena index'],
+  [100, 'access granted']
+];
 
 function runBootScreen(onDone) {
   const boot = document.getElementById('boot');
@@ -93,51 +106,127 @@ function runBootScreen(onDone) {
   writeSession(BOOT_KEY, 'yes'); // don't show it again this session
 
   const log = document.getElementById('boot-log');
+  const word = document.getElementById('boot-word');
+  const bar = boot.querySelector('[data-boot-bar]');
+  const percent = boot.querySelector('[data-boot-percent]');
+  const status = boot.querySelector('[data-boot-status]');
+  const letters = [];
   const timers = [];
   let finished = false;
+  let raf = 0;
 
-  // Schedule each log line
-  BOOT_LINES.forEach(function (line, i) {
-    const time = 100 + i * BOOT_LINE_DELAY;
+  // Build the wordmark as fixed-width glyph slots, then decode it.
+  if (word) {
+    word.textContent = '';
+    BOOT_WORD.split('').forEach(function (character) {
+      const span = document.createElement('span');
+      span.className = 'is-pending';
+      span.textContent = randomGlyph();
+      letters.push({ element: span, target: character });
+      word.appendChild(span);
+    });
+  }
+
+  let settled = 0;
+  const decode = setInterval(function () {
+    if (settled < letters.length) {
+      letters[settled].element.textContent = letters[settled].target;
+      letters[settled].element.classList.remove('is-pending');
+      settled++;
+    }
+    for (let i = settled; i < letters.length; i++) {
+      letters[i].element.textContent = randomGlyph();
+    }
+    if (settled >= letters.length) clearInterval(decode);
+  }, 62);
+
+  BOOT_LINES.forEach(function (line, index) {
     timers.push(setTimeout(function () {
-      log.appendChild(makeBootLine(time, line[0], line[1]));
-    }, time));
+      if (log) log.appendChild(makeBootLine(line[0], line[1], line[2]));
+    }, 140 + index * BOOT_LINE_DELAY));
   });
 
-  // Finish on its own after BOOT_TOTAL, or earlier if the visitor skips
-  timers.push(setTimeout(finish, BOOT_TOTAL));
+  // One requestAnimationFrame loop drives the bar, percentage and status, so
+  // they can never drift apart (and rAF pauses politely in a hidden tab).
+  const started = performance.now();
+  function progress(now) {
+    const ratio = Math.min(1, (now - started) / BOOT_TOTAL);
+    const eased = 1 - Math.pow(1 - ratio, 2);
+    const value = Math.round(eased * 100);
+
+    if (bar) bar.style.transform = 'scaleX(' + eased + ')';
+    if (percent) percent.textContent = String(value).padStart(3, '0') + '%';
+
+    if (status) {
+      let label = BOOT_STAGES[0][1];
+      BOOT_STAGES.forEach(function (stage) {
+        if (value >= stage[0]) label = stage[1];
+      });
+      status.textContent = label;
+    }
+
+    if (ratio < 1) raf = requestAnimationFrame(progress);
+    else finish();
+  }
+  raf = requestAnimationFrame(progress);
+  // rAF pauses in a hidden tab; this fallback guarantees the boot always ends.
+  const autoFinish = setTimeout(finish, BOOT_TOTAL + 150);
+
   document.addEventListener('keydown', finish);
   document.addEventListener('pointerdown', finish);
+  window.addEventListener('pagehide', finish, { once: true });
 
   function finish() {
     if (finished) return;
     finished = true;
 
     timers.forEach(clearTimeout);
+    clearInterval(decode);
+    clearTimeout(autoFinish);
+    cancelAnimationFrame(raf);
     document.removeEventListener('keydown', finish);
     document.removeEventListener('pointerdown', finish);
 
-    boot.classList.add('is-leaving'); // CSS fades it out over 200 ms
+    // Settle the wordmark and the meter before the wipe, so skipping early
+    // still ends on a finished frame.
+    letters.forEach(function (letter) {
+      letter.element.textContent = letter.target;
+      letter.element.classList.remove('is-pending');
+    });
+    if (bar) bar.style.transform = 'scaleX(1)';
+    if (percent) percent.textContent = '100%';
+    if (status) status.textContent = 'access granted';
+
+    boot.classList.add('is-leaving');
     setTimeout(function () {
       root.classList.remove('is-booting');
+      boot.classList.remove('is-leaving');
       onDone();
-    }, 200);
+    }, BOOT_EXIT);
   }
 }
 
-// Builds one line like:  [   0.280] mounting /dev/curiosity... ok
-function makeBootLine(ms, text, result) {
+function randomGlyph() {
+  return BOOT_GLYPHS[Math.floor(Math.random() * BOOT_GLYPHS.length)];
+}
+
+// Builds one line like:  [ handshake ] establishing secure channel  ok
+function makeBootLine(label, text, result) {
   const li = document.createElement('li');
 
   const stamp = document.createElement('span');
   stamp.className = 'stamp';
-  stamp.textContent = '[' + (ms / 1000).toFixed(3).padStart(8, ' ') + '] ';
+  stamp.textContent = '[' + label.padEnd(9, ' ') + ']';
+
+  const command = document.createElement('span');
+  command.className = 'boot__cmd';
+  command.textContent = text;
 
   const ok = document.createElement('span');
   ok.className = 'ok';
-  ok.textContent = result ? ' ' + result : '';
+  ok.textContent = result;
 
-  li.append(stamp, text, ok);
+  li.append(stamp, command, ok);
   return li;
 }
 
@@ -264,8 +353,8 @@ function initNav() {
 
 function initCountdown() {
   const timeEl = document.getElementById('next-event-time');
-  const lockEl = document.getElementById('next-event-end');
-  const lockRow = document.getElementById('event-lock-row');
+  const dateRow = document.getElementById('event-date-row');
+  const dateLabel = document.getElementById('event-date-label');
   const panel = document.getElementById('event-panel');
   const statusEl = document.getElementById('status-countdown');
   const clockEl = document.getElementById('status-clock');
@@ -291,14 +380,33 @@ function initCountdown() {
     timeEl.textContent = formatPkt(target);
   }
 
-  if (lockEl) {
-    if (!isNaN(end)) {
-      lockEl.setAttribute('datetime', endValue);
-      lockEl.textContent = formatPkt(end);
-    } else if (lockRow) {
-      lockRow.hidden = true;
+  // One visible date only. Upcoming: the start. Live: the lock. That keeps the
+  // panel from showing two dates for the same event.
+  let dateMode = '';
+  function renderDate(mode) {
+    if (!dateRow || !timeEl) return;
+    if (dateMode === mode) return;
+    dateMode = mode;
+
+    if (mode === 'hidden') {
+      dateRow.hidden = true;
+      return;
     }
+
+    const ms = mode === 'locks' ? end : target;
+    if (isNaN(ms)) {
+      dateRow.hidden = true;
+      dateMode = 'hidden';
+      return;
+    }
+
+    dateRow.hidden = false;
+    if (dateLabel) dateLabel.textContent = mode === 'locks' ? 'locks' : 'date';
+    timeEl.setAttribute('datetime', mode === 'locks' ? endValue : startValue);
+    timeEl.textContent = formatPkt(ms);
   }
+
+  renderDate(isNaN(target) ? 'hidden' : (Date.now() >= target && !isNaN(end) ? 'locks' : 'date'));
 
   // Keep the registration button pointed at the current event, not a slug
   // typed into the HTML months ago.
@@ -322,6 +430,7 @@ function initCountdown() {
     setText(parts.seconds, '--');
     setText(labelEl, 'date to be announced');
     setText(statusEl, 'tba');
+    renderDate('hidden');
     if (panel) panel.classList.remove('is-live');
   }
 
@@ -340,14 +449,19 @@ function initCountdown() {
     if (!isNaN(target) && !isNaN(end) && now >= target) {
       const left = splitTime(end - now);
       if (left.done) {
+        // After a day of "locked", the slot is free for the next event.
+        if (now > end + 24 * 3600 * 1000) {
+          showTba();
+          return;
+        }
         showDigits({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        renderDate('locks');
         setText(labelEl, 'room locked · results coming soon');
         setText(statusEl, 'locked');
         if (panel) panel.classList.remove('is-live');
-        // After a day of "locked", the slot is free for the next event.
-        if (now > end + 24 * 3600 * 1000) showTba();
       } else {
         showDigits(left);
+        renderDate('locks');
         setText(labelEl, 'live · room locks in');
         setText(statusEl, 'locks in ' + pad(left.days) + 'd ' + pad(left.hours) + 'h ' + pad(left.minutes) + 'm');
         if (panel) panel.classList.add('is-live');
@@ -368,12 +482,14 @@ function initCountdown() {
       setText(parts.hours, '00');
       setText(parts.minutes, '00');
       setText(parts.seconds, '00');
+      renderDate('date');
       setText(labelEl, 'live now');
       setText(statusEl, 'live now');
       if (panel) panel.classList.add('is-live');
       return;
     }
 
+    renderDate('date');
     setText(labelEl, 'starts in');
     setText(parts.days, pad(left.days));
     setText(parts.hours, pad(left.hours));
@@ -584,6 +700,7 @@ const HELP_TEXT = [
   '  guestbook rm <id>         delete your own message',
   'other',
   '  flag <answer>  submit the flag hidden on this site',
+  '  theme [mode]   toggle light/dark, or set: theme light | theme dark',
   '  sudo           try it',
   '  clear          clear the console',
   '  exit           close (or press Esc)'
@@ -808,6 +925,22 @@ function initConsole() {
     }
   }
 
+  // theme | theme light | theme dark
+  function theme(argument) {
+    const wanted = String(argument || '').toLowerCase();
+    if (wanted && wanted !== 'light' && wanted !== 'dark') {
+      print('usage: theme [light|dark]', 'hint');
+      return;
+    }
+    if (!window.MalwarousUI || !window.MalwarousUI.setTheme) {
+      print('theme controls are not available on this page.', 'error');
+      return;
+    }
+    const next = wanted || (window.MalwarousUI.theme() === 'light' ? 'dark' : 'light');
+    window.MalwarousUI.setTheme(next);
+    print('theme -> ' + next + '.');
+  }
+
   function run(raw) {
     const line = raw.trim();
     print(promptUser + '@malwarous:~$ ' + line, 'echo');
@@ -832,6 +965,8 @@ function initConsole() {
       guestbook(words, line);
     } else if (name === 'flag') {
       flag(line);
+    } else if (name === 'theme') {
+      theme(words[1]);
     } else if (name === 'sudo') {
       print('nice try.');
     } else if (name === 'clear') {

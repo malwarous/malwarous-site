@@ -41,8 +41,20 @@ const GALLERY_EVENTS = [
     date: '14 Oct 2026',
     type: 'hackathon',
     venue: 'Electronics Department Seminar Room',
-    poster: 'assets/gallery/ai-hackathon-oct-2026/poster.svg',
-    photos: []
+    photos: [
+      { alt: "Participants at their laptops in the lecture hall, with organizers standing among them" },
+      { alt: "An organizer pointing at a laptop screen, helping two participants" },
+      { alt: "A speaker at the front of the room, beside the whiteboard" },
+      { alt: "Rows of participants working on their laptops, with an organizer at the back" },
+      { alt: "Participants focused on their laptops, two at the front laughing over a screen" },
+      { alt: "Two participants discussing their project over a laptop" },
+      { alt: "An organizer talking with two participants at their desk" },
+      { alt: "An organizer checking a participant's work with a teammate nearby" },
+      { alt: "An organizer talking with a row of participants at their laptops" },
+      { alt: "A speaker explaining AI tools in front of the projected screen" },
+      { alt: "An organizer talking through an idea with two participants" },
+      { alt: "Two participants working through a problem on one laptop" }
+    ]
   },
   {
     slug: 'ctf-sep-2026',
